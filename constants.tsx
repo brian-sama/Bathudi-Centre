@@ -178,10 +178,10 @@ export const VALUES: Value[] = [
 ];
 
 export const TEAM: TeamMember[] = [
-  { name: 'Silelo Sioga', role: 'Executive Director', image: '5.jpg' },
-  { name: 'Ronewa Rambau', role: 'Chief Instructor', image: '6.jpg' },
-  { name: 'Rolivhuwa Sithubi', role: 'Operations Manager', image: '7.jpg' },
-  { name: 'Thendo Luvhengo', role: 'Student Coordinator', image: '8.jpg' }
+  { name: 'Ignatia Sekonyela', role: 'CEO/Founder', image: '5.jpg' },
+  { name: 'Michael More', role: 'Senior Technical Trainer', image: '6.jpg' },
+  { name: 'Kearabetswe Sekonyela', role: 'Communications Manager', image: '7.jpg' },
+
 ];
 
 export const NEWSLETTER: NewsletterPost[] = [
