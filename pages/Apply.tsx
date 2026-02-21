@@ -24,8 +24,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     address: '',
     education_level: '',
     previous_school: '',
-    course: '',
-    course_id: '',
+    course: '', // This will store the course ID as string
   });
   
   const [files, setFiles] = useState({
@@ -41,14 +40,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const PAYFAST_MERCHANT_KEY = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '';
   const PAYFAST_PASSPHRASE = import.meta.env.VITE_PAYFAST_PASSPHRASE || '';
   const IS_SANDBOX = import.meta.env.VITE_PAYFAST_SANDBOX === 'true';
-
-  // Debug log to check if env vars are loading
-  console.log('🔍 PayFast Config Check:', {
-    merchantId: PAYFAST_MERCHANT_ID ? '✅ Set: ' + PAYFAST_MERCHANT_ID : '❌ Missing',
-    merchantKey: PAYFAST_MERCHANT_KEY ? '✅ Set' : '❌ Missing',
-    passphrase: PAYFAST_PASSPHRASE ? '✅ Set' : '❌ Missing',
-    sandbox: IS_SANDBOX,
-  });
 
   // Fetch available courses from backend
   useEffect(() => {
@@ -69,9 +60,8 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     }
   };
 
-  // Handle PayFast payment - FIXED VERSION
+  // Handle PayFast payment
   const handlePayNow = () => {
-    // Validate required fields for payment
     if (!formData.name || !formData.surname || !formData.email) {
       alert('Please fill in your name, surname, and email before proceeding to payment.');
       return;
@@ -82,22 +72,17 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       return;
     }
 
-    // Check if credentials are configured
     if (!PAYFAST_MERCHANT_ID || !PAYFAST_MERCHANT_KEY) {
-      alert(`❌ PayFast merchant credentials are not configured.\n\nMerchant ID: ${PAYFAST_MERCHANT_ID ? '✅' : '❌'}\nMerchant Key: ${PAYFAST_MERCHANT_KEY ? '✅' : '❌'}\n\nPlease check your .env file and restart the server.`);
+      alert(`❌ PayFast merchant credentials are not configured.`);
       return;
     }
 
     setPaymentLoading(true);
 
     try {
-      // Get the base URL for return/cancel pages
       const baseUrl = window.location.origin;
-      
-      // Generate a unique payment ID
       const paymentId = generatePaymentId();
       
-      // Prepare payment data with ALL fields
       const paymentData: PayFastData = {
         merchant_id: PAYFAST_MERCHANT_ID,
         merchant_key: PAYFAST_MERCHANT_KEY,
@@ -116,20 +101,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         confirmation_address: formData.email,
       };
 
-      console.log('📦 Payment Data:', paymentData);
-
-      // Generate signature
       const signature = generatePayFastSignature(paymentData, PAYFAST_PASSPHRASE);
       
-      // Create form with ALL parameters in the SAME ORDER as signature generation
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = IS_SANDBOX ? PAYFAST_URLS.sandbox : PAYFAST_URLS.live;
       
-      // Get sorted keys (must match signature generation order)
       const sortedKeys = Object.keys(paymentData).sort() as Array<keyof PayFastData>;
       
-      // Add parameters in the exact same order as signature
       sortedKeys.forEach(key => {
         const value = paymentData[key];
         if (value !== undefined && value !== null && value !== '') {
@@ -138,21 +117,15 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           input.name = key;
           input.value = value.toString();
           form.appendChild(input);
-          console.log(`Adding field: ${key}=${value}`);
         }
       });
       
-      // Add signature
       const signatureInput = document.createElement('input');
       signatureInput.type = 'hidden';
       signatureInput.name = 'signature';
       signatureInput.value = signature;
       form.appendChild(signatureInput);
       
-      console.log('🚀 Submitting to:', form.action);
-      console.log('✅ Final signature:', signature);
-      
-      // Submit the form
       document.body.appendChild(form);
       form.submit();
       
@@ -262,7 +235,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     return true;
   };
 
-  // Submit form
+  // Submit form - FIXED: Send course as ID number, not course_id
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -278,23 +251,32 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     try {
       const formDataToSend = new FormData();
       
+      // Add all form fields - IMPORTANT: course must be sent as 'course', not 'course_id'
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'course') {
-          formDataToSend.append('course_id', value);
-        } else {
-          formDataToSend.append(key, value.toString());
+        if (value) {
+          if (key === 'course') {
+            // Send as 'course' with the ID as a number
+            const courseId = parseInt(value);
+            console.log('🎓 Sending course ID:', courseId);
+            formDataToSend.append('course', courseId.toString());
+            // Also send as form_course_id for the model's save method
+            formDataToSend.append('form_course_id', value);
+          } else if (key === 'age') {
+            formDataToSend.append('age', parseInt(value).toString());
+          } else {
+            formDataToSend.append(key, value.toString());
+          }
         }
       });
       
+      // Add files
       Object.entries(files).forEach(([key, file]) => {
         if (file) {
           formDataToSend.append(key, file, file.name);
         }
       });
 
-      console.log('Sending application data...');
-      
-      alert('📤 Submitting your application... Please wait while we process your information.');
+      console.log('📤 Submitting application data...');
       
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
       const response = await fetch(`${API_BASE_URL}/applications/`, {
@@ -302,16 +284,17 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         body: formDataToSend,
       });
 
-      console.log('Response status:', response.status);
+      console.log('📡 Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Application submitted successfully:', data);
+        console.log('✅ Application submitted successfully:', data);
         
-        alert(`✅ Application Submitted Successfully!\n\n📋 Application ID: ${data.id || 'Pending'}\n👤 Name: ${formData.name} ${formData.surname}\n🎓 Course: ${formData.course}\n\n📬 We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.`);
+        alert(`✅ Application Submitted Successfully!\n\n📋 Application ID: ${data.id || 'Pending'}\n👤 Name: ${formData.name} ${formData.surname}\n🎓 Course ID: ${formData.course}\n\n📬 We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.`);
         
         setSubmitStatus('success');
         
+        // Reset form
         setFormData({
           name: '',
           surname: '',
@@ -324,7 +307,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           education_level: '',
           previous_school: '',
           course: '',
-          course_id: '',
         });
         setFiles({
           id_document: null,
@@ -336,7 +318,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         
       } else {
         const errorText = await response.text();
-        console.error('Submission error response:', errorText);
+        console.error('❌ Error response:', errorText);
         
         try {
           const errorData = JSON.parse(errorText);
@@ -350,22 +332,19 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           setErrorMessage(errorMsg);
         } catch (parseError) {
           console.error('Error parsing error response:', parseError);
-          const errorMsg = `Server error (${response.status}): ${errorText.substring(0, 100)}...`;
+          const errorMsg = `Server error (${response.status})`;
           
-          alert(`❌ Server Error (${response.status}):\n\n${errorText.substring(0, 200)}`);
+          alert(`❌ Server Error (${response.status})`);
           
           setSubmitStatus('error');
           setErrorMessage(errorMsg);
         }
       }
     } catch (error: any) {
-      console.error('Network error:', error);
-      const errorMsg = 'Network error. Please check your connection and try again.';
-      
-      alert(`🌐 Network Error:\n\n${error.message || errorMsg}\n\nPlease check your internet connection and try again.`);
-      
+      console.error('❌ Network error:', error);
+      alert(`Network error: ${error.message}. Please check your connection.`);
       setSubmitStatus('error');
-      setErrorMessage(errorMsg);
+      setErrorMessage(error.message);
     } finally {
       setLoading(false);
     }
@@ -641,24 +620,16 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     required
                   >
                     <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>Select a course</option>
-                    <option value="automotive_engine_repairer" style={{ backgroundColor: '#1f2937', color: 'white' }}>
-                      Automotive Engine Repairer
-                    </option>
-                    <option value="automotive_clutch_brake_repairer" style={{ backgroundColor: '#1f2937', color: 'white' }}>
-                      Clutch & Brake Repairer
-                    </option>
-                    <option value="automotive_suspension_fitter" style={{ backgroundColor: '#1f2937', color: 'white' }}>
-                      Suspension Fitter
-                    </option>
-                    <option value="automotive_workshop_assistant" style={{ backgroundColor: '#1f2937', color: 'white' }}>
-                      Workshop Assistant
-                    </option>
+                    {/* IMPORTANT: Use course.id as the value (number) */}
                     {availableCourses.map(course => (
                       <option key={course.id} value={course.id} style={{ backgroundColor: '#1f2937', color: 'white' }}>
                         {course.title}
                       </option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Selected course ID: {formData.course}
+                  </p>
                 </div>
               </div>
             </div>
@@ -773,13 +744,13 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Proof of Payment - With Pay Now Button */}
+                {/* Proof of Payment */}
                 <div className="space-y-2 sm:space-y-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
                     Proof of Payment (R661.25) *
                   </label>
                   
-                  {/* Pay Now Button - Prominently displayed */}
+                  {/* Pay Now Button */}
                   <div className="mb-4">
                     <button
                       type="button"
@@ -863,7 +834,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Additional Document 1 - Optional */}
+                {/* Additional Document 1 */}
                 <div className="space-y-2 sm:space-y-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
                     Additional Document 1 (Optional)
@@ -913,7 +884,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Additional Document 2 - Optional */}
+                {/* Additional Document 2 */}
                 <div className="space-y-2 sm:space-y-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
                     Additional Document 2 (Optional)
