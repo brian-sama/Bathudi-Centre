@@ -13,6 +13,8 @@ export default defineConfig({
     host: '0.0.0.0',
     strictPort: true,
     allowedHosts: [
+      'bathudi.co.za',
+      'www.bathudi.co.za',
       'invigorating-laughter-production-ad4f.up.railway.app',
       '.up.railway.app'
     ]
