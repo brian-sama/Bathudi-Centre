@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TEAM } from '../constants';
 
@@ -14,7 +13,8 @@ const Team: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* FIXED: Auto-centering grid for 3 cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {TEAM.map((member, idx) => (
             <div key={idx} className="group relative glass rounded-2xl overflow-hidden border border-white/5 p-4 text-center">
               <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-6">
