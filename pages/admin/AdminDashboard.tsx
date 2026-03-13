@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardStats, RecentApplication, ApplicationStatus } from '../../types';
 
-const API_BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL 
-  ? import.meta.env.VITE_API_URL 
-  : 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({

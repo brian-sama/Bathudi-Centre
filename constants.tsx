@@ -262,11 +262,13 @@ export const CONTACT_INFO = {
   hours: 'Monday - Friday: 8:00 AM - 5:00 PM\nSaturday: 9:00 AM - 1:00 PM'
 };
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
 export const API_ENDPOINTS = {
-  courses: 'http://localhost:8000/api/courses/',
-  applications: 'http://localhost:8000/api/applications/',
-  pdf: (courseId: string) => `http://localhost:8000/api/course/${courseId}/pdf/download/`,
-  generatePdf: (courseId: string) => `http://localhost:8000/api/course/${courseId}/pdf/generate/`,
+  courses: `${API_BASE}/courses/`,
+  applications: `${API_BASE}/applications/`,
+  pdf: (courseId: string) => `${API_BASE}/course/${courseId}/pdf/download/`,
+  generatePdf: (courseId: string) => `${API_BASE}/course/${courseId}/pdf/generate/`,
 };
 
 export const COURSE_DURATIONS = [
