@@ -1,0 +1,7 @@
+{
+  "name": "Bathudi Training Center",
+  "description": "A modern public portal for an automotive training institute focusing on youth skills development in South Africa.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
