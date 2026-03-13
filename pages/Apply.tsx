@@ -493,22 +493,22 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="country"
+                    title="Select your country"
                     value={formData.country}
                     onChange={handleInputChange}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
                     required
                   >
-                    <option value="South Africa" style={{ backgroundColor: '#1f2937', color: 'white' }}>South Africa</option>
-                    <option value="Lesotho" style={{ backgroundColor: '#1f2937', color: 'white' }}>Lesotho</option>
-                    <option value="Botswana" style={{ backgroundColor: '#1f2937', color: 'white' }}>Botswana</option>
-                    <option value="Eswatini" style={{ backgroundColor: '#1f2937', color: 'white' }}>Eswatini</option>
-                    <option value="Namibia" style={{ backgroundColor: '#1f2937', color: 'white' }}>Namibia</option>
-                    <option value="Zimbabwe" style={{ backgroundColor: '#1f2937', color: 'white' }}>Zimbabwe</option>
-                    <option value="Mozambique" style={{ backgroundColor: '#1f2937', color: 'white' }}>Mozambique</option>
-                    <option value="Zambia" style={{ backgroundColor: '#1f2937', color: 'white' }}>Zambia</option>
-                    <option value="Other" style={{ backgroundColor: '#1f2937', color: 'white' }}>Other African Country</option>
-                    <option value="International" style={{ backgroundColor: '#1f2937', color: 'white' }}>International</option>
+                    <option value="South Africa" className="bg-gray-800 text-white">South Africa</option>
+                    <option value="Lesotho" className="bg-gray-800 text-white">Lesotho</option>
+                    <option value="Botswana" className="bg-gray-800 text-white">Botswana</option>
+                    <option value="Eswatini" className="bg-gray-800 text-white">Eswatini</option>
+                    <option value="Namibia" className="bg-gray-800 text-white">Namibia</option>
+                    <option value="Zimbabwe" className="bg-gray-800 text-white">Zimbabwe</option>
+                    <option value="Mozambique" className="bg-gray-800 text-white">Mozambique</option>
+                    <option value="Zambia" className="bg-gray-800 text-white">Zambia</option>
+                    <option value="Other" className="bg-gray-800 text-white">Other African Country</option>
+                    <option value="International" className="bg-gray-800 text-white">International</option>
                   </select>
                 </div>
                 
@@ -573,22 +573,22 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="education_level"
+                    title="Select your education level"
                     value={formData.education_level}
                     onChange={handleInputChange}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
                     required
                   >
-                    <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>Select your education level</option>
-                    <option value="Grade 9" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 9</option>
-                    <option value="Grade 10" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 10</option>
-                    <option value="Grade 11" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 11</option>
-                    <option value="Grade 12 (Matric)" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 12 (Matric)</option>
-                    <option value="N3" style={{ backgroundColor: '#1f2937', color: 'white' }}>N3</option>
-                    <option value="N4" style={{ backgroundColor: '#1f2937', color: 'white' }}>N4</option>
-                    <option value="Certificate" style={{ backgroundColor: '#1f2937', color: 'white' }}>Certificate</option>
-                    <option value="Diploma" style={{ backgroundColor: '#1f2937', color: 'white' }}>Diploma</option>
-                    <option value="Degree" style={{ backgroundColor: '#1f2937', color: 'white' }}>Degree</option>
+                    <option value="" className="bg-gray-800 text-white">Select your education level</option>
+                    <option value="Grade 9" className="bg-gray-800 text-white">Grade 9</option>
+                    <option value="Grade 10" className="bg-gray-800 text-white">Grade 10</option>
+                    <option value="Grade 11" className="bg-gray-800 text-white">Grade 11</option>
+                    <option value="Grade 12 (Matric)" className="bg-gray-800 text-white">Grade 12 (Matric)</option>
+                    <option value="N3" className="bg-gray-800 text-white">N3</option>
+                    <option value="N4" className="bg-gray-800 text-white">N4</option>
+                    <option value="Certificate" className="bg-gray-800 text-white">Certificate</option>
+                    <option value="Diploma" className="bg-gray-800 text-white">Diploma</option>
+                    <option value="Degree" className="bg-gray-800 text-white">Degree</option>
                   </select>
                 </div>
                 
@@ -613,16 +613,16 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="course"
+                    title="Select a course to apply for"
                     value={formData.course}
                     onChange={handleInputChange}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
                     required
                   >
-                    <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>Select a course</option>
+                    <option value="" className="bg-gray-800 text-white">Select a course</option>
                     {/* IMPORTANT: Use course.id as the value (number) */}
                     {availableCourses.map(course => (
-                      <option key={course.id} value={course.id} style={{ backgroundColor: '#1f2937', color: 'white' }}>
+                      <option key={course.id} value={course.id} className="bg-gray-800 text-white">
                         {course.title}
                       </option>
                     ))}
@@ -653,6 +653,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="id_document"
+                          title="Upload ID or Passport document"
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-blue-500/20 file:text-blue-400 hover:file:bg-blue-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -704,6 +705,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="matric_certificate"
+                          title="Upload Matric certificate or school results"
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-green-500/20 file:text-green-400 hover:file:bg-green-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -793,6 +795,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="proof_of_payment"
+                          title="Upload Proof of Payment"
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -845,6 +848,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="additional_doc_1"
+                          title="Upload Additional Document 1"
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
@@ -895,6 +899,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="additional_doc_2"
+                          title="Upload Additional Document 2"
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
