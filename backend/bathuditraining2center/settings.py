@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-bathudi-training-center-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'bathudi.co.za,www.bathudi.co.za,localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -70,7 +70,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        default=os.getenv('DATABASE_URL', 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
         conn_max_age=600,
         conn_health_checks=True,
     )
@@ -97,11 +97,8 @@ STATICFILES_DIRS = [
 ]
 
 # ========== MEDIA FILES (User Uploads) ==========
-# FIXED: Using Railway volume for persistent storage
 MEDIA_URL = '/media/'
-# Comment out local path - using Railway volume instead
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_ROOT = '/app/media'  # Matches Railway volume mount path
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Create necessary directories
 os.makedirs(os.path.join(BASE_DIR, 'static'), exist_ok=True)
@@ -116,9 +113,12 @@ os.makedirs(os.path.join(BASE_DIR, 'media'), exist_ok=True)
 # ========== DJANGO REST FRAMEWORK ==========
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
@@ -127,7 +127,7 @@ REST_FRAMEWORK = {
 }
 
 # ========== CORS SETTINGS ==========
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -152,18 +152,20 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    'https://bathudi.co.za',
+    'https://www.bathudi.co.za',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://bathudi-training-center-test-production.up.railway.app',
 ]
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
+    'https://bathudi.co.za',
+    'https://www.bathudi.co.za',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://bathudi-training-center-test-production.up.railway.app',
 ]
 
 CSRF_COOKIE_SECURE = True
@@ -173,6 +175,10 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Production Security
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
 
 # ========== FILE UPLOAD SETTINGS ==========
 FILE_UPLOAD_PERMISSIONS = 0o644
