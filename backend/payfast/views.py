@@ -65,7 +65,7 @@ def notify_payment(request):
         # In a real scenario, you'd probably pass the application ID in a custom field
         try:
             # Try to find the latest pending application for this email
-            application = Application.objects.filter(email=email).order_by('-date_submitted').first()
+            application = Application.objects.filter(email=email).order_by('-applied_date').first()
             if application:
                 application.fee_verified = True
                 application.save()
