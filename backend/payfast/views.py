@@ -46,7 +46,7 @@ def create_payfast_payment(request):
     """
     try:
         data = request.data
-        amount = data.get('amount', '661.25')
+        amount = data.get('amount', settings.REGISTRATION_FEE_AMOUNT)
         item_name = data.get('item_name', 'Bathudi Course Application Fee')
         email = data.get('email_address')
         

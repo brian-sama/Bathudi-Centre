@@ -39,6 +39,8 @@ INSTALLED_APPS = [
 PAYFAST_MERCHANT_ID = os.getenv("PAYFAST_MERCHANT_ID")
 PAYFAST_MERCHANT_KEY = os.getenv("PAYFAST_MERCHANT_KEY")
 PAYFAST_PASSPHRASE = os.getenv("PAYFAST_PASSPHRASE")
+PAYFAST_SANDBOX = os.getenv("PAYFAST_SANDBOX", "True") == "True"
+REGISTRATION_FEE_AMOUNT = os.getenv("REGISTRATION_FEE_AMOUNT", "661.25")
 
 PAYFAST_RETURN_URL = os.getenv("PAYFAST_RETURN_URL", "https://bathudi.co.za/payment-success")
 PAYFAST_CANCEL_URL = os.getenv("PAYFAST_CANCEL_URL", "https://bathudi.co.za/payment-cancel")

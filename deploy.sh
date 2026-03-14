@@ -26,8 +26,9 @@ echo "🐍 Updating Backend dependencies and migrations..."
 cd $BACKEND_DIR
 source $VENV_PATH/bin/activate
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
+python3 manage.py makemigrations payfast
+python3 manage.py migrate
+python3 manage.py collectstatic --noinput
 
 # 4. Restart Services
 echo "🔄 Restarting Gunicorn and Nginx..."
