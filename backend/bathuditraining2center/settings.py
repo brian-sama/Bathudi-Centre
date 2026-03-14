@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'core',
+    'payfast'
 ]
 
 MIDDLEWARE = [
@@ -304,6 +305,20 @@ We encourage you to apply again in the future when you meet the minimum requirem
 Kind regards,
 Bathudi Management
 """.strip()
+
+# ========== PAYFAST PAYMENT GATEWAY SETTINGS ==========
+PAYFAST_MERCHANT_ID = os.environ.get('PAYFAST_MERCHANT_ID', '')
+PAYFAST_MERCHANT_KEY = os.environ.get('PAYFAST_MERCHANT_KEY', '')
+PAYFAST_PASSPHRASE = os.environ.get('PAYFAST_PASSPHRASE', '')
+PAYFAST_SANDBOX = os.environ.get('PAYFAST_SANDBOX', 'False') == 'True'
+
+# PayFast URLs
+if PAYFAST_SANDBOX:
+    PAYFAST_URL = 'https://sandbox.payfast.co.za/eng/process'
+    PAYFAST_ITN_URL = 'https://sandbox.payfast.co.za/eng/notify'
+else:
+    PAYFAST_URL = 'https://www.payfast.co.za/eng/process'
+    PAYFAST_ITN_URL = 'https://www.payfast.co.za/eng/notify'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

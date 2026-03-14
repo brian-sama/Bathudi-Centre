@@ -158,6 +158,14 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             Empowering South African youth with world-class automotive training. Join the masters of mechanics today.
           </p>
 
+          {/* Accreditation Number - Added here */}
+          <div className="mb-6 sm:mb-8">
+            <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 glass rounded-xl border border-yellow-500/30 bg-yellow-900/10">
+              <span className="text-yellow-400 font-bold text-xs sm:text-sm mr-2">Accreditation No:</span>
+              <span className="text-white font-mono text-sm sm:text-base tracking-wider">SDP210225153101</span>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
             <button 
               onClick={() => onNavigate(Page.Apply)} 

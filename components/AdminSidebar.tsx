@@ -278,5 +278,4 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
     </>
   );
 };
-
 export default AdminSidebar;

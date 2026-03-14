@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page } from '../types';
+import { Page } from '../types';  // types is in root
 import { generatePayFastSignature, PAYFAST_URLS, generatePaymentId, PayFastData } from '../src/utils/payfast';
 
 interface ApplyProps {
@@ -60,7 +60,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     }
   };
 
-  // Handle PayFast payment
+  // Handle PayFast payment - UPDATED FOR LOCAL TESTING
   const handlePayNow = () => {
     if (!formData.name || !formData.surname || !formData.email) {
       alert('Please fill in your name, surname, and email before proceeding to payment.');
@@ -80,7 +80,10 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     setPaymentLoading(true);
 
     try {
-      const baseUrl = window.location.origin;
+      // Use localhost URLs for testing
+      const baseUrl = 'http://localhost:3000'; // Your React app URL
+      const backendUrl = 'http://localhost:8000'; // Your Django backend URL
+      
       const paymentId = generatePaymentId();
       
       const paymentData: PayFastData = {
@@ -88,7 +91,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         merchant_key: PAYFAST_MERCHANT_KEY,
         return_url: `${baseUrl}/payment-success`,
         cancel_url: `${baseUrl}/payment-cancel`,
-        notify_url: `${baseUrl}/api/payfast/notify`,
+        notify_url: `${backendUrl}/api/payfast/notify`,
         name_first: formData.name,
         name_last: formData.surname,
         email_address: formData.email,
@@ -96,17 +99,21 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         m_payment_id: paymentId,
         amount: '661.25',
         item_name: 'Course Registration Fee',
-        item_description: `Registration fee for ${formData.course}`,
+        item_description: `Registration fee for course ID: ${formData.course}`,
         email_confirmation: '1',
         confirmation_address: formData.email,
       };
 
+      console.log('Payment Data:', paymentData);
+      
       const signature = generatePayFastSignature(paymentData, PAYFAST_PASSPHRASE);
       
+      // Create form and submit to PayFast
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = IS_SANDBOX ? PAYFAST_URLS.sandbox : PAYFAST_URLS.live;
       
+      // Add all payment data fields
       const sortedKeys = Object.keys(paymentData).sort() as Array<keyof PayFastData>;
       
       sortedKeys.forEach(key => {
@@ -120,13 +127,16 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         }
       });
       
+      // Add signature
       const signatureInput = document.createElement('input');
       signatureInput.type = 'hidden';
       signatureInput.name = 'signature';
       signatureInput.value = signature;
       form.appendChild(signatureInput);
       
+      // Append form to body and submit
       document.body.appendChild(form);
+      console.log('Submitting form to PayFast:', form.action);
       form.submit();
       
     } catch (error) {
@@ -235,7 +245,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     return true;
   };
 
-  // Submit form - FIXED: Send course as ID number, not course_id
+  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -251,7 +261,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     try {
       const formDataToSend = new FormData();
       
-      // Add all form fields - IMPORTANT: course must be sent as 'course', not 'course_id'
+      // Add all form fields
       Object.entries(formData).forEach(([key, value]) => {
         if (value) {
           if (key === 'course') {
