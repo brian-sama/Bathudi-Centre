@@ -199,6 +199,25 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
         </div>
       </section>
 
+      {/* Accreditation Section */}
+      <section className="py-16 sm:py-20 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="glass p-8 sm:p-12 rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-950/20 to-transparent">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-white mb-6">Accreditation</h3>
+            <div className="w-20 h-1 bg-blue-500 mx-auto mb-8 rounded-full"></div>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              Bathudi Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
+            </p>
+            <div className="mt-10 flex justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+               {/* Placeholders for accreditation logos */}
+               <div className="text-4xl">📜</div>
+               <div className="text-4xl">✅</div>
+               <div className="text-4xl">🏆</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Campus Updates & Video - Mobile optimized */}
       <section className="py-16 sm:py-20 md:py-24 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

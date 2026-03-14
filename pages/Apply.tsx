@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
-import { generatePayFastSignature, PAYFAST_URLS, generatePaymentId, PayFastData } from '../src/utils/payfast';
+import { generatePayFastSignature, PAYFAST_URLS, generatePaymentId, PayFastData, initiatePayFastPayment } from '../src/utils/payfast';
 
 interface ApplyProps {
   onNavigate: (page: Page) => void;
@@ -95,39 +95,13 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         cell_number: formData.mobile,
         m_payment_id: paymentId,
         amount: '661.25',
-        item_name: 'Course Registration Fee',
+        item_name: 'Bathudi Course Application Fee',
         item_description: `Registration fee for ${formData.course}`,
         email_confirmation: '1',
         confirmation_address: formData.email,
       };
 
-      const signature = generatePayFastSignature(paymentData, PAYFAST_PASSPHRASE);
-      
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = IS_SANDBOX ? PAYFAST_URLS.sandbox : PAYFAST_URLS.live;
-      
-      const sortedKeys = Object.keys(paymentData).sort() as Array<keyof PayFastData>;
-      
-      sortedKeys.forEach(key => {
-        const value = paymentData[key];
-        if (value !== undefined && value !== null && value !== '') {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = value.toString();
-          form.appendChild(input);
-        }
-      });
-      
-      const signatureInput = document.createElement('input');
-      signatureInput.type = 'hidden';
-      signatureInput.name = 'signature';
-      signatureInput.value = signature;
-      form.appendChild(signatureInput);
-      
-      document.body.appendChild(form);
-      form.submit();
+      initiatePayFastPayment(paymentData, PAYFAST_PASSPHRASE, IS_SANDBOX);
       
     } catch (error) {
       console.error('❌ Payment error:', error);

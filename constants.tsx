@@ -147,12 +147,12 @@ export const FEE_NOTES = {
 export const VALUES: Value[] = [
   {
     title: 'Moral Integrity',
-    description: 'Building honest, trustworthy professionals who value ethics above all.',
+    description: 'Highlighting ethical leadership, accountability, and responsible citizenship in our students.',
     icon: '🛡️'
   },
   {
     title: 'Youth Empowerment',
-    description: 'Equipping the next generation with marketable skills to lead independent lives.',
+    description: 'Emphasising skills development, entrepreneurship, and personal growth opportunities for young people.',
     icon: '💪'
   },
   {

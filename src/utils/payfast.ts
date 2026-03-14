@@ -20,46 +20,33 @@ export interface PayFastData {
 }
 
 /**
- * Generate PayFast signature - URLs should NOT be encoded in the signature string
- * PayFast expects raw URLs in the signature calculation
+ * Generate PayFast signature
+ * All parameters should be sent to PayFast exactly as they are used in the signature
  */
 export const generatePayFastSignature = (data: PayFastData, passphrase: string): string => {
-  // Create an array to hold all parameter strings
   const paramStrings: string[] = [];
   
-  // Get all keys and sort them alphabetically (THIS IS CRITICAL)
+  // Get all keys and sort them alphabetically
   const sortedKeys = Object.keys(data).sort() as Array<keyof PayFastData>;
   
-  // Build each parameter string - DO NOT ENCODE URLS FOR SIGNATURE
   for (const key of sortedKeys) {
     const value = data[key];
-    // Skip undefined, null, or empty values
     if (value === undefined || value === null || value === '') {
       continue;
     }
     
-    // Convert to string and trim
-    const stringValue = value.toString().trim();
-    
-    // For signature: DO NOT encode URLs - use raw values
-    // PayFast's documentation is clear: signature uses raw values
+    // Convert to string and trim, then URL encode
+    const stringValue = encodeURIComponent(value.toString().trim()).replace(/%20/g, '+');
     paramStrings.push(`${key}=${stringValue}`);
   }
   
-  // Add the passphrase (DO NOT ENCODE THE PASSPHRASE)
-  paramStrings.push(`passphrase=${passphrase}`);
+  // Add the passphrase if it exists
+  if (passphrase) {
+    paramStrings.push(`passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, '+')}`);
+  }
   
-  // Join with & to create the final string
   const signatureString = paramStrings.join('&');
-  
-  // Log for debugging
-  console.log('📝 Signature String (RAW):', signatureString);
-  
-  // Generate MD5 hash
-  const signature = CryptoJS.MD5(signatureString).toString();
-  console.log('✅ Signature:', signature);
-  
-  return signature;
+  return CryptoJS.MD5(signatureString).toString();
 };
 
 export const PAYFAST_URLS = {
@@ -70,3 +57,36 @@ export const PAYFAST_URLS = {
 export const generatePaymentId = (): string => {
   return `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 };
+
+/**
+ * Helper to initiate a PayFast payment by creating and submitting a form
+ */
+export const initiatePayFastPayment = (paymentData: PayFastData, passphrase: string, isSandbox: boolean = true) => {
+  const signature = generatePayFastSignature(paymentData, passphrase);
+  
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = isSandbox ? PAYFAST_URLS.sandbox : PAYFAST_URLS.live;
+  
+  // Add all data fields
+  Object.entries(paymentData).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value.toString();
+      form.appendChild(input);
+    }
+  });
+  
+  // Add signature
+  const signatureInput = document.createElement('input');
+  signatureInput.type = 'hidden';
+  signatureInput.name = 'signature';
+  signatureInput.value = signature;
+  form.appendChild(signatureInput);
+  
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+};
