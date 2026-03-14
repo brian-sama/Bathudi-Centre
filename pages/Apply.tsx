@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
-import { generatePayFastSignature, PAYFAST_URLS, generatePaymentId, PayFastData, initiatePayFastPayment } from '../src/utils/payfast';
+import { initiatePayFastPayment } from '../src/utils/payfast';
 
 interface ApplyProps {
   onNavigate: (page: Page) => void;
@@ -35,12 +35,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     additional_doc_2: null as File | null,
   });
 
-  // PayFast configuration from environment variables
-  const PAYFAST_MERCHANT_ID = import.meta.env.VITE_PAYFAST_MERCHANT_ID || '';
-  const PAYFAST_MERCHANT_KEY = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '';
-  const PAYFAST_PASSPHRASE = import.meta.env.VITE_PAYFAST_PASSPHRASE || '';
-  const IS_SANDBOX = import.meta.env.VITE_PAYFAST_SANDBOX === 'true';
-
   // Fetch available courses from backend
   useEffect(() => {
     fetchCourses();
@@ -61,7 +55,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   };
 
   // Handle PayFast payment
-  const handlePayNow = () => {
+  const handlePayNow = async () => {
     if (!formData.name || !formData.surname || !formData.email) {
       alert('Please fill in your name, surname, and email before proceeding to payment.');
       return;
@@ -72,36 +66,17 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       return;
     }
 
-    if (!PAYFAST_MERCHANT_ID || !PAYFAST_MERCHANT_KEY) {
-      alert(`❌ PayFast merchant credentials are not configured.`);
-      return;
-    }
-
     setPaymentLoading(true);
 
     try {
-      const baseUrl = window.location.origin;
-      const paymentId = generatePaymentId();
-      
-      const paymentData: PayFastData = {
-        merchant_id: PAYFAST_MERCHANT_ID,
-        merchant_key: PAYFAST_MERCHANT_KEY,
-        return_url: `${baseUrl}/payment-success`,
-        cancel_url: `${baseUrl}/payment-cancel`,
-        notify_url: `${baseUrl}/api/payfast/notify`,
-        name_first: formData.name,
-        name_last: formData.surname,
-        email_address: formData.email,
-        cell_number: formData.mobile,
-        m_payment_id: paymentId,
+      await initiatePayFastPayment({
         amount: '661.25',
         item_name: 'Bathudi Course Application Fee',
-        item_description: `Registration fee for ${formData.course}`,
-        email_confirmation: '1',
-        confirmation_address: formData.email,
-      };
-
-      initiatePayFastPayment(paymentData, PAYFAST_PASSPHRASE, IS_SANDBOX);
+        email_address: formData.email,
+        name_first: formData.name,
+        name_last: formData.surname,
+        cell_number: formData.mobile,
+      });
       
     } catch (error) {
       console.error('❌ Payment error:', error);
