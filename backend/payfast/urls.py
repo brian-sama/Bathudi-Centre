@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import notify_payment, payment_success, payment_cancel
+from . import views
 
 urlpatterns = [
     path('notify/', views.notify_payment, name='payfast_notify'),
