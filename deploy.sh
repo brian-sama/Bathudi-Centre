@@ -1,4 +1,4 @@
-#!/bash
+#!/bin/bash
 # Simple Auto-Deploy Script for Bathudi Training Center
 
 # Configuration
