@@ -79,7 +79,7 @@ def create_payfast_payment(request):
         
         # Log the initiation
         PayfastTransaction.objects.create(
-            m_payment_id=m_payment_id,
+            payment_id=m_payment_id,
             email=email,
             amount=amount,
             status='initiated'
@@ -124,7 +124,7 @@ def notify_payment(request):
 
     # 3. Store Transaction
     transaction, created = PayfastTransaction.objects.update_or_create(
-        m_payment_id=payment_id,
+        payment_id=payment_id,
         defaults={
             'email': email,
             'amount': amount,
