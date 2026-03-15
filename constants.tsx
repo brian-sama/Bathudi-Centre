@@ -147,12 +147,12 @@ export const FEE_NOTES = {
 export const VALUES: Value[] = [
   {
     title: 'Moral Integrity',
-    description: 'Highlighting ethical leadership, accountability, and responsible citizenship in our students.',
+    description: 'Building Future Mechanical Professionals Who Value Excellence, Integrity, Innovation, and Hands-On Expertise.',
     icon: '🛡️'
   },
   {
     title: 'Youth Empowerment',
-    description: 'Emphasising skills development, entrepreneurship, and personal growth opportunities for young people.',
+    description: 'Empowering the next generation of skilled automotive professionals.',
     icon: '💪'
   },
   {
