@@ -208,6 +208,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             <p className="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Bathudi Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
             </p>
+            <div className="mt-4 inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
+              Accreditation No: SDP210225153101
+            </div>
             <div className="mt-10 flex justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                {/* Placeholders for accreditation logos */}
                <div className="text-4xl">📜</div>

@@ -53,17 +53,34 @@ export const initiatePayFastPayment = async (data: {
     const { payload, url } = await response.json();
 
     // 2. Create and submit the PayFast form
+    // IMPORTANT: Fields MUST be in the exact alphabetical order used for the signature
+    // and the signature itself MUST be the last field.
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = url;
 
-    Object.entries(payload).forEach(([key, value]) => {
+    // Get all keys except signature, sort them, and add to form
+    const sign = payload.signature;
+    const sortedKeys = Object.keys(payload)
+      .filter(k => k !== 'signature')
+      .sort();
+
+    sortedKeys.forEach(key => {
       const input = document.createElement('input');
       input.type = 'hidden';
       input.name = key;
-      input.value = value as string;
+      input.value = payload[key] as string;
       form.appendChild(input);
     });
+
+    // Finally, add the signature at the end
+    if (sign) {
+      const sigInput = document.createElement('input');
+      sigInput.type = 'hidden';
+      sigInput.name = 'signature';
+      sigInput.value = sign as string;
+      form.appendChild(sigInput);
+    }
 
     document.body.appendChild(form);
     form.submit();

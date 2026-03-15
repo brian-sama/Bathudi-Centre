@@ -16,18 +16,19 @@ logger = logging.getLogger(__name__)
 
 def generate_pf_signature(data, passphrase=None):
     """Generate PayFast signature securely on the server"""
-    # Remove signature if present
-    temp_data = data.copy()
-    if 'signature' in temp_data:
-        temp_data.pop('signature')
-        
     # Create parameter string
     pf_params = []
     # Sort keys alphabetically as per PayFast requirement
-    for key in sorted(temp_data.keys()):
-        value = temp_data[key]
+    # We must EXCLUDE the signature if it exists in the data
+    sorted_keys = sorted([k for k in data.keys() if k != 'signature'])
+    
+    for key in sorted_keys:
+        value = data[key]
         if value is not None and value != '':
-            pf_params.append(f"{key}={urllib.parse.quote_plus(str(value).strip())}")
+            # URL encode values, matching PHP's urlencode() / Javascript's encodeURIComponent(v).replace(/%20/g, '+')
+            # quote_plus is the standard for form-encoded data (spaces to +)
+            encoded_value = urllib.parse.quote_plus(str(value).strip())
+            pf_params.append(f"{key}={encoded_value}")
     
     pf_string = "&".join(pf_params)
     
