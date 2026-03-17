@@ -3,6 +3,23 @@ import React, { useEffect, useState } from 'react';
 // FIXED: Use environment variable for API base URL
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+// Helper to get CSRF token from cookies
+const getCsrfToken = () => {
+  const name = 'csrftoken';
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+};
+
 type Tab = 'news' | 'gallery' | 'video';
 
 const AdminCMS: React.FC = () => {
@@ -140,7 +157,11 @@ const AdminCMS: React.FC = () => {
       
       const res = await fetch(`${API_BASE}/news-posts/`, {
         method: 'POST',
+        headers: {
+          'X-CSRFToken': getCsrfToken() || '',
+        },
         body: formData,
+        credentials: 'include',
       });
 
       console.log('News post response status:', res.status);
@@ -174,7 +195,11 @@ const AdminCMS: React.FC = () => {
     
     try {
       const res = await fetch(`${API_BASE}/news-posts/${id}/`, { 
-        method: 'DELETE' 
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCsrfToken() || '',
+        },
+        credentials: 'include',
       });
       
       if (!res.ok) {
@@ -219,7 +244,11 @@ const AdminCMS: React.FC = () => {
         
         const res = await fetch(`${API_BASE}/gallery/`, {
           method: 'POST',
+          headers: {
+            'X-CSRFToken': getCsrfToken() || '',
+          },
           body: fd,
+          credentials: 'include',
         });
         
         if (res.ok) {
@@ -252,7 +281,11 @@ const AdminCMS: React.FC = () => {
     
     try {
       const res = await fetch(`${API_BASE}/gallery/${id}/`, { 
-        method: 'DELETE' 
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCsrfToken() || '',
+        },
+        credentials: 'include',
       });
       
       if (!res.ok) throw new Error('Delete failed');
@@ -290,7 +323,11 @@ const AdminCMS: React.FC = () => {
 
       const res = await fetch(`${API_BASE}/director-message/${directorMessage.id}/`, {
         method: 'PATCH',
+        headers: {
+          'X-CSRFToken': getCsrfToken() || '',
+        },
         body: formData,
+        credentials: 'include',
       });
 
       if (res.ok) {
@@ -343,8 +380,12 @@ const AdminCMS: React.FC = () => {
 
       const res = await fetch(url, {
         method: method,
+        headers: {
+          'X-CSRFToken': getCsrfToken() || '',
+        },
         body: formData,
-        signal: controller.signal
+        signal: controller.signal,
+        credentials: 'include',
       });
 
       clearTimeout(timeoutId);

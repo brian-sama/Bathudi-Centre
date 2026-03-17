@@ -441,6 +441,13 @@ class DirectorMessageViewSet(viewsets.ModelViewSet):
         return Response({})
     
     def create(self, request, *args, **kwargs):
+        print("=" * 60)
+        print("🎥 RECEIVING DIRECTOR MESSAGE UPDATE")
+        print("=" * 60)
+        print("📁 Files received:", list(request.FILES.keys()))
+        print("📋 Data received:", dict(request.data))
+        print("=" * 60)
+        
         DirectorMessage.objects.filter(is_active=True).update(is_active=False)
         
         serializer = self.get_serializer(data=request.data, context={'request': request})
