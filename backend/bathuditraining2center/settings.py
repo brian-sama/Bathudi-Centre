@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-bathudi-training-cent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'bathudi.co.za,www.bathudi.co.za,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'bathudi.co.za,www.bathudi.co.za,localhost,127.0.0.1,89.116.26.24,0.0.0.0').split(',')
 
 # Application definition
 INSTALLED_APPS = [
