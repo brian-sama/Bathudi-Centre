@@ -426,6 +426,10 @@ class DirectorMessageViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     permission_classes = [AllowAny]
     
+    def dispatch(self, request, *args, **kwargs):
+        print(f"🔍 [DISPATCH] {request.method} {request.path}")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_serializer_context(self):
         """Pass request context to serializer"""
         context = super().get_serializer_context()
@@ -442,18 +446,52 @@ class DirectorMessageViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         print("=" * 60)
-        print("🎥 RECEIVING DIRECTOR MESSAGE UPDATE")
+        print("🎥 RECEIVING DIRECTOR MESSAGE (POST)")
         print("=" * 60)
-        print("📁 Files received:", list(request.FILES.keys()))
-        print("📋 Data received:", dict(request.data))
+        print("📁 Files:", list(request.FILES.keys()))
+        print("📋 Data:", dict(request.data))
+        try:
+            DirectorMessage.objects.filter(is_active=True).update(is_active=False)
+            response = super().create(request, *args, **kwargs)
+            print("✅ POST SUCCESS")
+            return response
+        except Exception as e:
+            print(f"❌ POST ERROR: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, *args, **kwargs):
         print("=" * 60)
-        
-        DirectorMessage.objects.filter(is_active=True).update(is_active=False)
-        
-        serializer = self.get_serializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(f"🎥 RECEIVING DIRECTOR MESSAGE UPDATE (PUT) - ID: {kwargs.get('pk')}")
+        print("=" * 60)
+        print("📁 Files:", list(request.FILES.keys()))
+        print("📋 Data:", dict(request.data))
+        try:
+            response = super().update(request, *args, **kwargs)
+            print("✅ PUT SUCCESS")
+            return response
+        except Exception as e:
+            print(f"❌ PUT ERROR: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, *args, **kwargs):
+        print("=" * 60)
+        print(f"🎥 RECEIVING DIRECTOR MESSAGE PARTIAL UPDATE (PATCH) - ID: {kwargs.get('pk')}")
+        print("=" * 60)
+        print("📁 Files:", list(request.FILES.keys()))
+        print("📋 Data:", dict(request.data))
+        try:
+            response = super().partial_update(request, *args, **kwargs)
+            print("✅ PATCH SUCCESS")
+            return response
+        except Exception as e:
+            print(f"❌ PATCH ERROR: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Simple view to get PDF URL
 @api_view(['GET'])

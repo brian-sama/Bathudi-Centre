@@ -156,11 +156,12 @@ const AdminCMS: React.FC = () => {
 
       console.log('Posting to:', `${API_BASE}/news-posts/`);
       
+      const csrfToken = getCsrfToken();
+      console.log('🚀 POST News - CSRF Present:', !!csrfToken);
+      
       const res = await fetch(`${API_BASE}/news-posts/`, {
         method: 'POST',
-        headers: {
-          'X-CSRFToken': getCsrfToken() || '',
-        },
+        headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {},
         body: formData,
         credentials: 'include',
       });
@@ -195,11 +196,12 @@ const AdminCMS: React.FC = () => {
     if (!confirm('Are you sure you want to delete this news post?')) return;
     
     try {
+      const csrfToken = getCsrfToken();
+      console.log('🚀 DELETE News - CSRF Present:', !!csrfToken);
+
       const res = await fetch(`${API_BASE}/news-posts/${id}/`, { 
         method: 'DELETE',
-        headers: {
-          'X-CSRFToken': getCsrfToken() || '',
-        },
+        headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {},
         credentials: 'include',
       });
       
@@ -379,11 +381,12 @@ const AdminCMS: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
+      const csrfToken = getCsrfToken();
+      console.log(`🚀 ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}`);
+
       const res = await fetch(url, {
         method: method,
-        headers: {
-          'X-CSRFToken': getCsrfToken() || '',
-        },
+        headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {},
         body: formData,
         signal: controller.signal,
         credentials: 'include',
@@ -410,11 +413,17 @@ const AdminCMS: React.FC = () => {
       showStatus("Director's message updated successfully!", 'success');
       fetchData();
     } catch (error: any) {
-      console.error('Director message error:', error);
+      console.error('❌ Director message error:', error);
+      console.log('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      
       if (error.name === 'AbortError') {
         showStatus('Upload timeout: Video file may be too large (max 100MB recommended)', 'error');
       } else {
-        showStatus('Server error: ' + error.message, 'error');
+        showStatus('Network/Server error: ' + error.message, 'error');
       }
     } finally {
       setIsUpdating(false);
