@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getYoutubeEmbedUrl } from '../../src/utils/youtube';
 
 // FIXED: Use environment variable for API base URL
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -711,7 +712,7 @@ const AdminCMS: React.FC = () => {
                       </video>
                     ) : directorMessage.video_url ? (
                       <iframe 
-                        src={directorMessage.video_url.replace('watch?v=', 'embed/')} 
+                        src={getYoutubeEmbedUrl(directorMessage.video_url)} 
                         className="w-full h-full"
                         allowFullScreen
                         title="Current Director Video"

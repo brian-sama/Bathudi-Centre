@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getYoutubeEmbedUrl } from '../src/utils/youtube';
 import { Page } from '../types';
 import { VALUES } from '../constants';
 
@@ -304,7 +305,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                       </video>
                     ) : directorData.video_url ? (
                       <iframe 
-                        src={directorData.video_url.replace('watch?v=', 'embed/')} 
+                        src={getYoutubeEmbedUrl(directorData.video_url)} 
                         className="w-full h-full" 
                         allowFullScreen
                         title="Director's Message"
