@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Student, StudentStatus, FeeStatus } from '../../types';
 
+// To handle Excel/CSV uploads, you'll need to install the 'xlsx' library:
+// npm install xlsx
+import * as XLSX from 'xlsx';
 // API Base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -35,6 +38,9 @@ const AdminStudents: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
+  const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
+  const [bulkFile, setBulkFile] = useState<File | null>(null);
+  const [parsedData, setParsedData] = useState<any[] | null>(null);
   const [processing, setProcessing] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
@@ -51,7 +57,7 @@ const AdminStudents: React.FC = () => {
     education_level: '',
     previous_school: '',
     course_id: 1,
-    course_title: 'Engine Fitter',
+    course_title: '',
     status: StudentStatus.Active,
     fees_status: FeeStatus.Pending,
     documents: {
@@ -137,17 +143,8 @@ const AdminStudents: React.FC = () => {
       const studentData = {
         name: newStudent.name,
         surname: newStudent.surname,
-        email: newStudent.email,
-        phone: newStudent.phone,
-        address: newStudent.address,
-        id_number: newStudent.id_number,
-        age: parseInt(newStudent.age) || 0,
-        country: newStudent.country,
-        education_level: newStudent.education_level,
-        previous_school: newStudent.previous_school,
+        ...newStudent,
         course: newStudent.course_id,
-        status: newStudent.status,
-        fees_status: newStudent.fees_status,
         documents_status: {
           id: newStudent.documents.id,
           matric: newStudent.documents.matric,
@@ -169,7 +166,8 @@ const AdminStudents: React.FC = () => {
         fetchStudents();
       } else {
         const error = await response.json();
-        alert(`❌ Failed to enroll student: ${error.message || 'Unknown error'}`);
+        const errorDetail = typeof error.details === 'string' ? error.details : JSON.stringify(error.details);
+        alert(`❌ Failed to enroll student: ${error.error || 'Unknown error'}. Details: ${errorDetail}`);
       }
     } catch (error) {
       console.error('Error enrolling student:', error);
@@ -243,7 +241,7 @@ const AdminStudents: React.FC = () => {
       education_level: '',
       previous_school: '',
       course_id: 1,
-      course_title: 'Engine Fitter',
+      course_title: '',
       status: StudentStatus.Active,
       fees_status: FeeStatus.Pending,
       documents: {
@@ -253,6 +251,58 @@ const AdminStudents: React.FC = () => {
         additional: false
       }
     });
+    setParsedData(null);
+    setBulkFile(null);
+  };
+
+  // Handle bulk upload file selection and parsing
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBulkFile(file);
+      setProcessing(true);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = event.target?.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const json = XLSX.utils.sheet_to_json(worksheet);
+          setParsedData(json);
+        } catch (err) {
+          alert("Error reading the file. Please ensure it's a valid Excel or CSV file.");
+          console.error(err);
+        } finally {
+          setProcessing(false);
+        }
+      };
+      reader.readAsBinaryString(file);
+    }
+  };
+
+  // Handle submitting bulk upload
+  const handleBulkUpload = async () => {
+    if (!parsedData) return alert('No data to upload.');
+    setProcessing(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/students/bulk_enroll/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsedData),
+      });
+      const result = await response.json();
+      alert(result.message || 'Upload process finished.');
+      if (response.ok || response.status === 207) {
+        setShowBulkUploadModal(false);
+        resetForm();
+        fetchStudents();
+      }
+    } catch (error) {
+      alert('A network error occurred during bulk upload.');
+    } finally {
+      setProcessing(false);
+    }
   };
 
   // Filter students
@@ -298,6 +348,173 @@ const AdminStudents: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Add Student Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="glass p-8 rounded-3xl border border-white/5 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Enroll New Student</h2>
+              <button onClick={() => { setShowAddModal(false); resetForm(); }} 
+                className="text-gray-400 hover:text-white text-2xl">×</button>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="md:col-span-2 text-lg font-semibold text-blue-400 border-b border-white/10 pb-2">Personal Details</h3>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">First Name *</label>
+                  <input type="text" name="name" value={newStudent.name} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Last Name *</label>
+                  <input type="text" name="surname" value={newStudent.surname} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Email *</label>
+                  <input type="email" name="email" value={newStudent.email} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Phone *</label>
+                  <input type="text" name="phone" value={newStudent.phone} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">ID Number</label>
+                  <input type="text" name="id_number" value={newStudent.id_number} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Age</label>
+                  <input type="number" name="age" value={newStudent.age} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm text-gray-400 mb-1">Address</label>
+                  <textarea name="address" value={newStudent.address} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white min-h-[80px]"></textarea>
+                </div>
+
+                <h3 className="md:col-span-2 text-lg font-semibold text-blue-400 border-b border-white/10 pb-2 mt-4">Enrollment Details</h3>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Course *</label>
+                  <select name="course_id" value={newStudent.course_id} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                    {availableCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Student Status</label>
+                  <select name="status" value={newStudent.status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                    {Object.values(StudentStatus).map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Fee Status</label>
+                  <select name="fees_status" value={newStudent.fees_status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                    {Object.values(FeeStatus).map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-blue-400 border-b border-white/10 pb-2 mt-4 mb-2">Documents on File</h3>
+                <div className="flex flex-wrap gap-4">
+                  <label className="flex items-center space-x-2 text-gray-300">
+                    <input type="checkbox" checked={newStudent.documents.id} onChange={() => handleDocumentChange('id')} className="form-checkbox bg-gray-800 border-gray-600 text-blue-500" />
+                    <span>ID Document</span>
+                  </label>
+                  <label className="flex items-center space-x-2 text-gray-300">
+                    <input type="checkbox" checked={newStudent.documents.matric} onChange={() => handleDocumentChange('matric')} className="form-checkbox bg-gray-800 border-gray-600 text-blue-500" />
+                    <span>Matric Certificate</span>
+                  </label>
+                  <label className="flex items-center space-x-2 text-gray-300">
+                    <input type="checkbox" checked={newStudent.documents.pop} onChange={() => handleDocumentChange('pop')} className="form-checkbox bg-gray-800 border-gray-600 text-blue-500" />
+                    <span>Proof of Payment</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-4 mt-6">
+                <button onClick={() => { setShowAddModal(false); resetForm(); }} 
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg">Cancel</button>
+                <button onClick={handleEnrollStudent} disabled={processing}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50">
+                  {processing ? 'Enrolling...' : 'Enroll Student'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Upload Modal */}
+      {showBulkUploadModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="glass p-8 rounded-3xl border border-white/5 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Bulk Student Upload</h2>
+              <button onClick={() => { setShowBulkUploadModal(false); resetForm(); }} 
+                className="text-gray-400 hover:text-white text-2xl">×</button>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="bg-blue-900/50 p-4 rounded-lg border border-blue-500/30 text-sm text-blue-200">
+                <p className="font-bold mb-2">Instructions:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Upload an Excel (.xlsx) or CSV (.csv) file.</li>
+                  <li>The first row must be a header row.</li>
+                  <li>Required columns: <strong>name, surname, email, phone, course</strong>.</li>
+                  <li>The 'course' column should match a course title in the system.</li>
+                </ul>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Upload Spreadsheet</label>
+                <input 
+                  type="file" 
+                  accept=".xlsx, .xls, .csv"
+                  onChange={handleFileSelect}
+                  className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                />
+              </div>
+
+              {processing && <div className="text-center text-blue-400">Processing file...</div>}
+
+              {parsedData && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Data Preview ({parsedData.length} rows found)</h3>
+                  <div className="max-h-60 overflow-y-auto border border-white/10 rounded-lg">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-white/10">
+                        <tr>
+                          {Object.keys(parsedData[0]).map(key => (
+                            <th key={key} className="px-4 py-2 text-gray-300 font-semibold">{key}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {parsedData.slice(0, 5).map((row, i) => (
+                          <tr key={i}>
+                            {Object.values(row).map((val: any, j) => (
+                              <td key={j} className="px-4 py-2 text-gray-400 truncate max-w-[150px]">{String(val)}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {parsedData.length > 5 && <p className="text-xs text-gray-500 mt-2">...and {parsedData.length - 5} more rows.</p>}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-4 mt-6">
+                <button onClick={() => { setShowBulkUploadModal(false); resetForm(); }} 
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg">Cancel</button>
+                <button onClick={handleBulkUpload} disabled={!parsedData || processing}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50">
+                  {processing ? 'Uploading...' : `Upload ${parsedData?.length || 0} Students`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* View Modal */}
       {showViewModal && selectedStudent && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -404,14 +621,15 @@ const AdminStudents: React.FC = () => {
         </div>
       )}
 
-      {/* Rest of your component remains the same... */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-orbitron font-bold text-white mb-2">Student Registry</h1>
           <p className="text-gray-400">Manage, track, and update enrolled students and their fee records.</p>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="px-6 py-3 glass hover:bg-white/10 rounded-xl text-sm font-bold border border-white/10">
+          <button 
+            onClick={() => setShowBulkUploadModal(true)}
+            className="px-6 py-3 glass hover:bg-white/10 rounded-xl text-sm font-bold border border-white/10">
             Bulk Upload CSV
           </button>
           <button 

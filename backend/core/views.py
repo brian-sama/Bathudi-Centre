@@ -356,6 +356,98 @@ class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
     permission_classes = [AllowAny]
 
+    @action(detail=False, methods=['post'])
+    def bulk_enroll(self, request):
+        """
+        Bulk enroll students from a list of student data (e.g., from a CSV/Excel file).
+        Expects a list of objects.
+        """
+        students_data = request.data
+        if not isinstance(students_data, list):
+            return Response({'error': 'Expected a list of students'}, status=status.HTTP_400_BAD_REQUEST)
+
+        created_students = []
+        errors = []
+        
+        try:
+            # Get all courses once to avoid multiple DB hits in the loop
+            courses_map = {}
+            for c in Course.objects.filter(is_active=True):
+                if c.title:
+                    courses_map[c.title.lower()] = c
+                if getattr(c, 'short_title', None):
+                    courses_map[c.short_title.lower()] = c
+
+            for index, student_data in enumerate(students_data):
+                try:
+                    # Normalize keys to lowercase and strip whitespace to handle headers like 'NAME', ' SURNAME '
+                    if isinstance(student_data, dict):
+                        normalized_data = {str(k).lower().strip(): v for k, v in student_data.items()}
+                    else:
+                        normalized_data = {}
+
+                    # --- Find Course ---
+                    course_name = str(normalized_data.get('course', '')).lower().strip()
+                    course = None
+                    if course_name:
+                        # Direct match first
+                        course = courses_map.get(course_name)
+                        # Partial match if no direct match found
+                        if not course:
+                            for title, course_obj in courses_map.items():
+                                if course_name in title:
+                                    course = course_obj
+                                    break
+                    
+                    # --- Map Data ---
+                    # Be flexible with column names from spreadsheet
+                    name = normalized_data.get('name') or normalized_data.get('names') or normalized_data.get('first_name')
+                    surname = normalized_data.get('surname') or normalized_data.get('surnames') or normalized_data.get('last_name')
+                    email = normalized_data.get('email')
+                    phone = normalized_data.get('phone') or normalized_data.get('number') or normalized_data.get('mobile')
+
+                    if not all([name, surname, email, phone]):
+                        errors.append({'row': index + 2, 'data': student_data, 'errors': 'Missing required fields: name, surname, email, phone.'})
+                        continue
+
+                    data = {
+                        'name': str(name).strip(),
+                        'surname': str(surname).strip(),
+                        'email': str(email).strip(),
+                        'phone': str(phone).strip(),
+                        'course': course.id if course else None,
+                        'status': 'enrolled',  # Default to 'enrolled', matching STATUS_CHOICES
+                        # Removed fees_status as it is not in Student model
+                    }
+
+                    serializer = self.get_serializer(data=data)
+                    if serializer.is_valid():
+                        student = serializer.save()
+                        created_students.append(self.get_serializer(student).data)
+                    else:
+                        errors.append({'row': index + 2, 'data': student_data, 'errors': serializer.errors})
+                except Exception as e:
+                    errors.append({'row': index + 2, 'data': student_data, 'errors': str(e)})
+
+            if errors:
+                return Response({
+                    'message': f'Upload complete. {len(created_students)} students enrolled, {len(errors)} rows failed.',
+                    'created_count': len(created_students),
+                    'error_count': len(errors),
+                    'errors': errors
+                }, status=status.HTTP_207_MULTI_STATUS)
+
+            return Response({
+                'message': f'Successfully enrolled {len(created_students)} students.',
+                'created_count': len(created_students),
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({
+                'error': 'An unexpected error occurred during bulk upload',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class NewsletterViewSet(viewsets.ModelViewSet):
     queryset = Newsletter.objects.filter(is_active=True)
     serializer_class = NewsletterSerializer

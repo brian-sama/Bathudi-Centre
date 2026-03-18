@@ -338,8 +338,13 @@ class Student(models.Model):
     address = models.TextField(blank=True)
     
     def save(self, *args, **kwargs):
-        if not self.student_id and self.application:
-            self.student_id = f'STU{self.application.id:04d}'
+        if not self.student_id:
+            if self.application:
+                self.student_id = f'STU{self.application.id:04d}'
+            else:
+                import uuid
+                # Generate a short unique ID for bulk enrolled students without an application
+                self.student_id = f'BULK{str(uuid.uuid4())[:8].upper()}'
         super().save(*args, **kwargs)
     
     def __str__(self):
