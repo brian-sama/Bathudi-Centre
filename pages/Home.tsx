@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { getYoutubeEmbedUrl } from '../src/utils/youtube';
-=======
->>>>>>> upstream/main
 import { Page } from '../types';
 import { VALUES } from '../constants';
 
@@ -162,17 +159,6 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             Empowering South African youth with world-class automotive training. Join the masters of mechanics today.
           </p>
 
-<<<<<<< HEAD
-=======
-          {/* Accreditation Number - Added here */}
-          <div className="mb-6 sm:mb-8">
-            <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 glass rounded-xl border border-yellow-500/30 bg-yellow-900/10">
-              <span className="text-yellow-400 font-bold text-xs sm:text-sm mr-2">Accreditation No:</span>
-              <span className="text-white font-mono text-sm sm:text-base tracking-wider">SDP210225153101</span>
-            </div>
-          </div>
-
->>>>>>> upstream/main
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
             <button 
               onClick={() => onNavigate(Page.Apply)} 
@@ -214,7 +200,6 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
         </div>
       </section>
 
-<<<<<<< HEAD
       {/* Accreditation Section */}
       <section className="py-16 sm:py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -237,8 +222,6 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
         </div>
       </section>
 
-=======
->>>>>>> upstream/main
       {/* Campus Updates & Video - Mobile optimized */}
       <section className="py-16 sm:py-20 md:py-24 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -322,11 +305,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                       </video>
                     ) : directorData.video_url ? (
                       <iframe 
-<<<<<<< HEAD
                         src={getYoutubeEmbedUrl(directorData.video_url)} 
-=======
-                        src={directorData.video_url.replace('watch?v=', 'embed/')} 
->>>>>>> upstream/main
                         className="w-full h-full" 
                         allowFullScreen
                         title="Director's Message"

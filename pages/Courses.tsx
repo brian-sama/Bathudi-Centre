@@ -10,16 +10,10 @@ interface CoursesProps {
 const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
   const [coursePdfs, setCoursePdfs] = useState<{[key: string]: string}>({});
   const [loading, setLoading] = useState<{[key: string]: boolean}>({});
-<<<<<<< HEAD
-  
-  // Array of available cover images
-  const coverImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg'];
-=======
   const [imageErrors, setImageErrors] = useState<{[key: string]: boolean}>({});
   
   // Array of available cover images
   const coverImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '13.jpeg', '14.jpeg', '16.jpeg', '17.jpeg', '18.jpeg', '32.jpeg'];
->>>>>>> upstream/main
   
   // Map each course to a specific cover image
   const getCourseCoverImage = (courseId: string | number, courseIndex: number) => {
@@ -27,8 +21,6 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
     return coverImages[imageIndex];
   };
 
-<<<<<<< HEAD
-=======
   // Get image path with proper formatting
   const getImagePath = (imageName: string) => {
     // Remove any existing slashes and ensure clean path
@@ -58,7 +50,6 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
     return placeholders[courseIndex % placeholders.length];
   };
 
->>>>>>> upstream/main
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
@@ -148,21 +139,6 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {COURSES.map((course, index) => {
             const coverImage = getCourseCoverImage(course.id, index);
-<<<<<<< HEAD
-            
-            return (
-              <div key={course.id} className="group relative glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-blue-500/30 hover:transform hover:-translate-y-1 duration-300">
-                <div className="w-full h-40 overflow-hidden">
-                  <img 
-                    src={`/images/${coverImage}`} 
-                    alt={course.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = course.image || `https://picsum.photos/400/600?random=${course.id}`;
-                    }}
-                  />
-                </div>
-=======
             const hasImageError = imageErrors[String(course.id)];
             const imagePath = getImagePath(coverImage);
             const fallbackImage = getFallbackImage(index);
@@ -200,29 +176,18 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
                   </div>
                 </div>
                 
->>>>>>> upstream/main
                 <div className="p-8">
                   <div className="flex justify-between items-start mb-4">
                     <h4 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
                       {course.short_title || course.title}
                     </h4>
-<<<<<<< HEAD
-                    <span className="bg-blue-600/20 text-blue-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest ml-2 whitespace-nowrap">
-                      {course.duration}
-                    </span>
-=======
->>>>>>> upstream/main
                   </div>
                   
                   <p className="text-gray-400 text-sm leading-relaxed mb-6">
                     {course.description}
                   </p>
                   
-<<<<<<< HEAD
-                  {/* FIXED: Only showing registration and assessment fees */}
-=======
                   {/* Only showing registration and assessment fees */}
->>>>>>> upstream/main
                   <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/5">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-400">Registration Fee:</span>

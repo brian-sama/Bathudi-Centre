@@ -155,8 +155,4 @@ const BroadcastMessages: React.FC<BroadcastMessagesProps> = ({ onNavigate }) => 
   );
 };
 
-<<<<<<< HEAD
 export default BroadcastMessages;
-=======
-export default BroadcastMessages;
->>>>>>> upstream/main

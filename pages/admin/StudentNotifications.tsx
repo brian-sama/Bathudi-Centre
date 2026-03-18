@@ -195,8 +195,4 @@ const StudentNotifications: React.FC<StudentNotificationsProps> = ({ onNavigate 
   );
 };
 
-<<<<<<< HEAD
 export default StudentNotifications;
-=======
-export default StudentNotifications;
->>>>>>> upstream/main

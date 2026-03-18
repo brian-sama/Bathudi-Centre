@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { Page } from '../types';
 import { initiatePayFastPayment } from '../src/utils/payfast';
-=======
-import { Page } from '../types';  // types is in root
-import { generatePayFastSignature, PAYFAST_URLS, generatePaymentId, PayFastData } from '../src/utils/payfast';
->>>>>>> upstream/main
 
 interface ApplyProps {
   onNavigate: (page: Page) => void;
@@ -40,15 +35,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     additional_doc_2: null as File | null,
   });
 
-<<<<<<< HEAD
-=======
-  // PayFast configuration from environment variables
-  const PAYFAST_MERCHANT_ID = import.meta.env.VITE_PAYFAST_MERCHANT_ID || '';
-  const PAYFAST_MERCHANT_KEY = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '';
-  const PAYFAST_PASSPHRASE = import.meta.env.VITE_PAYFAST_PASSPHRASE || '';
-  const IS_SANDBOX = import.meta.env.VITE_PAYFAST_SANDBOX === 'true';
-
->>>>>>> upstream/main
   // Fetch available courses from backend
   useEffect(() => {
     fetchCourses();
@@ -68,13 +54,8 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     }
   };
 
-<<<<<<< HEAD
   // Handle PayFast payment
   const handlePayNow = async () => {
-=======
-  // Handle PayFast payment - UPDATED FOR LOCAL TESTING
-  const handlePayNow = () => {
->>>>>>> upstream/main
     if (!formData.name || !formData.surname || !formData.email) {
       alert('Please fill in your name, surname, and email before proceeding to payment.');
       return;
@@ -85,7 +66,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       return;
     }
 
-<<<<<<< HEAD
     setPaymentLoading(true);
 
     try {
@@ -98,75 +78,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         cell_number: formData.mobile,
       });
       
-=======
-    if (!PAYFAST_MERCHANT_ID || !PAYFAST_MERCHANT_KEY) {
-      alert(`❌ PayFast merchant credentials are not configured.`);
-      return;
-    }
-
-    setPaymentLoading(true);
-
-    try {
-      // Use localhost URLs for testing
-      const baseUrl = 'http://localhost:3000'; // Your React app URL
-      const backendUrl = 'http://localhost:8000'; // Your Django backend URL
-      
-      const paymentId = generatePaymentId();
-      
-      const paymentData: PayFastData = {
-        merchant_id: PAYFAST_MERCHANT_ID,
-        merchant_key: PAYFAST_MERCHANT_KEY,
-        return_url: `${baseUrl}/payment-success`,
-        cancel_url: `${baseUrl}/payment-cancel`,
-        notify_url: `${backendUrl}/api/payfast/notify`,
-        name_first: formData.name,
-        name_last: formData.surname,
-        email_address: formData.email,
-        cell_number: formData.mobile,
-        m_payment_id: paymentId,
-        amount: '661.25',
-        item_name: 'Course Registration Fee',
-        item_description: `Registration fee for course ID: ${formData.course}`,
-        email_confirmation: '1',
-        confirmation_address: formData.email,
-      };
-
-      console.log('Payment Data:', paymentData);
-      
-      const signature = generatePayFastSignature(paymentData, PAYFAST_PASSPHRASE);
-      
-      // Create form and submit to PayFast
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = IS_SANDBOX ? PAYFAST_URLS.sandbox : PAYFAST_URLS.live;
-      
-      // Add all payment data fields
-      const sortedKeys = Object.keys(paymentData).sort() as Array<keyof PayFastData>;
-      
-      sortedKeys.forEach(key => {
-        const value = paymentData[key];
-        if (value !== undefined && value !== null && value !== '') {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = value.toString();
-          form.appendChild(input);
-        }
-      });
-      
-      // Add signature
-      const signatureInput = document.createElement('input');
-      signatureInput.type = 'hidden';
-      signatureInput.name = 'signature';
-      signatureInput.value = signature;
-      form.appendChild(signatureInput);
-      
-      // Append form to body and submit
-      document.body.appendChild(form);
-      console.log('Submitting form to PayFast:', form.action);
-      form.submit();
-      
->>>>>>> upstream/main
     } catch (error) {
       console.error('❌ Payment error:', error);
       alert('Failed to initiate payment. Please try again.');
@@ -273,11 +184,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     return true;
   };
 
-<<<<<<< HEAD
   // Submit form - FIXED: Send course as ID number, not course_id
-=======
-  // Submit form
->>>>>>> upstream/main
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -293,11 +200,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     try {
       const formDataToSend = new FormData();
       
-<<<<<<< HEAD
       // Add all form fields - IMPORTANT: course must be sent as 'course', not 'course_id'
-=======
-      // Add all form fields
->>>>>>> upstream/main
       Object.entries(formData).forEach(([key, value]) => {
         if (value) {
           if (key === 'course') {
@@ -539,7 +442,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="country"
-<<<<<<< HEAD
                     title="Select your country"
                     value={formData.country}
                     onChange={handleInputChange}
@@ -556,24 +458,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     <option value="Zambia" className="bg-gray-800 text-white">Zambia</option>
                     <option value="Other" className="bg-gray-800 text-white">Other African Country</option>
                     <option value="International" className="bg-gray-800 text-white">International</option>
-=======
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
-                    required
-                  >
-                    <option value="South Africa" style={{ backgroundColor: '#1f2937', color: 'white' }}>South Africa</option>
-                    <option value="Lesotho" style={{ backgroundColor: '#1f2937', color: 'white' }}>Lesotho</option>
-                    <option value="Botswana" style={{ backgroundColor: '#1f2937', color: 'white' }}>Botswana</option>
-                    <option value="Eswatini" style={{ backgroundColor: '#1f2937', color: 'white' }}>Eswatini</option>
-                    <option value="Namibia" style={{ backgroundColor: '#1f2937', color: 'white' }}>Namibia</option>
-                    <option value="Zimbabwe" style={{ backgroundColor: '#1f2937', color: 'white' }}>Zimbabwe</option>
-                    <option value="Mozambique" style={{ backgroundColor: '#1f2937', color: 'white' }}>Mozambique</option>
-                    <option value="Zambia" style={{ backgroundColor: '#1f2937', color: 'white' }}>Zambia</option>
-                    <option value="Other" style={{ backgroundColor: '#1f2937', color: 'white' }}>Other African Country</option>
-                    <option value="International" style={{ backgroundColor: '#1f2937', color: 'white' }}>International</option>
->>>>>>> upstream/main
                   </select>
                 </div>
                 
@@ -638,7 +522,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="education_level"
-<<<<<<< HEAD
                     title="Select your education level"
                     value={formData.education_level}
                     onChange={handleInputChange}
@@ -655,24 +538,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     <option value="Certificate" className="bg-gray-800 text-white">Certificate</option>
                     <option value="Diploma" className="bg-gray-800 text-white">Diploma</option>
                     <option value="Degree" className="bg-gray-800 text-white">Degree</option>
-=======
-                    value={formData.education_level}
-                    onChange={handleInputChange}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
-                    required
-                  >
-                    <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>Select your education level</option>
-                    <option value="Grade 9" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 9</option>
-                    <option value="Grade 10" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 10</option>
-                    <option value="Grade 11" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 11</option>
-                    <option value="Grade 12 (Matric)" style={{ backgroundColor: '#1f2937', color: 'white' }}>Grade 12 (Matric)</option>
-                    <option value="N3" style={{ backgroundColor: '#1f2937', color: 'white' }}>N3</option>
-                    <option value="N4" style={{ backgroundColor: '#1f2937', color: 'white' }}>N4</option>
-                    <option value="Certificate" style={{ backgroundColor: '#1f2937', color: 'white' }}>Certificate</option>
-                    <option value="Diploma" style={{ backgroundColor: '#1f2937', color: 'white' }}>Diploma</option>
-                    <option value="Degree" style={{ backgroundColor: '#1f2937', color: 'white' }}>Degree</option>
->>>>>>> upstream/main
                   </select>
                 </div>
                 
@@ -697,7 +562,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </label>
                   <select
                     name="course"
-<<<<<<< HEAD
                     title="Select a course to apply for"
                     value={formData.course}
                     onChange={handleInputChange}
@@ -708,18 +572,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     {/* IMPORTANT: Use course.id as the value (number) */}
                     {availableCourses.map(course => (
                       <option key={course.id} value={course.id} className="bg-gray-800 text-white">
-=======
-                    value={formData.course}
-                    onChange={handleInputChange}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none cursor-pointer text-sm sm:text-base"
-                    style={{ color: 'white' }}
-                    required
-                  >
-                    <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>Select a course</option>
-                    {/* IMPORTANT: Use course.id as the value (number) */}
-                    {availableCourses.map(course => (
-                      <option key={course.id} value={course.id} style={{ backgroundColor: '#1f2937', color: 'white' }}>
->>>>>>> upstream/main
                         {course.title}
                       </option>
                     ))}
@@ -750,10 +602,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="id_document"
-<<<<<<< HEAD
                           title="Upload ID or Passport document"
-=======
->>>>>>> upstream/main
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-blue-500/20 file:text-blue-400 hover:file:bg-blue-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -805,10 +654,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="matric_certificate"
-<<<<<<< HEAD
                           title="Upload Matric certificate or school results"
-=======
->>>>>>> upstream/main
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-green-500/20 file:text-green-400 hover:file:bg-green-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -898,10 +744,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="proof_of_payment"
-<<<<<<< HEAD
                           title="Upload Proof of Payment"
-=======
->>>>>>> upstream/main
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png"
@@ -954,10 +797,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="additional_doc_1"
-<<<<<<< HEAD
                           title="Upload Additional Document 1"
-=======
->>>>>>> upstream/main
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
@@ -1008,10 +848,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <input
                           type="file"
                           name="additional_doc_2"
-<<<<<<< HEAD
                           title="Upload Additional Document 2"
-=======
->>>>>>> upstream/main
                           onChange={handleFileChange}
                           className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"

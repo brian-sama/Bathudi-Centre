@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Student, StudentStatus, FeeStatus } from '../../types';
 
-<<<<<<< HEAD
-=======
 // To handle Excel/CSV uploads, you'll need to install the 'xlsx' library:
 // npm install xlsx
 import * as XLSX from 'xlsx';
->>>>>>> upstream/main
 // API Base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -41,12 +38,9 @@ const AdminStudents: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
-<<<<<<< HEAD
-=======
   const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
   const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<any[] | null>(null);
->>>>>>> upstream/main
   const [processing, setProcessing] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
@@ -63,11 +57,7 @@ const AdminStudents: React.FC = () => {
     education_level: '',
     previous_school: '',
     course_id: 1,
-<<<<<<< HEAD
-    course_title: 'Engine Fitter',
-=======
     course_title: '',
->>>>>>> upstream/main
     status: StudentStatus.Active,
     fees_status: FeeStatus.Pending,
     documents: {
@@ -153,22 +143,8 @@ const AdminStudents: React.FC = () => {
       const studentData = {
         name: newStudent.name,
         surname: newStudent.surname,
-<<<<<<< HEAD
-        email: newStudent.email,
-        phone: newStudent.phone,
-        address: newStudent.address,
-        id_number: newStudent.id_number,
-        age: parseInt(newStudent.age) || 0,
-        country: newStudent.country,
-        education_level: newStudent.education_level,
-        previous_school: newStudent.previous_school,
-        course: newStudent.course_id,
-        status: newStudent.status,
-        fees_status: newStudent.fees_status,
-=======
         ...newStudent,
         course: newStudent.course_id,
->>>>>>> upstream/main
         documents_status: {
           id: newStudent.documents.id,
           matric: newStudent.documents.matric,
@@ -190,12 +166,8 @@ const AdminStudents: React.FC = () => {
         fetchStudents();
       } else {
         const error = await response.json();
-<<<<<<< HEAD
-        alert(`❌ Failed to enroll student: ${error.message || 'Unknown error'}`);
-=======
         const errorDetail = typeof error.details === 'string' ? error.details : JSON.stringify(error.details);
         alert(`❌ Failed to enroll student: ${error.error || 'Unknown error'}. Details: ${errorDetail}`);
->>>>>>> upstream/main
       }
     } catch (error) {
       console.error('Error enrolling student:', error);
@@ -269,11 +241,7 @@ const AdminStudents: React.FC = () => {
       education_level: '',
       previous_school: '',
       course_id: 1,
-<<<<<<< HEAD
-      course_title: 'Engine Fitter',
-=======
       course_title: '',
->>>>>>> upstream/main
       status: StudentStatus.Active,
       fees_status: FeeStatus.Pending,
       documents: {
@@ -283,8 +251,6 @@ const AdminStudents: React.FC = () => {
         additional: false
       }
     });
-<<<<<<< HEAD
-=======
     setParsedData(null);
     setBulkFile(null);
   };
@@ -337,7 +303,6 @@ const AdminStudents: React.FC = () => {
     } finally {
       setProcessing(false);
     }
->>>>>>> upstream/main
   };
 
   // Filter students
@@ -383,8 +348,6 @@ const AdminStudents: React.FC = () => {
 
   return (
     <div className="space-y-8">
-<<<<<<< HEAD
-=======
       {/* Add Student Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -552,7 +515,6 @@ const AdminStudents: React.FC = () => {
         </div>
       )}
 
->>>>>>> upstream/main
       {/* View Modal */}
       {showViewModal && selectedStudent && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -659,23 +621,15 @@ const AdminStudents: React.FC = () => {
         </div>
       )}
 
-<<<<<<< HEAD
-      {/* Rest of your component remains the same... */}
-=======
->>>>>>> upstream/main
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-orbitron font-bold text-white mb-2">Student Registry</h1>
           <p className="text-gray-400">Manage, track, and update enrolled students and their fee records.</p>
         </div>
         <div className="flex items-center space-x-4">
-<<<<<<< HEAD
-          <button className="px-6 py-3 glass hover:bg-white/10 rounded-xl text-sm font-bold border border-white/10">
-=======
           <button 
             onClick={() => setShowBulkUploadModal(true)}
             className="px-6 py-3 glass hover:bg-white/10 rounded-xl text-sm font-bold border border-white/10">
->>>>>>> upstream/main
             Bulk Upload CSV
           </button>
           <button 
