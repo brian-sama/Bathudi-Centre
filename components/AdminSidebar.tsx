@@ -225,6 +225,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="lg:hidden absolute top-4 right-4 p-2 bg-slate-800 rounded-lg text-gray-400 hover:text-white"
+            title="Close mobile menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -278,5 +279,4 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
     </>
   );
 };
-
 export default AdminSidebar;

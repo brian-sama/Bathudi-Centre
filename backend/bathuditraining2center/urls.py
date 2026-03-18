@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('core.urls')),
     path('payments/', include('payfast.urls')),
+    path('api/payfast/', include('payfast.urls')),  # Add this line for PayFast
 ]
 
 # Serve media files in ALL environments (development AND production)

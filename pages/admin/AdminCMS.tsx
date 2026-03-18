@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { getYoutubeEmbedUrl } from '../../src/utils/youtube';
+=======
+>>>>>>> upstream/main
 
 // FIXED: Use environment variable for API base URL
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+<<<<<<< HEAD
 // Helper to get CSRF token from cookies
 const getCsrfToken = () => {
   const name = 'csrftoken';
@@ -21,6 +25,8 @@ const getCsrfToken = () => {
   return cookieValue;
 };
 
+=======
+>>>>>>> upstream/main
 type Tab = 'news' | 'gallery' | 'video';
 
 const AdminCMS: React.FC = () => {
@@ -156,6 +162,7 @@ const AdminCMS: React.FC = () => {
 
       console.log('Posting to:', `${API_BASE}/news-posts/`);
       
+<<<<<<< HEAD
       const csrfToken = getCsrfToken();
       console.log('🚀 POST News - CSRF Present:', !!csrfToken);
       
@@ -164,6 +171,11 @@ const AdminCMS: React.FC = () => {
         headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {},
         body: formData,
         credentials: 'include',
+=======
+      const res = await fetch(`${API_BASE}/news-posts/`, {
+        method: 'POST',
+        body: formData,
+>>>>>>> upstream/main
       });
 
       console.log('News post response status:', res.status);
@@ -196,6 +208,7 @@ const AdminCMS: React.FC = () => {
     if (!confirm('Are you sure you want to delete this news post?')) return;
     
     try {
+<<<<<<< HEAD
       const csrfToken = getCsrfToken();
       console.log('🚀 DELETE News - CSRF Present:', !!csrfToken);
 
@@ -203,6 +216,10 @@ const AdminCMS: React.FC = () => {
         method: 'DELETE',
         headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {},
         credentials: 'include',
+=======
+      const res = await fetch(`${API_BASE}/news-posts/${id}/`, { 
+        method: 'DELETE' 
+>>>>>>> upstream/main
       });
       
       if (!res.ok) {
@@ -247,11 +264,15 @@ const AdminCMS: React.FC = () => {
         
         const res = await fetch(`${API_BASE}/gallery/`, {
           method: 'POST',
+<<<<<<< HEAD
           headers: {
             'X-CSRFToken': getCsrfToken() || '',
           },
           body: fd,
           credentials: 'include',
+=======
+          body: fd,
+>>>>>>> upstream/main
         });
         
         if (res.ok) {
@@ -284,11 +305,15 @@ const AdminCMS: React.FC = () => {
     
     try {
       const res = await fetch(`${API_BASE}/gallery/${id}/`, { 
+<<<<<<< HEAD
         method: 'DELETE',
         headers: {
           'X-CSRFToken': getCsrfToken() || '',
         },
         credentials: 'include',
+=======
+        method: 'DELETE' 
+>>>>>>> upstream/main
       });
       
       if (!res.ok) throw new Error('Delete failed');
@@ -326,11 +351,15 @@ const AdminCMS: React.FC = () => {
 
       const res = await fetch(`${API_BASE}/director-message/${directorMessage.id}/`, {
         method: 'PATCH',
+<<<<<<< HEAD
         headers: {
           'X-CSRFToken': getCsrfToken() || '',
         },
         body: formData,
         credentials: 'include',
+=======
+        body: formData,
+>>>>>>> upstream/main
       });
 
       if (res.ok) {
@@ -381,6 +410,7 @@ const AdminCMS: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
+<<<<<<< HEAD
       const csrfToken = getCsrfToken();
       console.log(`🚀 ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}`);
 
@@ -390,6 +420,12 @@ const AdminCMS: React.FC = () => {
         body: formData,
         signal: controller.signal,
         credentials: 'include',
+=======
+      const res = await fetch(url, {
+        method: method,
+        body: formData,
+        signal: controller.signal
+>>>>>>> upstream/main
       });
 
       clearTimeout(timeoutId);
@@ -413,6 +449,7 @@ const AdminCMS: React.FC = () => {
       showStatus("Director's message updated successfully!", 'success');
       fetchData();
     } catch (error: any) {
+<<<<<<< HEAD
       console.error('❌ Director message error:', error);
       console.log('Error details:', {
         name: error.name,
@@ -424,6 +461,13 @@ const AdminCMS: React.FC = () => {
         showStatus('Upload timeout: Video file may be too large (max 100MB recommended)', 'error');
       } else {
         showStatus('Network/Server error: ' + error.message, 'error');
+=======
+      console.error('Director message error:', error);
+      if (error.name === 'AbortError') {
+        showStatus('Upload timeout: Video file may be too large (max 100MB recommended)', 'error');
+      } else {
+        showStatus('Server error: ' + error.message, 'error');
+>>>>>>> upstream/main
       }
     } finally {
       setIsUpdating(false);
@@ -721,7 +765,11 @@ const AdminCMS: React.FC = () => {
                       </video>
                     ) : directorMessage.video_url ? (
                       <iframe 
+<<<<<<< HEAD
                         src={getYoutubeEmbedUrl(directorMessage.video_url)} 
+=======
+                        src={directorMessage.video_url.replace('watch?v=', 'embed/')} 
+>>>>>>> upstream/main
                         className="w-full h-full"
                         allowFullScreen
                         title="Current Director Video"

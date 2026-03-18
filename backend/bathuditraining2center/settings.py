@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-bathudi-training-cent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'bathudi.co.za,www.bathudi.co.za,localhost,127.0.0.1,89.116.26.24,0.0.0.0').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bathudi.co.za,www.bathudi.co.za,localhost,127.0.0.1,89.116.26.24,0.0.0.0,*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -45,7 +45,6 @@ REGISTRATION_FEE_AMOUNT = os.getenv("REGISTRATION_FEE_AMOUNT", "661.25")
 PAYFAST_RETURN_URL = os.getenv("PAYFAST_RETURN_URL", "https://bathudi.co.za/payment-success")
 PAYFAST_CANCEL_URL = os.getenv("PAYFAST_CANCEL_URL", "https://bathudi.co.za/payment-cancel")
 PAYFAST_NOTIFY_URL = os.getenv("PAYFAST_NOTIFY_URL", "https://bathudi.co.za/payments/notify/")
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -109,8 +108,11 @@ STATICFILES_DIRS = [
 ]
 
 # ========== MEDIA FILES (User Uploads) ==========
+# FIXED: Using Railway volume for persistent storage
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Comment out local path - using Railway volume instead
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', '/app/media')  # Matches Railway volume mount path or local setup
 
 # Create necessary directories
 os.makedirs(os.path.join(BASE_DIR, 'static'), exist_ok=True)
@@ -139,7 +141,7 @@ REST_FRAMEWORK = {
 }
 
 # ========== CORS SETTINGS ==========
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -168,6 +170,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://www.bathudi.co.za',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://bathudi-training-center-test-production.up.railway.app',
 ]
 
 # CSRF
@@ -178,6 +181,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://bathudi-training-center-test-production.up.railway.app',
 ]
 
 CSRF_COOKIE_SECURE = True
@@ -191,7 +195,6 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 # Production Security
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
-
 # ========== FILE UPLOAD SETTINGS ==========
 FILE_UPLOAD_PERMISSIONS = 0o644
 FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
@@ -322,6 +325,7 @@ We encourage you to apply again in the future when you meet the minimum requirem
 Kind regards,
 Bathudi Management
 """.strip()
+
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
