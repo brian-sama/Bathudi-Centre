@@ -12,6 +12,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
+  const [payfastReference, setPayfastReference] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -69,7 +70,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     setPaymentLoading(true);
 
     try {
-      await initiatePayFastPayment({
+      const response = await initiatePayFastPayment({
         amount: '661.25',
         item_name: 'Bathudi Course Application Fee',
         email_address: formData.email,
@@ -77,6 +78,11 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         name_last: formData.surname,
         cell_number: formData.mobile,
       });
+
+      if (response && response.m_payment_id) {
+        console.log('💳 Captured PayFast Reference:', response.m_payment_id);
+        setPayfastReference(response.m_payment_id);
+      }
       
     } catch (error) {
       console.error('❌ Payment error:', error);
@@ -217,6 +223,12 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           }
         }
       });
+      
+      // Add PayFast reference if available
+      if (payfastReference) {
+        formDataToSend.append('payment_reference', payfastReference);
+        console.log('💳 Including payment reference in application:', payfastReference);
+      }
       
       // Add files
       Object.entries(files).forEach(([key, file]) => {

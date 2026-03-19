@@ -85,8 +85,11 @@ export const initiatePayFastPayment = async (data: {
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
+
+    return { m_payment_id: payload.m_payment_id };
   } catch (error) {
     console.error('PayFast redirection error:', error);
     alert('Could not initiate payment. Please try again later.');
+    return null;
   }
 };

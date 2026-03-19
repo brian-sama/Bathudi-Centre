@@ -214,6 +214,7 @@ class Application(models.Model):
     # Status fields
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     fee_verified = models.BooleanField(default=False)
+    payment_reference = models.CharField(max_length=100, blank=True, null=True, unique=True, help_text="PayFast m_payment_id")
     applied_date = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, help_text="Admin notes")
     

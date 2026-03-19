@@ -54,8 +54,13 @@ def create_payfast_payment(request):
         if not email:
             return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate unique payment ID
-        m_payment_id = f"PAY-{int(timezone.now().timestamp())}"
+        # Generate unique payment ID if not provided
+        # If an application_id is provided, use it to make the reference more descriptive
+        app_id = data.get('application_id')
+        if app_id:
+            m_payment_id = f"APP-{app_id}-{int(timezone.now().timestamp())}"
+        else:
+            m_payment_id = f"PAY-{int(timezone.now().timestamp())}"
         
         # Build payload
         payload = {
@@ -89,6 +94,7 @@ def create_payfast_payment(request):
         is_sandbox = getattr(settings, 'PAYFAST_SANDBOX', True)
         return Response({
             'payload': payload,
+            'm_payment_id': m_payment_id,  # Return this so frontend can save it to the application
             'url': 'https://sandbox.payfast.co.za/eng/process' if is_sandbox else 'https://www.payfast.co.za/eng/process'
         })
         
@@ -137,20 +143,25 @@ def notify_payment(request):
     # 4. Process Successful Payment
     if payment_status == 'COMPLETE':
         # Mark related course application as paid
-        # Assuming the payment_id links to an application (e.g., encoded in m_payment_id)
-        # For now, we'll try to find the application by email and link it
-        # In a real scenario, you'd probably pass the application ID in a custom field
         try:
-            # Try to find the latest pending application for this email
-            application = Application.objects.filter(email=email).order_by('-applied_date').first()
+            # 1. First choice: Match by payment_id (payment_reference)
+            application = Application.objects.filter(payment_reference=payment_id).first()
+            
+            # 2. Second choice: Fallback to matching by email
+            if not application:
+                application = Application.objects.filter(email=email).order_by('-applied_date').first()
+                
             if application:
                 application.fee_verified = True
+                # If we matched by email and the reference was empty, save it for future tracking
+                if not application.payment_reference:
+                    application.payment_reference = payment_id
                 application.save()
-                logger.info(f"Application {application.id} marked as PAID for {email}")
+                logger.info(f"✅ Application {application.id} marked as PAID for {email} (Ref: {payment_id})")
             else:
-                logger.warning(f"No application found for email {email} to mark as PAID")
+                logger.warning(f"⚠️ No application found for reference {payment_id} or email {email} to mark as PAID")
         except Exception as e:
-            logger.error(f"Error updating application status: {str(e)}")
+            logger.error(f"❌ Error updating application status: {str(e)}")
 
     return HttpResponse("OK")
 

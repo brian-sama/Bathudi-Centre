@@ -181,7 +181,7 @@ export const TEAM: TeamMember[] = [
   { name: 'Ignatia Sekonyela', role: 'CEO/Founder', image: '5.jpg' },
   { name: 'Michael More', role: 'Senior Technical Trainer', image: '6.jpg' },
   { name: 'Kearabetswe Sekonyela', role: 'Communications Manager', image: '7.jpg' },
-
+  { name: 'Bongeka Ntiemeza', role: 'Assistant Trainer', image: '8.jpg' },
 ];
 
 export const NEWSLETTER: NewsletterPost[] = [
