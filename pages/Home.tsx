@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getYoutubeEmbedUrl } from '../src/utils/youtube';
 import { Page } from '../types';
 import { VALUES } from '../constants';
@@ -214,9 +214,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             </div>
             <div className="mt-10 flex justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                {/* Placeholders for accreditation logos */}
-               <div className="text-4xl">ðŸ“œ</div>
-               <div className="text-4xl">âœ…</div>
-               <div className="text-4xl">ðŸ†</div>
+               <div className="text-4xl">{'\uD83D\uDCDC'}</div>
+               <div className="text-4xl">{'\u2705'}</div>
+               <div className="text-4xl">{'\uD83C\uDFC6'}</div>
             </div>
           </div>
         </div>
@@ -231,7 +231,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             {/* Campus Updates */}
             <div className="lg:col-span-2">
               <h3 className="text-xl sm:text-2xl font-orbitron font-bold text-white mb-6 sm:mb-8 flex items-center">
-                <span className="mr-3">ðŸ“°</span> Latest News
+                 <span className="mr-3">{'\uD83D\uDCF0'}</span> Latest News
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {newsPosts.map(news => (
@@ -281,7 +281,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                 {newsPosts.length === 0 && (
                   <div className="col-span-2 text-center py-12 glass rounded-2xl border border-white/5
                     hover:border-red-500/30 hover:bg-red-950/10 transition-all">
-                    <div className="text-5xl mb-4">ðŸ“°</div>
+                    <div className="text-5xl mb-4">{'\uD83D\uDCF0'}</div>
                     <h4 className="text-xl font-bold text-white mb-2">No News Yet</h4>
                     <p className="text-gray-400">Stay tuned for upcoming campus announcements and updates.</p>
                   </div>
@@ -292,7 +292,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             {/* Director's Message Sidebar - Mobile optimized */}
             <div>
               <h3 className="text-xl sm:text-2xl font-orbitron font-bold text-white mb-6 sm:mb-8 flex items-center">
-                <span className="mr-3">ðŸŽ¥</span> Director's Message
+                 <span className="mr-3">{'\uD83C\uDFA5'}</span> Director's Message
               </h3>
               <div className="space-y-6">
                 <div className="aspect-video rounded-2xl overflow-hidden glass border border-white/10
@@ -313,7 +313,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-blue-900/20 to-slate-800/20">
                         <div className="text-center">
-                          <div className="text-5xl mb-4">ðŸ“½ï¸</div>
+                          <div className="text-5xl mb-4">{'\uD83D\uDCF9'}</div>
                           <p>Video coming soon</p>
                         </div>
                       </div>
@@ -321,7 +321,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-blue-900/20 to-slate-800/20">
                       <div className="text-center">
-                        <div className="text-5xl mb-4 animate-pulse">â³</div>
+                        <div className="text-5xl mb-4 animate-pulse">{'\u23F3'}</div>
                         <p>Loading director's message...</p>
                       </div>
                     </div>

@@ -21,7 +21,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
               <img 
-                src="/images/bathudi logo.png" 
+                src="/images/logo1.jpg" 
                 alt="Bathudi Automotive Technical Center Logo" 
                 className="h-12 w-auto"
                 onError={(e) => {
@@ -192,8 +192,8 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
-                <span className="text-gray-400 text-sm">Mon – Fri:</span>
-                <span className="text-white font-medium text-sm">08:00 – 17:00</span>
+                <span className="text-gray-400 text-sm">Mon - Fri:</span>
+                <span className="text-white font-medium text-sm">08:00 - 17:00</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
                 <span className="text-gray-400 text-sm">Saturday:</span>
@@ -210,7 +210,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-white/5 text-center">
           <p className="text-gray-500 text-xs">
-            © {new Date().getFullYear()} Bathudi Automotive Technical Center. All rights reserved. Professional Automotive Training.
+            &copy; {new Date().getFullYear()} Bathudi Automotive Technical Center. All rights reserved. Professional Automotive Training.
           </p>
         </div>
       </div>

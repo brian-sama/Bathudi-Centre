@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getYoutubeEmbedUrl } from '../../src/utils/youtube';
 
 // FIXED: Use environment variable for API base URL
@@ -157,7 +157,7 @@ const AdminCMS: React.FC = () => {
       console.log('Posting to:', `${API_BASE}/news-posts/`);
       
       const csrfToken = getCsrfToken();
-      console.log('ðŸš€ POST News - CSRF Present:', !!csrfToken);
+      console.log('\uD83D\uDE80 POST News - CSRF Present:', !!csrfToken);
       
       const res = await fetch(`${API_BASE}/news-posts/`, {
         method: 'POST',
@@ -197,7 +197,7 @@ const AdminCMS: React.FC = () => {
     
     try {
       const csrfToken = getCsrfToken();
-      console.log('ðŸš€ DELETE News - CSRF Present:', !!csrfToken);
+      console.log('\uD83D\uDE80 DELETE News - CSRF Present:', !!csrfToken);
 
       const res = await fetch(`${API_BASE}/news-posts/${id}/`, { 
         method: 'DELETE',
@@ -382,7 +382,7 @@ const AdminCMS: React.FC = () => {
       const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
       const csrfToken = getCsrfToken();
-      console.log(`ðŸš€ ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}`);
+      console.log(`\uD83D\uDE80 ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}`);
 
       const res = await fetch(url, {
         method: method,
@@ -413,7 +413,7 @@ const AdminCMS: React.FC = () => {
       showStatus("Director's message updated successfully!", 'success');
       fetchData();
     } catch (error: any) {
-      console.error('âŒ Director message error:', error);
+      console.error('\u274C Director message error:', error);
       console.log('Error details:', {
         name: error.name,
         message: error.message,
@@ -541,7 +541,7 @@ const AdminCMS: React.FC = () => {
                             onClick={clearNewsImage}
                             className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full"
                           >
-                            âœ•
+                            &times;
                           </button>
                           <p className="text-sm text-gray-400">Click to change image</p>
                         </div>

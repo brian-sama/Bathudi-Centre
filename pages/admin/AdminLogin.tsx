@@ -34,7 +34,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
             <div className="relative w-24 h-24 mx-auto mb-6">
               {!logoError ? (
                 <img 
-                  src="/images/bathudi logo.png" 
+                  src="/images/logo1.jpg" 
                   alt="Bathudi Automotive Technical Center Logo" 
                   className="w-full h-full object-contain"
                   onError={() => setLogoError(true)}
@@ -76,7 +76,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500 transition-all"
-                placeholder="••••••••"
+                placeholder="........"
               />
             </div>
 

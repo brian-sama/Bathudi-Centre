@@ -47,15 +47,34 @@ require_var() {
   [ -n "$value" ] || fail "Required variable $1 is not set in $ENV_FILE"
 }
 
-wait_for_http() {
+wait_for_private_api() {
   url="$1"
   timeout="$2"
   elapsed=0
 
   while [ "$elapsed" -lt "$timeout" ]; do
-    if curl --silent --show-error --location --fail --output /dev/null "$url"; then
+    http_code="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "$url" || true)"
+    case "$http_code" in
+      200|301|302|307|308)
+        return 0
+        ;;
+    esac
+
+    if docker exec bathudi_api python - <<'PY' >/dev/null 2>&1
+import urllib.request
+
+request = urllib.request.Request(
+    "http://127.0.0.1:8000/api/courses/",
+    headers={"X-Forwarded-Proto": "https"},
+)
+with urllib.request.urlopen(request, timeout=5) as response:
+    if response.status != 200:
+        raise SystemExit(1)
+PY
+    then
       return 0
     fi
+
     sleep 5
     elapsed=$((elapsed + 5))
   done
@@ -137,7 +156,7 @@ docker compose build --pull bathudi_api bathudi_web
 docker compose up -d --remove-orphans bathudi_db bathudi_api bathudi_web
 
 log "Waiting for Bathudi API on http://127.0.0.1:8002/api/courses/"
-wait_for_http "http://127.0.0.1:8002/api/courses/" "$API_WAIT_SECONDS" || {
+wait_for_private_api "http://127.0.0.1:8002/api/courses/" "$API_WAIT_SECONDS" || {
   show_debug
   fail "Bathudi API did not become ready in time."
 }

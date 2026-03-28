@@ -13,21 +13,21 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
 
   // Main navigation items
   const mainNavItems = [
-    { id: Page.AdminDashboard, label: 'Dashboard', icon: '📊' },
-    { id: Page.AdminStudents, label: 'Students', icon: '👥' },
-    { id: Page.AdminApplications, label: 'Applications', icon: '📝' },
+    { id: Page.AdminDashboard, label: 'Dashboard', icon: '\uD83D\uDCCA' },
+    { id: Page.AdminStudents, label: 'Students', icon: '\uD83D\uDC65' },
+    { id: Page.AdminApplications, label: 'Applications', icon: '\uD83D\uDCDD' },
   ];
 
   // Content Management items
   const contentNavItems = [
-    { id: Page.AdminCMS, label: 'Website Content', icon: '🌐' },
-    { id: Page.StudentContent, label: 'Student Content', icon: '📢', badge: 'New' },
+    { id: Page.AdminCMS, label: 'Website Content', icon: '\uD83C\uDF10' },
+    { id: Page.StudentContent, label: 'Student Content', icon: '\uD83D\uDCE2', badge: 'New' },
   ];
 
   // Settings items
   const settingsNavItems = [
-    { id: Page.StudentNotifications, label: 'Push Notifications', icon: '🔔' },
-    { id: Page.BroadcastMessages, label: 'Broadcast Messages', icon: '📣' },
+    { id: Page.StudentNotifications, label: 'Push Notifications', icon: '\uD83D\uDD14' },
+    { id: Page.BroadcastMessages, label: 'Broadcast Messages', icon: '\uD83D\uDCE3' },
   ];
 
   const toggleMobileMenu = () => {
@@ -77,7 +77,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
         <div className="p-4 sm:p-6 border-b border-white/5">
           <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
             <img 
-              src="/images/bathudi logo.png" 
+              src="/images/logo1.jpg" 
               alt="Logo" 
               className="h-8 sm:h-10 w-auto flex-shrink-0"
               onError={(e) => {

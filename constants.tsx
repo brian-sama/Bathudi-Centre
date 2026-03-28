@@ -1,4 +1,4 @@
-﻿import { Course, Value, TeamMember, NewsletterPost } from './types';
+import { Course, Value, TeamMember, NewsletterPost } from './types';
 
 export const COURSES: Course[] = [
   {
@@ -148,32 +148,32 @@ export const VALUES: Value[] = [
   {
     title: 'Moral Integrity',
     description: 'Building Future Mechanical Professionals Who Value Excellence, Integrity, Innovation, and Hands-On Expertise.',
-    icon: 'ðŸ›¡ï¸'
+    icon: '\uD83D\uDEE1\uFE0F'
   },
   {
     title: 'Youth Empowerment',
     description: 'Empowering the next generation of skilled automotive professionals.',
-    icon: 'ðŸ’ª'
+    icon: '\uD83D\uDCAA'
   },
   {
     title: 'Second Chances',
     description: 'Providing a pathway for South African youth to rewrite their future through hard work.',
-    icon: 'ðŸ”„'
+    icon: '\uD83D\uDD04'
   },
   {
     title: 'Discipline',
     description: 'Fostering a culture of professionalism, punctuality, and respect.',
-    icon: 'âš–ï¸'
+    icon: '\u2696\uFE0F'
   },
   {
     title: 'Sustainable Futures',
     description: 'Skills designed to last a lifetime in an evolving global automotive market.',
-    icon: 'ðŸŒ±'
+    icon: '\uD83C\uDF31'
   },
   {
     title: 'Community Impact',
     description: 'Strengthening our local economy by reducing unemployment and fostering talent.',
-    icon: 'ðŸ¤'
+    icon: '\uD83E\uDD1D'
   }
 ];
 
@@ -218,28 +218,28 @@ export const ADMISSION_REQUIREMENTS = [
     type: 'id_copy',
     title: 'Certified ID Copy',
     description: 'Certified copy of ID document or passport',
-    icon: 'ðŸ“„',
+    icon: '\uD83D\uDCC4',
     is_required: true
   },
   {
     type: 'matric',
     title: 'Matric/School Certificate',
     description: 'Latest school results or matric certificate',
-    icon: 'ðŸŽ“',
+    icon: '\uD83C\uDF93',
     is_required: true
   },
   {
     type: 'fee',
     title: 'Registration Fee',
     description: 'R661.25 non-refundable registration fee',
-    icon: 'ðŸ’°',
+    icon: '\uD83D\uDCB0',
     is_required: true
   },
   {
     type: 'maths',
     title: 'Mathematics',
     description: 'Required for some advanced courses',
-    icon: 'ðŸ”¢',
+    icon: '\uD83D\uDD22',
     is_required: false
   }
 ];

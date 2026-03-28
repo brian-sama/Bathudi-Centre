@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Page } from '../types';
 
 // FIXED: Use environment variable for API URL
@@ -90,7 +90,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId, onBack }) => {
           </button>
           
           <div className="text-center py-16">
-            <div className="text-5xl mb-4">ðŸ˜•</div>
+            <div className="text-5xl mb-4">{'\uD83D\uDE15'}</div>
             <h1 className="text-2xl font-bold text-white mb-2">News Not Found</h1>
             <p className="text-gray-400 mb-6">{error || 'The news article you are looking for does not exist.'}</p>
             <button

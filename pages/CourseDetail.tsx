@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
 
 interface CourseDetailProps {
@@ -473,7 +473,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {['Automotive Technician', 'Diagnostic Specialist', 'Workshop Manager'].map((job, index) => (
                       <div key={index} className="p-6 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-                        <div className="text-3xl mb-4">{['ðŸ”§', 'ðŸ”', 'ðŸ‘”'][index]}</div>
+                        <div className="text-3xl mb-4">{['\uD83D\uDD27', '\uD83D\uDD0D', '\uD83D\uDC54'][index]}</div>
                         <h4 className="text-lg font-bold text-white mb-2">{job}</h4>
                         <p className="text-gray-400 text-sm">
                           Start your career as a professional {job.toLowerCase()} with skills gained from this course

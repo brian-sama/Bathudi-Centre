@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardStats, RecentApplication, ApplicationStatus } from '../../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
@@ -72,10 +72,10 @@ const AdminDashboard: React.FC = () => {
   };
 
   const dashboardStats = [
-    { label: 'Total Students', value: stats.totalStudents.toString(), change: '+12%', icon: 'ðŸ‘¥', color: 'blue' },
-    { label: 'Active Learners', value: stats.activeLearners.toString(), change: '+5%', icon: 'ðŸ”¥', color: 'green' },
-    { label: 'New Applications', value: stats.newApplications.toString(), change: `${stats.pendingApplications} Pending`, icon: 'ðŸ“', color: 'amber' },
-    { label: 'Revenue', value: stats.revenue, change: 'This Month', icon: 'ðŸ’°', color: 'emerald' },
+    { label: 'Total Students', value: stats.totalStudents.toString(), change: '+12%', icon: '\uD83D\uDC65', color: 'blue' },
+    { label: 'Active Learners', value: stats.activeLearners.toString(), change: '+5%', icon: '\uD83D\uDD25', color: 'green' },
+    { label: 'New Applications', value: stats.newApplications.toString(), change: `${stats.pendingApplications} Pending`, icon: '\uD83D\uDCDD', color: 'amber' },
+    { label: 'Revenue', value: stats.revenue, change: 'This Month', icon: '\uD83D\uDCB0', color: 'emerald' },
   ];
 
   if (loading) {
@@ -94,7 +94,7 @@ const AdminDashboard: React.FC = () => {
           <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden glass border border-white/10 flex-shrink-0">
             {!logoError ? (
               <img 
-                src="/images/bathudi logo.png" 
+                src="/images/logo1.jpg" 
                 alt="Bathudi Logo" 
                 className="w-full h-full object-contain"
                 onError={() => setLogoError(true)}
@@ -114,7 +114,7 @@ const AdminDashboard: React.FC = () => {
           onClick={fetchDashboardData}
           className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all flex items-center justify-center space-x-2"
         >
-          <span>ðŸ”„</span>
+          <span>{'\uD83D\uDD04'}</span>
           <span>Refresh</span>
         </button>
       </header>
@@ -153,7 +153,7 @@ const AdminDashboard: React.FC = () => {
           <div className="space-y-3 sm:space-y-4">
             {recentApps.length === 0 ? (
               <div className="text-center py-6 sm:py-8">
-                <span className="text-3xl sm:text-4xl mb-3 sm:mb-4 block">ðŸ“­</span>
+                <span className="text-3xl sm:text-4xl mb-3 sm:mb-4 block">{'\uD83D\uDCEC'}</span>
                 <p className="text-sm sm:text-base text-gray-400">No applications yet</p>
               </div>
             ) : (
