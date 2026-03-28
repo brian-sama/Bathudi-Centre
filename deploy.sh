@@ -53,7 +53,7 @@ wait_for_http() {
   elapsed=0
 
   while [ "$elapsed" -lt "$timeout" ]; do
-    if curl --silent --show-error --output /dev/null "$url"; then
+    if curl --silent --show-error --location --fail --output /dev/null "$url"; then
       return 0
     fi
     sleep 5
@@ -70,6 +70,22 @@ wait_for_https_cert() {
 
   while [ "$elapsed" -lt "$timeout" ]; do
     if curl --silent --show-error --head "https://$host" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 10
+    elapsed=$((elapsed + 10))
+  done
+
+  return 1
+}
+
+wait_for_public_url() {
+  url="$1"
+  timeout="$2"
+  elapsed=0
+
+  while [ "$elapsed" -lt "$timeout" ]; do
+    if curl --silent --show-error --location --fail --output /dev/null "$url"; then
       return 0
     fi
     sleep 10
@@ -107,6 +123,13 @@ if ! docker ps --format '{{.Image}} {{.Names}}' | grep -qi 'traefik'; then
   fail "No running Traefik container detected. SSL issuance requires a live Traefik instance with ACME configured for resolver '$TRAEFIK_CERTRESOLVER'."
 fi
 
+TRAEFIK_CONTAINER="$(docker ps --format '{{.Names}} {{.Image}}' | awk 'tolower($0) ~ /traefik/ {print $1; exit}')"
+[ -n "${TRAEFIK_CONTAINER:-}" ] || fail "Could not determine the Traefik container name."
+
+if ! docker inspect "$TRAEFIK_CONTAINER" --format '{{range $name, $_ := .NetworkSettings.Networks}}{{println $name}}{{end}}' | grep -Fxq "$TRAEFIK_NETWORK"; then
+  fail "Traefik container '$TRAEFIK_CONTAINER' is not attached to Docker network '$TRAEFIK_NETWORK'. Attach Traefik to that network first."
+fi
+
 git pull --ff-only
 
 docker compose pull bathudi_db
@@ -134,7 +157,15 @@ if [ -n "$WWW_DOMAIN" ]; then
 fi
 
 docker compose ps
-curl --silent --show-error --head "https://$DOMAIN" >/dev/null
+wait_for_public_url "https://$DOMAIN/" "$API_WAIT_SECONDS" || {
+  show_debug
+  fail "Public Bathudi site did not return a successful response on https://$DOMAIN/."
+}
+
+wait_for_public_url "https://$DOMAIN/api/courses/" "$API_WAIT_SECONDS" || {
+  show_debug
+  fail "Public Bathudi API did not return a successful response on https://$DOMAIN/api/courses/."
+}
 
 log "Bathudi redeploy completed successfully."
 log "HTTPS is live for $DOMAIN"
