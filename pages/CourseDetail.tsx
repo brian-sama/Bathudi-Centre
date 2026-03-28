@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
 
 interface CourseDetailProps {
@@ -44,7 +44,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
         setLoading(true);
         setError(null);
         
-        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+        const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
         const response = await fetch(`${API_BASE_URL}/courses/${courseId}/`);
         
         if (!response.ok) {
@@ -130,7 +130,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
       return;
     }
     
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
     const baseUrl = API_BASE_URL.replace('/api', '');
     const pdfUrl = `${baseUrl}/pdfs/course-outlines/${pdfFilename}`;
     window.open(pdfUrl, '_blank');
@@ -473,7 +473,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {['Automotive Technician', 'Diagnostic Specialist', 'Workshop Manager'].map((job, index) => (
                       <div key={index} className="p-6 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-                        <div className="text-3xl mb-4">{['🔧', '🔍', '👔'][index]}</div>
+                        <div className="text-3xl mb-4">{['ðŸ”§', 'ðŸ”', 'ðŸ‘”'][index]}</div>
                         <h4 className="text-lg font-bold text-white mb-2">{job}</h4>
                         <p className="text-gray-400 text-sm">
                           Start your career as a professional {job.toLowerCase()} with skills gained from this course

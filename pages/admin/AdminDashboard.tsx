@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { DashboardStats, RecentApplication, ApplicationStatus } from '../../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -72,10 +72,10 @@ const AdminDashboard: React.FC = () => {
   };
 
   const dashboardStats = [
-    { label: 'Total Students', value: stats.totalStudents.toString(), change: '+12%', icon: '👥', color: 'blue' },
-    { label: 'Active Learners', value: stats.activeLearners.toString(), change: '+5%', icon: '🔥', color: 'green' },
-    { label: 'New Applications', value: stats.newApplications.toString(), change: `${stats.pendingApplications} Pending`, icon: '📝', color: 'amber' },
-    { label: 'Revenue', value: stats.revenue, change: 'This Month', icon: '💰', color: 'emerald' },
+    { label: 'Total Students', value: stats.totalStudents.toString(), change: '+12%', icon: 'ðŸ‘¥', color: 'blue' },
+    { label: 'Active Learners', value: stats.activeLearners.toString(), change: '+5%', icon: 'ðŸ”¥', color: 'green' },
+    { label: 'New Applications', value: stats.newApplications.toString(), change: `${stats.pendingApplications} Pending`, icon: 'ðŸ“', color: 'amber' },
+    { label: 'Revenue', value: stats.revenue, change: 'This Month', icon: 'ðŸ’°', color: 'emerald' },
   ];
 
   if (loading) {
@@ -114,7 +114,7 @@ const AdminDashboard: React.FC = () => {
           onClick={fetchDashboardData}
           className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all flex items-center justify-center space-x-2"
         >
-          <span>🔄</span>
+          <span>ðŸ”„</span>
           <span>Refresh</span>
         </button>
       </header>
@@ -153,7 +153,7 @@ const AdminDashboard: React.FC = () => {
           <div className="space-y-3 sm:space-y-4">
             {recentApps.length === 0 ? (
               <div className="text-center py-6 sm:py-8">
-                <span className="text-3xl sm:text-4xl mb-3 sm:mb-4 block">📭</span>
+                <span className="text-3xl sm:text-4xl mb-3 sm:mb-4 block">ðŸ“­</span>
                 <p className="text-sm sm:text-base text-gray-400">No applications yet</p>
               </div>
             ) : (

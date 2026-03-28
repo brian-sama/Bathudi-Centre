@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 'prerequisites': 'Grade 11 certificate. Basic automotive knowledge.',
                 'requirements': 'Certified ID copy, Grade 11/Matric certificate, Registration fee of R661.25',
                 'career_opportunities': 'Suspension Technician, Wheel Alignment Specialist, Automotive Repairer, Chassis Specialist',
-                'course_pdf_url': '/pdfs/course-outlines/Automotive Suspension Fitter.pdf',
+                'course_pdf_url': '/pdfs/course-outlines/Automotive Suspension Repairer.pdf',
                 'is_math_required': True,
                 'is_featured': True,
                 'is_active': True,

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
-import { initiatePayFastPayment } from '../src/utils/payfast';
 
 interface ApplyProps {
   onNavigate: (page: Page) => void;
@@ -8,11 +7,9 @@ interface ApplyProps {
 
 const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const [loading, setLoading] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
-  const [payfastReference, setPayfastReference] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -43,7 +40,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
 
   const fetchCourses = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
       const response = await fetch(`${API_BASE_URL}/courses/`);
       if (response.ok) {
         const data = await response.json();
@@ -52,42 +49,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       }
     } catch (error) {
       console.error('Error fetching courses:', error);
-    }
-  };
-
-  // Handle PayFast payment
-  const handlePayNow = async () => {
-    if (!formData.name || !formData.surname || !formData.email) {
-      alert('Please fill in your name, surname, and email before proceeding to payment.');
-      return;
-    }
-
-    if (!formData.course) {
-      alert('Please select a course before proceeding to payment.');
-      return;
-    }
-
-    setPaymentLoading(true);
-
-    try {
-      const response = await initiatePayFastPayment({
-        amount: '661.25',
-        item_name: 'Bathudi Course Application Fee',
-        email_address: formData.email,
-        name_first: formData.name,
-        name_last: formData.surname,
-        cell_number: formData.mobile,
-      });
-
-      if (response && response.m_payment_id) {
-        console.log('💳 Captured PayFast Reference:', response.m_payment_id);
-        setPayfastReference(response.m_payment_id);
-      }
-      
-    } catch (error) {
-      console.error('❌ Payment error:', error);
-      alert('Failed to initiate payment. Please try again.');
-      setPaymentLoading(false);
     }
   };
 
@@ -195,7 +156,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      alert(`❌ Validation Error: ${errorMessage}`);
+      alert(`âŒ Validation Error: ${errorMessage}`);
       return;
     }
 
@@ -212,7 +173,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           if (key === 'course') {
             // Send as 'course' with the ID as a number
             const courseId = parseInt(value);
-            console.log('🎓 Sending course ID:', courseId);
+            console.log('ðŸŽ“ Sending course ID:', courseId);
             formDataToSend.append('course', courseId.toString());
             // Also send as form_course_id for the model's save method
             formDataToSend.append('form_course_id', value);
@@ -224,12 +185,6 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         }
       });
       
-      // Add PayFast reference if available
-      if (payfastReference) {
-        formDataToSend.append('payment_reference', payfastReference);
-        console.log('💳 Including payment reference in application:', payfastReference);
-      }
-      
       // Add files
       Object.entries(files).forEach(([key, file]) => {
         if (file) {
@@ -237,21 +192,21 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         }
       });
 
-      console.log('📤 Submitting application data...');
+      console.log('ðŸ“¤ Submitting application data...');
       
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
       const response = await fetch(`${API_BASE_URL}/applications/`, {
         method: 'POST',
         body: formDataToSend,
       });
 
-      console.log('📡 Response status:', response.status);
+      console.log('ðŸ“¡ Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Application submitted successfully:', data);
+        console.log('âœ… Application submitted successfully:', data);
         
-        alert(`✅ Application Submitted Successfully!\n\n📋 Application ID: ${data.id || 'Pending'}\n👤 Name: ${formData.name} ${formData.surname}\n🎓 Course ID: ${formData.course}\n\n📬 We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.`);
+        alert(`âœ… Application Submitted Successfully!\n\nðŸ“‹ Application ID: ${data.id || 'Pending'}\nðŸ‘¤ Name: ${formData.name} ${formData.surname}\nðŸŽ“ Course ID: ${formData.course}\n\nðŸ“¬ We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.`);
         
         setSubmitStatus('success');
         
@@ -279,7 +234,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         
       } else {
         const errorText = await response.text();
-        console.error('❌ Error response:', errorText);
+        console.error('âŒ Error response:', errorText);
         
         try {
           const errorData = JSON.parse(errorText);
@@ -287,7 +242,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           
           let errorMsg = errorData.error || errorData.detail || errorData.message || 'Failed to submit application. Please try again.';
           
-          alert(`❌ Submission Error:\n\n${errorMsg}\n\nPlease check your information and try again.`);
+          alert(`âŒ Submission Error:\n\n${errorMsg}\n\nPlease check your information and try again.`);
           
           setSubmitStatus('error');
           setErrorMessage(errorMsg);
@@ -295,14 +250,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           console.error('Error parsing error response:', parseError);
           const errorMsg = `Server error (${response.status})`;
           
-          alert(`❌ Server Error (${response.status})`);
+          alert(`âŒ Server Error (${response.status})`);
           
           setSubmitStatus('error');
           setErrorMessage(errorMsg);
         }
       }
     } catch (error: any) {
-      console.error('❌ Network error:', error);
+      console.error('âŒ Network error:', error);
       alert(`Network error: ${error.message}. Please check your connection.`);
       setSubmitStatus('error');
       setErrorMessage(error.message);
@@ -336,9 +291,9 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
             Apply for Admission
           </h2>
           <div className="inline-flex flex-col sm:flex-row items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-4 sm:mb-6">
-            <span className="text-amber-400 font-bold text-sm sm:text-base">📢 Registration Fee: R661.25</span>
-            <span className="hidden sm:inline mx-3 text-gray-400">•</span>
-            <span className="text-gray-300 text-xs sm:text-sm">Pay online or upload proof</span>
+            <span className="text-amber-400 font-bold text-sm sm:text-base">ðŸ“¢ Registration Fee: R661.25</span>
+            <span className="hidden sm:inline mx-3 text-gray-400">â€¢</span>
+            <span className="text-gray-300 text-xs sm:text-sm">Please upload proof of payment below</span>
           </div>
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
             Complete the form below to apply for your chosen course. All fields are required unless marked optional.
@@ -350,7 +305,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl">
             <div className="flex items-center">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-500/20 flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
-                <span className="text-xl sm:text-2xl text-green-400">✓</span>
+                <span className="text-xl sm:text-2xl text-green-400">âœ“</span>
               </div>
               <div>
                 <p className="text-green-400 font-bold text-base sm:text-lg">Application Submitted Successfully!</p>
@@ -366,7 +321,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-2xl">
             <div className="flex items-center">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
-                <span className="text-xl sm:text-2xl text-red-400">✗</span>
+                <span className="text-xl sm:text-2xl text-red-400">âœ—</span>
               </div>
               <div>
                 <p className="text-red-400 font-bold text-base sm:text-lg">Submission Error</p>
@@ -626,7 +581,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-blue-400 text-sm sm:text-base">🆔</span>
+                              <span className="text-blue-400 text-sm sm:text-base">ðŸ†”</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.id_document.name}>
@@ -638,14 +593,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                            <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                            <span className="text-green-400 text-xs sm:text-sm">âœ“</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile('id_document')}
                               className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
                               title="Remove file"
                             >
-                              ×
+                              Ã—
                             </button>
                           </div>
                         </div>
@@ -678,7 +633,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-green-400 text-sm sm:text-base">🎓</span>
+                              <span className="text-green-400 text-sm sm:text-base">ðŸŽ“</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.matric_certificate.name}>
@@ -690,14 +645,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                            <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                            <span className="text-green-400 text-xs sm:text-sm">âœ“</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile('matric_certificate')}
                               className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
                               title="Remove file"
                             >
-                              ×
+                              Ã—
                             </button>
                           </div>
                         </div>
@@ -713,44 +668,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     Proof of Payment (R661.25) *
                   </label>
                   
-                  {/* Pay Now Button */}
-                  <div className="mb-4">
-                    <button
-                      type="button"
-                      onClick={handlePayNow}
-                      disabled={paymentLoading}
-                      className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl text-sm sm:text-base transition-all duration-300 shadow-lg shadow-green-600/30 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-green-400/30"
-                    >
-                      {paymentLoading ? (
-                        <>
-                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Redirecting to PayFast...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-2xl">💰</span>
-                          <span className="text-lg">Pay Now with PayFast</span>
-                        </>
-                      )}
-                    </button>
-                    <p className="text-xs text-center text-gray-500 mt-2">
-                      Click to pay your R661.25 registration fee securely via PayFast
-                    </p>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-white/10"></div>
-                    </div>
-                    <div className="relative flex justify-center text-xs">
-                      <span className="px-2 bg-white/5 text-gray-400 rounded">OR upload proof of payment</span>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2 sm:space-y-3 mt-3">
+                  <div className="space-y-4">
                     {!files.proof_of_payment ? (
                       <div className="relative">
                         <input
@@ -770,7 +688,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-amber-400 text-sm sm:text-base">💰</span>
+                              <span className="text-amber-400 text-sm sm:text-base">ðŸ’°</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.proof_of_payment.name}>
@@ -782,14 +700,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                            <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                            <span className="text-green-400 text-xs sm:text-sm">âœ“</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile('proof_of_payment')}
                               className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
                               title="Remove file"
                             >
-                              ×
+                              Ã—
                             </button>
                           </div>
                         </div>
@@ -820,7 +738,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-purple-400 text-sm sm:text-base">📄</span>
+                              <span className="text-purple-400 text-sm sm:text-base">ðŸ“„</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.additional_doc_1.name}>
@@ -832,14 +750,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                            <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                            <span className="text-green-400 text-xs sm:text-sm">âœ“</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile('additional_doc_1')}
                               className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
                               title="Remove file"
                             >
-                              ×
+                              Ã—
                             </button>
                           </div>
                         </div>
@@ -871,7 +789,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-purple-400 text-sm sm:text-base">📄</span>
+                              <span className="text-purple-400 text-sm sm:text-base">ðŸ“„</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.additional_doc_2.name}>
@@ -883,14 +801,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                             </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                            <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                            <span className="text-green-400 text-xs sm:text-sm">âœ“</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile('additional_doc_2')}
                               className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
                               title="Remove file"
                             >
-                              ×
+                              Ã—
                             </button>
                           </div>
                         </div>
@@ -903,14 +821,14 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
 
               <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
                 <div className="flex items-start">
-                  <div className="mr-2 sm:mr-4 text-blue-400 flex-shrink-0">ℹ️</div>
+                  <div className="mr-2 sm:mr-4 text-blue-400 flex-shrink-0">â„¹ï¸</div>
                   <div>
                     <p className="text-blue-400 font-medium text-xs sm:text-sm mb-1">Important Notes:</p>
                     <ul className="text-[10px] sm:text-xs text-gray-400 space-y-1">
-                      <li>• Maximum file size: 5MB per document</li>
-                      <li>• Accepted formats: PDF, JPG, JPEG, PNG, DOC, DOCX</li>
-                      <li>• Registration fee of R661.25 is non-refundable</li>
-                      <li>• You can pay online via PayFast or upload proof of payment</li>
+                      <li>â€¢ Maximum file size: 5MB per document</li>
+                      <li>â€¢ Accepted formats: PDF, JPG, JPEG, PNG, DOC, DOCX</li>
+                      <li>â€¢ Registration fee of R661.25 is non-refundable</li>
+                      <li>â€¢ You can pay online via PayFast or upload proof of payment</li>
                     </ul>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 const Gallery: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<any | null>(null);
@@ -6,7 +6,7 @@ const Gallery: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
   const generateLocalImages = () => {
     const localImages = [];

@@ -1,4 +1,4 @@
-import { Course, Value, TeamMember, NewsletterPost } from './types';
+﻿import { Course, Value, TeamMember, NewsletterPost } from './types';
 
 export const COURSES: Course[] = [
   {
@@ -148,32 +148,32 @@ export const VALUES: Value[] = [
   {
     title: 'Moral Integrity',
     description: 'Building Future Mechanical Professionals Who Value Excellence, Integrity, Innovation, and Hands-On Expertise.',
-    icon: '🛡️'
+    icon: 'ðŸ›¡ï¸'
   },
   {
     title: 'Youth Empowerment',
     description: 'Empowering the next generation of skilled automotive professionals.',
-    icon: '💪'
+    icon: 'ðŸ’ª'
   },
   {
     title: 'Second Chances',
     description: 'Providing a pathway for South African youth to rewrite their future through hard work.',
-    icon: '🔄'
+    icon: 'ðŸ”„'
   },
   {
     title: 'Discipline',
     description: 'Fostering a culture of professionalism, punctuality, and respect.',
-    icon: '⚖️'
+    icon: 'âš–ï¸'
   },
   {
     title: 'Sustainable Futures',
     description: 'Skills designed to last a lifetime in an evolving global automotive market.',
-    icon: '🌱'
+    icon: 'ðŸŒ±'
   },
   {
     title: 'Community Impact',
     description: 'Strengthening our local economy by reducing unemployment and fostering talent.',
-    icon: '🤝'
+    icon: 'ðŸ¤'
   }
 ];
 
@@ -218,28 +218,28 @@ export const ADMISSION_REQUIREMENTS = [
     type: 'id_copy',
     title: 'Certified ID Copy',
     description: 'Certified copy of ID document or passport',
-    icon: '📄',
+    icon: 'ðŸ“„',
     is_required: true
   },
   {
     type: 'matric',
     title: 'Matric/School Certificate',
     description: 'Latest school results or matric certificate',
-    icon: '🎓',
+    icon: 'ðŸŽ“',
     is_required: true
   },
   {
     type: 'fee',
     title: 'Registration Fee',
     description: 'R661.25 non-refundable registration fee',
-    icon: '💰',
+    icon: 'ðŸ’°',
     is_required: true
   },
   {
     type: 'maths',
     title: 'Mathematics',
     description: 'Required for some advanced courses',
-    icon: '🔢',
+    icon: 'ðŸ”¢',
     is_required: false
   }
 ];
@@ -262,7 +262,7 @@ export const CONTACT_INFO = {
   hours: 'Monday - Friday: 8:00 AM - 5:00 PM\nSaturday: 9:00 AM - 1:00 PM'
 };
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export const API_ENDPOINTS = {
   courses: `${API_BASE}/courses/`,

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Student, StudentStatus, FeeStatus } from '../../types';
 
 // To handle Excel/CSV uploads, you'll need to install the 'xlsx' library:
 // npm install xlsx
 import * as XLSX from 'xlsx';
 // API Base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 interface NewStudentForm {
   name: string;
@@ -160,18 +160,18 @@ const AdminStudents: React.FC = () => {
       });
 
       if (response.ok) {
-        alert(`✅ Student ${newStudent.name} ${newStudent.surname} enrolled successfully!`);
+        alert(`âœ… Student ${newStudent.name} ${newStudent.surname} enrolled successfully!`);
         setShowAddModal(false);
         resetForm();
         fetchStudents();
       } else {
         const error = await response.json();
         const errorDetail = typeof error.details === 'string' ? error.details : JSON.stringify(error.details);
-        alert(`❌ Failed to enroll student: ${error.error || 'Unknown error'}. Details: ${errorDetail}`);
+        alert(`âŒ Failed to enroll student: ${error.error || 'Unknown error'}. Details: ${errorDetail}`);
       }
     } catch (error) {
       console.error('Error enrolling student:', error);
-      alert('❌ Network error. Please try again.');
+      alert('âŒ Network error. Please try again.');
     } finally {
       setProcessing(false);
     }
@@ -190,17 +190,17 @@ const AdminStudents: React.FC = () => {
       });
 
       if (response.ok) {
-        alert(`✅ Student details updated successfully!`);
+        alert(`âœ… Student details updated successfully!`);
         setShowEditModal(false);
         setSelectedStudent(null);
         fetchStudents();
       } else {
         const error = await response.json();
-        alert(`❌ Failed to update student: ${error.message || 'Unknown error'}`);
+        alert(`âŒ Failed to update student: ${error.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error updating student:', error);
-      alert('❌ Network error. Please try again.');
+      alert('âŒ Network error. Please try again.');
     } finally {
       setProcessing(false);
     }
@@ -216,14 +216,14 @@ const AdminStudents: React.FC = () => {
       });
 
       if (response.ok) {
-        alert(`✅ Student deleted successfully!`);
+        alert(`âœ… Student deleted successfully!`);
         fetchStudents();
       } else {
-        alert(`❌ Failed to delete student`);
+        alert(`âŒ Failed to delete student`);
       }
     } catch (error) {
       console.error('Error deleting student:', error);
-      alert('❌ Network error. Please try again.');
+      alert('âŒ Network error. Please try again.');
     }
   };
 
@@ -355,7 +355,7 @@ const AdminStudents: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">Enroll New Student</h2>
               <button onClick={() => { setShowAddModal(false); resetForm(); }} 
-                className="text-gray-400 hover:text-white text-2xl">×</button>
+                className="text-gray-400 hover:text-white text-2xl">Ã—</button>
             </div>
             
             <div className="space-y-6">
@@ -449,7 +449,7 @@ const AdminStudents: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">Bulk Student Upload</h2>
               <button onClick={() => { setShowBulkUploadModal(false); resetForm(); }} 
-                className="text-gray-400 hover:text-white text-2xl">×</button>
+                className="text-gray-400 hover:text-white text-2xl">Ã—</button>
             </div>
             
             <div className="space-y-6">
@@ -522,7 +522,7 @@ const AdminStudents: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">Student Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedStudent(null); }} 
-                className="text-gray-400 hover:text-white text-2xl">×</button>
+                className="text-gray-400 hover:text-white text-2xl">Ã—</button>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -551,7 +551,7 @@ const AdminStudents: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">Edit Student Details</h2>
               <button onClick={() => { setShowEditModal(false); setSelectedStudent(null); }} 
-                className="text-gray-400 hover:text-white text-2xl">×</button>
+                className="text-gray-400 hover:text-white text-2xl">Ã—</button>
             </div>
             
             <div className="space-y-4">
@@ -644,7 +644,7 @@ const AdminStudents: React.FC = () => {
       {/* Filter Bar */}
       <div className="glass p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center border border-white/5">
         <div className="relative flex-grow">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">ðŸ”</span>
           <input 
             type="text" 
             placeholder="Search by name, ID or course..." 
@@ -731,7 +731,7 @@ const AdminStudents: React.FC = () => {
                             className="p-2 glass hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors" 
                             title="View Details"
                           >
-                            👁️
+                            ðŸ‘ï¸
                           </button>
                           {/* Pen - Edit Details */}
                           <button 
@@ -739,7 +739,7 @@ const AdminStudents: React.FC = () => {
                             className="p-2 glass hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors" 
                             title="Edit Details"
                           >
-                            ✏️
+                            âœï¸
                           </button>
                           {/* Dustbin - Delete Student */}
                           <button 
@@ -747,7 +747,7 @@ const AdminStudents: React.FC = () => {
                             className="p-2 glass hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-400 transition-colors" 
                             title="Delete Student"
                           >
-                            🗑️
+                            ðŸ—‘ï¸
                           </button>
                         </div>
                       </td>

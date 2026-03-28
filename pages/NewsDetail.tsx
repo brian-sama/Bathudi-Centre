@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Page } from '../types';
 
 // FIXED: Use environment variable for API URL
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 interface NewsDetailProps {
   newsId: string | null;
@@ -90,7 +90,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId, onBack }) => {
           </button>
           
           <div className="text-center py-16">
-            <div className="text-5xl mb-4">😕</div>
+            <div className="text-5xl mb-4">ðŸ˜•</div>
             <h1 className="text-2xl font-bold text-white mb-2">News Not Found</h1>
             <p className="text-gray-400 mb-6">{error || 'The news article you are looking for does not exist.'}</p>
             <button

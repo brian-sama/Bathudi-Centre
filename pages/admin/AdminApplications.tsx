@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 // Define types for the application
 interface Application {
@@ -55,7 +55,7 @@ interface ApplicationDocuments {
 }
 
 // FIXED: Use import.meta.env for Vite instead of process.env
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const AdminApplications: React.FC = () => {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -162,7 +162,7 @@ const AdminApplications: React.FC = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('✅ Student added successfully:', result);
+        console.log('âœ… Student added successfully:', result);
         return true;
       } else {
         const error = await response.json();
@@ -199,12 +199,12 @@ const AdminApplications: React.FC = () => {
             const studentAdded = await addToStudents(approvedApp);
             
             if (studentAdded) {
-              alert(`✅ Application approved and student added to registry successfully!`);
+              alert(`âœ… Application approved and student added to registry successfully!`);
             } else {
-              alert(`⚠️ Application approved but failed to add to student registry. Please add manually.`);
+              alert(`âš ï¸ Application approved but failed to add to student registry. Please add manually.`);
             }
           } else {
-            alert(`✅ ${result.message || 'Application approved successfully!'}`);
+            alert(`âœ… ${result.message || 'Application approved successfully!'}`);
           }
           
           fetchApplications(); // Refresh the list
@@ -241,7 +241,7 @@ const AdminApplications: React.FC = () => {
         
         if (response.ok) {
           const result = await response.json();
-          alert(`❌ ${result.message || 'Application rejected.'}`);
+          alert(`âŒ ${result.message || 'Application rejected.'}`);
           fetchApplications(); // Refresh the list
           if (selectedApp?.id === appId) {
             setSelectedApp(null);
@@ -271,7 +271,7 @@ const AdminApplications: React.FC = () => {
       
       if (response.ok) {
         const result = await response.json();
-        alert(`💰 ${result.message || 'Fee verified successfully!'}`);
+        alert(`ðŸ’° ${result.message || 'Fee verified successfully!'}`);
         fetchApplications(); // Refresh the list
       } else {
         alert('Failed to verify fee. Please try again.');
@@ -338,7 +338,7 @@ const AdminApplications: React.FC = () => {
   return (
     <div className="space-y-8 p-4 md:p-6">
       <header>
-        <h1 className="text-3xl font-bold text-white mb-2">📋 Applications Review</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">ðŸ“‹ Applications Review</h1>
         <p className="text-gray-400">Review student submissions and fee confirmations. Approving an application automatically adds the student to the registry.</p>
         
         {/* Statistics Cards */}
@@ -399,7 +399,7 @@ const AdminApplications: React.FC = () => {
             disabled={loading}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg text-sm font-bold transition-all flex items-center"
           >
-            <span className="mr-2">🔄</span>
+            <span className="mr-2">ðŸ”„</span>
             {loading ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
@@ -411,7 +411,7 @@ const AdminApplications: React.FC = () => {
           <div className="glass p-6 md:p-8 rounded-3xl border border-white/5 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">
-                📄 Documents for {selectedApp.name} {selectedApp.surname}
+                ðŸ“„ Documents for {selectedApp.name} {selectedApp.surname}
               </h2>
               <button 
                 onClick={() => {
@@ -420,7 +420,7 @@ const AdminApplications: React.FC = () => {
                 }}
                 className="text-gray-400 hover:text-white text-2xl transition-colors"
               >
-                ×
+                Ã—
               </button>
             </div>
 
@@ -437,7 +437,7 @@ const AdminApplications: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Age & Country</p>
-                  <p className="text-white font-medium">{selectedApp.age} years • {selectedApp.country}</p>
+                  <p className="text-white font-medium">{selectedApp.age} years â€¢ {selectedApp.country}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Mobile</p>
@@ -484,7 +484,7 @@ const AdminApplications: React.FC = () => {
                       className="block mb-2 p-3 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg border border-blue-500/20 transition-all"
                     >
                       <div className="text-center">
-                        <span className="text-3xl">🆔</span>
+                        <span className="text-3xl">ðŸ†”</span>
                         <p className="text-sm text-white mt-2">View ID Document</p>
                         <p className="text-xs text-gray-400 mt-1 truncate" title={documentUrls.id_document.name}>
                           {documentUrls.id_document.name}
@@ -506,7 +506,7 @@ const AdminApplications: React.FC = () => {
                   </>
                 ) : (
                   <div className="text-center p-4">
-                    <span className="text-3xl text-gray-600">❌</span>
+                    <span className="text-3xl text-gray-600">âŒ</span>
                     <p className="text-gray-500 mt-2">No ID document uploaded</p>
                   </div>
                 )}
@@ -529,7 +529,7 @@ const AdminApplications: React.FC = () => {
                       className="block mb-2 p-3 bg-green-500/10 hover:bg-green-500/20 rounded-lg border border-green-500/20 transition-all"
                     >
                       <div className="text-center">
-                        <span className="text-3xl">🎓</span>
+                        <span className="text-3xl">ðŸŽ“</span>
                         <p className="text-sm text-white mt-2">View Matric Certificate</p>
                         <p className="text-xs text-gray-400 mt-1 truncate" title={documentUrls.matric_certificate.name}>
                           {documentUrls.matric_certificate.name}
@@ -551,7 +551,7 @@ const AdminApplications: React.FC = () => {
                   </>
                 ) : (
                   <div className="text-center p-4">
-                    <span className="text-3xl text-gray-600">❌</span>
+                    <span className="text-3xl text-gray-600">âŒ</span>
                     <p className="text-gray-500 mt-2">No matric certificate uploaded</p>
                   </div>
                 )}
@@ -574,7 +574,7 @@ const AdminApplications: React.FC = () => {
                       className="block mb-2 p-3 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg border border-amber-500/20 transition-all"
                     >
                       <div className="text-center">
-                        <span className="text-3xl">💰</span>
+                        <span className="text-3xl">ðŸ’°</span>
                         <p className="text-sm text-white mt-2">View Proof of Payment</p>
                         <p className="text-xs text-gray-400 mt-1 truncate" title={documentUrls.proof_of_payment.name}>
                           {documentUrls.proof_of_payment.name}
@@ -596,7 +596,7 @@ const AdminApplications: React.FC = () => {
                   </>
                 ) : (
                   <div className="text-center p-4">
-                    <span className="text-3xl text-gray-600">❌</span>
+                    <span className="text-3xl text-gray-600">âŒ</span>
                     <p className="text-gray-500 mt-2">No proof of payment uploaded</p>
                   </div>
                 )}
@@ -618,7 +618,7 @@ const AdminApplications: React.FC = () => {
                         className="block mb-2 p-3 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg border border-purple-500/20 transition-all"
                       >
                         <div className="text-center">
-                          <span className="text-3xl">📄</span>
+                          <span className="text-3xl">ðŸ“„</span>
                           <p className="text-sm text-white mt-2">View Document</p>
                           <p className="text-xs text-gray-400 mt-1 truncate">
                             {documentUrls.additional_doc_1.name}
@@ -637,7 +637,7 @@ const AdminApplications: React.FC = () => {
                         className="block mb-2 p-3 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg border border-purple-500/20 transition-all"
                       >
                         <div className="text-center">
-                          <span className="text-3xl">📄</span>
+                          <span className="text-3xl">ðŸ“„</span>
                           <p className="text-sm text-white mt-2">View Document</p>
                           <p className="text-xs text-gray-400 mt-1 truncate">
                             {documentUrls.additional_doc_2.name}
@@ -668,7 +668,7 @@ const AdminApplications: React.FC = () => {
                   disabled={processing === selectedApp.id || selectedApp.fee_verified}
                   className="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-amber-400 rounded-lg text-sm font-bold border border-amber-500/20 transition-all"
                 >
-                  {selectedApp.fee_verified ? '✓ Fee Verified' : 'Verify Fee'}
+                  {selectedApp.fee_verified ? 'âœ“ Fee Verified' : 'Verify Fee'}
                 </button>
                 {/* FIXED: Use type guard to check if status is not 'approved' */}
                 {selectedApp.status !== 'approved' && (
@@ -699,7 +699,7 @@ const AdminApplications: React.FC = () => {
       <div className="grid grid-cols-1 gap-6">
         {getFilteredApplications().length === 0 ? (
           <div className="glass p-8 rounded-3xl border border-white/5 text-center">
-            <span className="text-5xl mb-4">📭</span>
+            <span className="text-5xl mb-4">ðŸ“­</span>
             <h3 className="text-xl font-bold text-white mb-2">
               {filter === 'all' ? 'No Applications' : `No ${filter} Applications`}
             </h3>
@@ -741,16 +741,16 @@ const AdminApplications: React.FC = () => {
                     <p className="text-blue-400 text-sm font-semibold mb-3">{app.course_title}</p>
                     <div className="flex flex-wrap gap-4">
                       <span className="text-xs text-gray-500 flex items-center">
-                        <span className="mr-1">🗓️</span> {app.formatted_date || new Date(app.created_at).toLocaleDateString()}
+                        <span className="mr-1">ðŸ—“ï¸</span> {app.formatted_date || new Date(app.created_at).toLocaleDateString()}
                       </span>
                       <span className="text-xs text-gray-500 flex items-center">
-                        <span className="mr-1">🎂</span> {app.age} years
+                        <span className="mr-1">ðŸŽ‚</span> {app.age} years
                       </span>
                       <span className="text-xs text-gray-500 flex items-center">
-                        <span className="mr-1">📞</span> {app.mobile}
+                        <span className="mr-1">ðŸ“ž</span> {app.mobile}
                       </span>
                       <span className="text-xs text-gray-500 flex items-center">
-                        <span className="mr-1">📍</span> {app.country}
+                        <span className="mr-1">ðŸ“</span> {app.country}
                       </span>
                     </div>
                   </div>
@@ -762,19 +762,19 @@ const AdminApplications: React.FC = () => {
                     <div className="text-center" title="ID Document">
                       <p className="text-[9px] uppercase tracking-widest text-gray-500 mb-1">ID</p>
                       <span className={app.documents_status.id ? "text-green-500 text-lg" : "text-gray-600 text-lg"}>
-                        {app.documents_status.id ? "✅" : "❌"}
+                        {app.documents_status.id ? "âœ…" : "âŒ"}
                       </span>
                     </div>
                     <div className="text-center" title="Matric Certificate">
                       <p className="text-[9px] uppercase tracking-widest text-gray-500 mb-1">Matric</p>
                       <span className={app.documents_status.matric ? "text-green-500 text-lg" : "text-gray-600 text-lg"}>
-                        {app.documents_status.matric ? "✅" : "❌"}
+                        {app.documents_status.matric ? "âœ…" : "âŒ"}
                       </span>
                     </div>
                     <div className="text-center" title="Proof of Payment">
                       <p className="text-[9px] uppercase tracking-widest text-blue-400 mb-1 font-bold">R661.25 POP</p>
                       <span className={app.documents_status.pop ? "text-green-500 text-lg" : "text-gray-600 text-lg"}>
-                        {app.documents_status.pop ? "✅" : "❌"}
+                        {app.documents_status.pop ? "âœ…" : "âŒ"}
                       </span>
                     </div>
                   </div>
@@ -801,13 +801,13 @@ const AdminApplications: React.FC = () => {
 
               <div className="mt-6 pt-6 border-t border-white/5 flex flex-wrap gap-4 justify-between items-center">
                 <div className="text-xs text-gray-500">
-                  <span className="font-medium text-gray-400">Education:</span> {app.education_level} • {app.previous_school}
+                  <span className="font-medium text-gray-400">Education:</span> {app.education_level} â€¢ {app.previous_school}
                 </div>
                 <div className="flex gap-3">
                   {/* FIXED: Use type guard to check if status is 'approved' */}
                   {app.status === 'approved' ? (
                     <span className="px-4 py-2 text-xs bg-green-500/20 text-green-400 rounded-lg font-bold border border-green-500/20">
-                      ✓ Approved
+                      âœ“ Approved
                     </span>
                   ) : (
                     <>

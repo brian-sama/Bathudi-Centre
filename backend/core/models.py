@@ -90,9 +90,7 @@ class Course(models.Model):
         """Get course PDF URL - prefer uploaded file over URL"""
         if self.course_pdf:
             return self.course_pdf.url
-        elif self.course_pdf_url:
-            if self.course_pdf_url.startswith('/'):
-                return f'http://localhost:8000{self.course_pdf_url}'
+        if self.course_pdf_url:
             return self.course_pdf_url
         return None
 

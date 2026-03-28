@@ -1,0 +1,77 @@
+services:
+  bathudi_db:
+    image: postgres:15-alpine
+    container_name: bathudi_db
+    restart: always
+    environment:
+      POSTGRES_DB: bathudi_db
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    ports:
+      - "5434:5432"
+    volumes:
+      - bathudi_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d bathudi_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - bathudi_network
+
+  bathudi_api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bathudi_api
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-change-me}@bathudi_db:5432/bathudi_db
+    env_file:
+      - .env.production
+    ports:
+      - "8002:8000"
+    volumes:
+      - bathudi_static:/app/staticfiles
+      - bathudi_media:/app/media
+      - ./backend/pdfs:/app/pdfs:ro
+    depends_on:
+      bathudi_db:
+        condition: service_healthy
+    networks:
+      - bathudi_network
+
+  bathudi_web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    container_name: bathudi_web
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_NETWORK:-traefik-public}"
+      - "traefik.http.routers.bathudi.rule=Host(`${DOMAIN:-bathudi.co.za}`) || Host(`${WWW_DOMAIN:-www.bathudi.co.za}`)"
+      - "traefik.http.routers.bathudi.entrypoints=websecure"
+      - "traefik.http.routers.bathudi.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
+      - "traefik.http.services.bathudi.loadbalancer.server.port=80"
+    depends_on:
+      - bathudi_api
+    networks:
+      - bathudi_network
+      - traefik_public
+
+networks:
+  bathudi_network:
+    name: bathudi_network
+    driver: bridge
+  traefik_public:
+    name: ${TRAEFIK_NETWORK:-traefik-public}
+    external: true
+
+volumes:
+  bathudi_postgres_data:
+  bathudi_static:
+  bathudi_media:

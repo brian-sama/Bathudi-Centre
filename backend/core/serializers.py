@@ -44,7 +44,11 @@ class CourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
     
     def get_course_pdf_url(self, obj):
-        return obj.get_course_pdf_url
+        pdf_url = obj.get_course_pdf_url
+        request = self.context.get('request')
+        if pdf_url and request and pdf_url.startswith('/'):
+            return request.build_absolute_uri(pdf_url)
+        return pdf_url
     
     def get_image_url(self, obj):
         if obj.image:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
 import { COURSES } from '../constants';
 
@@ -53,7 +53,7 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+        const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
         const response = await fetch(`${API_BASE_URL}/courses/`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -94,7 +94,7 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
         const pdfFilename = course.course_pdf_url.split('/').pop();
         
         if (pdfFilename) {
-          const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+          const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
           const baseUrl = API_BASE_URL.replace('/api', '');
           const pdfUrl = `${baseUrl}/pdfs/course-outlines/${pdfFilename}`;
           window.open(pdfUrl, '_blank');
@@ -161,7 +161,7 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
                     >
                       <div className="w-full h-full flex items-center justify-center bg-black/50 backdrop-blur-sm">
                         <div className="text-center">
-                          <div className="text-4xl mb-2">🔧</div>
+                          <div className="text-4xl mb-2">ðŸ”§</div>
                           <p className="text-white text-sm font-medium px-4">{course.title}</p>
                         </div>
                       </div>
@@ -257,19 +257,19 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
           <p className="text-gray-400 mb-8 max-w-2xl mx-auto">Please note that all applications require a non-refundable R661.25 registration fee. Proof of payment must be uploaded during the application process.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-8">
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-              <span className="block text-2xl mb-2">📄</span>
+              <span className="block text-2xl mb-2">ðŸ“„</span>
               <p className="text-sm font-medium text-gray-300">Certified ID Copy</p>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-              <span className="block text-2xl mb-2">🎓</span>
+              <span className="block text-2xl mb-2">ðŸŽ“</span>
               <p className="text-sm font-medium text-gray-300">Matric/School Cert</p>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-              <span className="block text-2xl mb-2">💰</span>
+              <span className="block text-2xl mb-2">ðŸ’°</span>
               <p className="text-sm font-medium text-gray-300">R661.25 Admin Fee</p>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-              <span className="block text-2xl mb-2">🔢</span>
+              <span className="block text-2xl mb-2">ðŸ”¢</span>
               <p className="text-sm font-medium text-gray-300">Maths (Required for some)</p>
             </div>
           </div>
@@ -304,19 +304,19 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
               <h5 className="text-lg font-bold text-white mb-4">Important Notes</h5>
               <ul className="text-sm text-gray-400 space-y-2">
                 <li className="flex items-start">
-                  <span className="text-amber-400 mr-2">•</span>
+                  <span className="text-amber-400 mr-2">â€¢</span>
                   <span>No cash payments accepted</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-amber-400 mr-2">•</span>
+                  <span className="text-amber-400 mr-2">â€¢</span>
                   <span>10% discount for upfront payment</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-amber-400 mr-2">•</span>
+                  <span className="text-amber-400 mr-2">â€¢</span>
                   <span>Monthly payments due on 1st of each month</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-amber-400 mr-2">•</span>
+                  <span className="text-amber-400 mr-2">â€¢</span>
                   <span>R500 late payment fee after 7th of month</span>
                 </li>
               </ul>

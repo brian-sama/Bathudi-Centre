@@ -570,7 +570,7 @@ def get_course_pdf(request, course_id):
         return Response({"error": "No PDF available for this course"}, status=404)
     
     pdf_filename = course.course_pdf_url.split('/')[-1]
-    pdf_url = f"http://localhost:8000/pdfs/course-outlines/{pdf_filename}"
+    pdf_url = request.build_absolute_uri(f"/pdfs/course-outlines/{pdf_filename}")
     
     return Response({"pdf_url": pdf_url})
 
