@@ -16,6 +16,20 @@ fail() {
   exit 1
 }
 
+show_debug() {
+  printf '\n=== docker compose ps ===\n' >&2
+  docker compose ps >&2 || true
+
+  printf '\n=== bathudi_web logs ===\n' >&2
+  docker logs --tail 100 bathudi_web >&2 || true
+
+  printf '\n=== bathudi_api logs ===\n' >&2
+  docker logs --tail 100 bathudi_api >&2 || true
+
+  printf '\n=== Traefik containers ===\n' >&2
+  docker ps --format '{{.Names}} {{.Image}}' | grep -i traefik >&2 || true
+}
+
 require_command() {
   command -v "$1" >/dev/null 2>&1 || fail "Missing required command: $1"
 }
@@ -100,14 +114,23 @@ docker compose build --pull bathudi_api bathudi_web
 docker compose up -d --remove-orphans bathudi_db bathudi_api bathudi_web
 
 log "Waiting for Bathudi API on http://127.0.0.1:8002/api/courses/"
-wait_for_http "http://127.0.0.1:8002/api/courses/" "$API_WAIT_SECONDS" || fail "Bathudi API did not become ready in time."
+wait_for_http "http://127.0.0.1:8002/api/courses/" "$API_WAIT_SECONDS" || {
+  show_debug
+  fail "Bathudi API did not become ready in time."
+}
 
 log "Waiting for trusted HTTPS certificate on https://$DOMAIN"
-wait_for_https_cert "$DOMAIN" "$CERT_WAIT_SECONDS" || fail "Trusted HTTPS certificate was not issued for $DOMAIN. Check Traefik ACME logs and DNS."
+wait_for_https_cert "$DOMAIN" "$CERT_WAIT_SECONDS" || {
+  show_debug
+  fail "Trusted HTTPS certificate was not issued for $DOMAIN. Check Traefik ACME logs and DNS."
+}
 
 if [ -n "$WWW_DOMAIN" ]; then
   log "Waiting for trusted HTTPS certificate on https://$WWW_DOMAIN"
-  wait_for_https_cert "$WWW_DOMAIN" "$CERT_WAIT_SECONDS" || fail "Trusted HTTPS certificate was not issued for $WWW_DOMAIN. Check Traefik ACME logs and DNS."
+  wait_for_https_cert "$WWW_DOMAIN" "$CERT_WAIT_SECONDS" || {
+    show_debug
+    fail "Trusted HTTPS certificate was not issued for $WWW_DOMAIN. Check Traefik ACME logs and DNS."
+  }
 fi
 
 docker compose ps
