@@ -134,6 +134,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                 country=application.country,
                 education_level=application.education_level,
                 previous_school=application.previous_school,
+                status='Active',
                 fees_status='Pending'
             )
         return Response({'message': 'Application approved', 'status': 'approved'})
@@ -208,7 +209,7 @@ class StudentViewSet(viewsets.ModelViewSet):
                         'email': str(email).strip(),
                         'phone': str(phone).strip(),
                         'course': course.id if course else None,
-                        'status': 'enrolled',
+                        'status': 'Active',
                         'age': normalized_data.get('age'),
                         'id_number': normalized_data.get('id_number') or normalized_data.get('id') or normalized_data.get('passport'),
                         'country': normalized_data.get('country', 'South Africa'),

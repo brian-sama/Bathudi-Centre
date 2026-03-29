@@ -290,9 +290,10 @@ class Application(models.Model):
 
 class Student(models.Model):
     STATUS_CHOICES = [
-        ('enrolled', 'Enrolled'),
-        ('completed', 'Completed'),
-        ('dropped', 'Dropped'),
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+        ('Graduated', 'Graduated'),
+        ('Suspended', 'Suspended'),
     ]
     
     # Linking to application
@@ -317,7 +318,7 @@ class Student(models.Model):
     # Enrollment details
     enrollment_date = models.DateField(auto_now_add=True)
     completion_date = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='enrolled')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
     
     # Fee status
     FEE_STATUS_CHOICES = [
