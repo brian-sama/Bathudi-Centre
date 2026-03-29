@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
         <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group" onClick={handleLogoClick}>
           <div className="relative">
             <img 
-               src="/images/logo1.jpg" 
+              src="/images/bathudi-logo.png" 
               alt="Bathudi Training Center Logo" 
               className="h-14 sm:h-16 md:h-20 lg:h-27 w-auto transition-all duration-300 group-hover:scale-110 group-hover:rotate-2"
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -68,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
                 console.error("Navbar logo failed to load. Attempted path:", img.src);
                 setLogoError(true);
               }}
-              onLoad={() => console.log("Navbar logo loaded successfully from:", "/images/logo1.jpg")}
+              onLoad={() => console.log("✅ Preloader logo loaded successfully from:", "/images/bathudi-logo.png")}
             />
             {logoError && (
               <div className="absolute inset-0 flex items-center justify-center bg-red-600 rounded-lg">

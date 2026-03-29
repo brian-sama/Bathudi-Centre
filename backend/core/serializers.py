@@ -139,49 +139,27 @@ class ApplicationSerializer(serializers.ModelSerializer):
         return obj.documents_status
     
     def validate(self, data):
-        """Validate and map course data - FIXED"""
-        print(f"🔍 Serializer validate - raw data: {data}")
-        
-        # Handle form_course_id that we set in the view
+        """Validate and map course data"""
         form_course_id = data.get('form_course_id', '')
-        
         if form_course_id:
-            print(f"🔍 Found form_course_id: {form_course_id}")
-            
-            # Map form course IDs to actual Course titles
             course_mapping = {
                 'automotive_engine_repairer': 'Automotive Engine Repairer',
                 'automotive_clutch_brake_repairer': 'Automotive Clutch and Brake Repairer',
                 'automotive_suspension_fitter': 'Automotive Suspension Fitter',
                 'automotive_workshop_assistant': 'Automotive Workshop Assistant',
             }
-            
             if form_course_id in course_mapping:
                 course_title = course_mapping[form_course_id]
-                try:
-                    # Try contains first
-                    course = Course.objects.filter(title__icontains=course_title).first()
-                    
-                    # If not found, try exact match
-                    if not course:
-                        course = Course.objects.filter(title=course_title).first()
-                    
-                    if course:
-                        data['course'] = course
-                        data['course_title'] = course.title
-                        print(f"✅ SUCCESS: Mapped to course: {course.title} (ID: {course.id})")
-                    else:
-                        print(f"⚠️ WARNING: No course found matching: {course_title}")
-                        
-                        # List all available courses for debugging
-                        all_courses = Course.objects.all()
-                        print(f"📚 Available courses: {[c.title for c in all_courses]}")
-                except Exception as e:
-                    print(f"❌ Error mapping course: {e}")
+                course = Course.objects.filter(title__icontains=course_title).first()
+                if not course:
+                    course = Course.objects.filter(title=course_title).first()
+                if course:
+                    data['course'] = course
+                    data['course_title'] = course.title
         
         # Set default status
-        data['status'] = 'pending'
-        data['fee_verified'] = False
+        if not data.get('status'):
+            data['status'] = 'pending'
         
         return data
 
@@ -241,7 +219,8 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'application', 'user', 'student_id', 'name', 'surname',
             'email', 'phone', 'course', 'course_title', 'enrollment_date',
-            'completion_date', 'status', 'certificate_id', 'address'
+            'completion_date', 'status', 'certificate_id', 'address',
+            'age', 'id_number', 'country', 'education_level', 'previous_school', 'fees_status'
         ]
         read_only_fields = ['enrollment_date', 'student_id']
 

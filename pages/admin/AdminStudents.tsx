@@ -156,7 +156,11 @@ const AdminStudents: React.FC = () => {
       const response = await fetch(`${API_BASE_URL}/students/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(studentData),
+        body: JSON.stringify({
+          ...newStudent,
+          course: newStudent.course_id,
+          age: parseInt(newStudent.age) || null,
+        }),
       });
 
       if (response.ok) {
@@ -533,7 +537,11 @@ const AdminStudents: React.FC = () => {
                 <div><p className="text-gray-400">Course</p><p className="text-white font-medium">{selectedStudent.course_title}</p></div>
                 <div><p className="text-gray-400">Status</p><p className={`font-medium ${selectedStudent.status === StudentStatus.Active ? 'text-green-400' : 'text-red-400'}`}>{selectedStudent.status}</p></div>
                 <div><p className="text-gray-400">Fee Status</p><p className={`font-medium ${getFeeStatusColor(getFeeStatus(selectedStudent))}`}>{getFeeStatus(selectedStudent)}</p></div>
-                <div><p className="text-gray-400">Address</p><p className="text-white font-medium">{selectedStudent.address || 'N/A'}</p></div>
+                <div><p className="text-gray-400">Age</p><p className="text-white font-medium">{selectedStudent.age || 'N/A'}</p></div>
+                <div><p className="text-gray-400">ID Number</p><p className="text-white font-medium">{selectedStudent.id_number || 'N/A'}</p></div>
+                <div><p className="text-gray-400">Country</p><p className="text-white font-medium">{selectedStudent.country || 'N/A'}</p></div>
+                <div><p className="text-gray-400">Education</p><p className="text-white font-medium">{selectedStudent.education_level || 'N/A'}</p></div>
+                <div className="col-span-2"><p className="text-gray-400">Address</p><p className="text-white font-medium">{selectedStudent.address || 'N/A'}</p></div>
               </div>
               <div className="flex justify-end mt-6">
                 <button onClick={() => { setShowViewModal(false); setSelectedStudent(null); }} 
@@ -581,10 +589,24 @@ const AdminStudents: React.FC = () => {
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Address</label>
-                  <input type="text" value={selectedStudent.address || ''} 
-                    onChange={(e) => setSelectedStudent({...selectedStudent, address: e.target.value})}
+                  <label className="block text-sm text-gray-400 mb-1">Age</label>
+                  <input type="number" value={selectedStudent.age || ''} 
+                    onChange={(e) => setSelectedStudent({...selectedStudent, age: parseInt(e.target.value) || undefined})}
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">ID Number</label>
+                  <input type="text" value={selectedStudent.id_number || ''} 
+                    onChange={(e) => setSelectedStudent({...selectedStudent, id_number: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Course</label>
+                  <select value={selectedStudent.course} 
+                    onChange={(e) => setSelectedStudent({...selectedStudent, course: parseInt(e.target.value)})}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                    {availableCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Fee Status</label>
@@ -604,7 +626,15 @@ const AdminStudents: React.FC = () => {
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     <option value={StudentStatus.Active}>Active</option>
                     <option value={StudentStatus.Inactive}>Inactive</option>
+                    <option value={StudentStatus.Graduated}>Graduated</option>
+                    <option value={StudentStatus.Suspended}>Suspended</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Address</label>
+                  <input type="text" value={selectedStudent.address || ''} 
+                    onChange={(e) => setSelectedStudent({...selectedStudent, address: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
               </div>
               

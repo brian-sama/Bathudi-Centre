@@ -77,7 +77,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
         <div className="p-4 sm:p-6 border-b border-white/5">
           <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
             <img 
-              src="/images/logo1.jpg" 
+              src="/images/bathudi-logo.png" 
               alt="Logo" 
               className="h-8 sm:h-10 w-auto flex-shrink-0"
               onError={(e) => {

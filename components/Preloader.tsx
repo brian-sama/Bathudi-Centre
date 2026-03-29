@@ -34,7 +34,7 @@ const ElegantPreloader: React.FC = () => {
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl shadow-blue-500/20">
             {!imageError ? (
               <img 
-                src="/images/logo1.jpg" 
+                src="/images/bathudi-logo.png" 
                 alt="Bathudi Logo" 
                 className="w-full h-full object-cover"
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -44,7 +44,7 @@ const ElegantPreloader: React.FC = () => {
                   console.log("Base URL:", document.baseURI);
                   setImageError(true);
                 }}
-                onLoad={() => console.log("✅ Preloader logo loaded successfully from:", "/images/logo1.jpg")}
+                onLoad={() => console.log("✅ Preloader logo loaded successfully from:", "/images/bathudi-logo.png")}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">

@@ -135,6 +135,14 @@ export interface Student {
   address?: string;
   profile_image?: string;
   application?: number; // Application ID
+  
+  // New fields
+  age?: number;
+  id_number?: string;
+  country?: string;
+  education_level?: string;
+  previous_school?: string;
+  
   // Backward compatibility fields
   feesStatus?: FeeStatus;
   dateRegistered?: string;

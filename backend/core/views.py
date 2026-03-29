@@ -28,26 +28,16 @@ from .serializers import (
 @api_view(['GET'])
 def serve_document(request, file_path):
     """Serve document files with proper content disposition"""
-    # Construct the full file path
     full_path = os.path.join(settings.MEDIA_ROOT, file_path)
-    
-    # Check if file exists
     if not os.path.exists(full_path):
         raise Http404("File does not exist")
-    
-    # Open the file
     file_handle = open(full_path, 'rb')
-    
-    # Guess content type
     content_type, encoding = mimetypes.guess_type(full_path)
     if content_type is None:
         content_type = 'application/octet-stream'
-    
-    # Create response
     response = FileResponse(file_handle, content_type=content_type)
     response['Content-Disposition'] = f'inline; filename="{os.path.basename(full_path)}"'
     response['Content-Length'] = os.path.getsize(full_path)
-    
     return response
 
 # ========== DEBUG VIEW ==========
@@ -76,35 +66,26 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     
     def get_serializer_class(self):
-        """Return different serializers based on action"""
         if self.action == 'retrieve':
             return ApplicationDetailSerializer
         return ApplicationSerializer
     
     def get_serializer_context(self):
-        """Pass request context to serializer"""
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
     
     def get_queryset(self):
-        """Filter applications based on query parameters"""
         queryset = Application.objects.all().order_by('-applied_date')
-        
-        # Filter by status
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
-        
-        # Filter by fee_verified
         fee_verified = self.request.query_params.get('fee_verified', None)
         if fee_verified:
             if fee_verified.lower() == 'true':
                 queryset = queryset.filter(fee_verified=True)
             elif fee_verified.lower() == 'false':
                 queryset = queryset.filter(fee_verified=False)
-        
-        # Search by name, email, or mobile
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(
@@ -113,140 +94,32 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                 Q(email__icontains=search) |
                 Q(mobile__icontains=search)
             )
-        
         return queryset
-    
+
     def create(self, request, *args, **kwargs):
-        """Create a new application with file uploads - FIXED"""
-        try:
-            print("=" * 60)
-            print("📝 RECEIVING APPLICATION SUBMISSION")
-            print("=" * 60)
-            print("📁 Files received:", list(request.FILES.keys()))
-            print("📋 Data received:", dict(request.data))
-            print("=" * 60)
-            
-            # Prepare data
-            data = request.data.copy()
-            files = request.FILES
-            
-            # CRITICAL FIX: Handle course mapping properly
-            # Check for course_id in the request data (sent from React)
-            if 'course_id' in data:
-                course_id_value = data['course_id']
-                print(f"🎯 Found course_id: {course_id_value}")
-                
-                # Set form_course_id for the serializer
-                data['form_course_id'] = course_id_value
-                
-                # Also try to directly map to a Course object
-                course_mapping = {
-                    'automotive_engine_repairer': 'Automotive Engine Repairer',
-                    'automotive_clutch_brake_repairer': 'Automotive Clutch and Brake Repairer',
-                    'automotive_suspension_fitter': 'Automotive Suspension Fitter',
-                    'automotive_workshop_assistant': 'Automotive Workshop Assistant',
-                }
-                
-                if course_id_value in course_mapping:
-                    course_title = course_mapping[course_id_value]
-                    try:
-                        # Try contains first
-                        course = Course.objects.filter(title__icontains=course_title).first()
-                        
-                        # If not found, try exact match
-                        if not course:
-                            course = Course.objects.filter(title=course_title).first()
-                        
-                        if course:
-                            data['course'] = course.id
-                            print(f"✅ SUCCESS: Mapped course: {course.title} (ID: {course.id})")
-                        else:
-                            print(f"⚠️ WARNING: Course not found for title: {course_title}")
-                            
-                            # List all available courses for debugging
-                            all_courses = Course.objects.all()
-                            print(f"📚 Available courses: {[c.title for c in all_courses]}")
-                    except Exception as e:
-                        print(f"❌ Error finding course: {e}")
-            
-            # Also check for 'course' field
-            elif 'course' in data and isinstance(data['course'], str):
-                data['form_course_id'] = data['course']
-                print(f"🎯 Found course field: {data['course']}")
-            
-            # Create serializer with request context
-            serializer = self.get_serializer(data=data, context={'request': request})
-            
-            if serializer.is_valid():
-                # Save application
-                application = serializer.save()
-                
-                # Handle file uploads
-                file_fields = ['id_document', 'matric_certificate', 'proof_of_payment', 
-                             'additional_doc_1', 'additional_doc_2']
-                
-                for field in file_fields:
-                    if field in files:
-                        file_obj = files[field]
-                        setattr(application, field, file_obj)
-                        print(f"📎 Attached {field}: {file_obj.name}")
-                
-                application.save()
-                
-                # Return response
-                response_serializer = ApplicationDetailSerializer(
-                    application, 
-                    context={'request': request}
-                )
-                
-                print("=" * 60)
-                print(f"✅ SUCCESS: Application {application.id} created!")
-                print(f"   👤 Name: {application.name} {application.surname}")
-                print(f"   📚 Course: {application.course.title if application.course else 'No course'}")
-                print(f"   📋 Course Title: {application.course_title}")
-                print(f"   📁 Documents: {application.get_documents_status_display() if hasattr(application, 'get_documents_status_display') else 'None'}")
-                print("=" * 60)
-                
-                return Response({
-                    'id': application.id,
-                    'message': 'Application submitted successfully!',
-                    'status': 'pending',
-                    'data': response_serializer.data
-                }, status=status.HTTP_201_CREATED)
-            else:
-                print("❌ Serializer errors:", serializer.errors)
-                return Response({
-                    'error': 'Validation failed',
-                    'details': serializer.errors
-                }, status=status.HTTP_400_BAD_REQUEST)
-                
-        except Exception as e:
-            print(f"❌ Error creating application: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return Response({
-                'error': 'Failed to create application',
-                'details': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    @action(detail=True, methods=['get'])
-    def documents(self, request, pk=None):
-        """Get all documents for an application with full URLs"""
-        application = self.get_object()
-        serializer = ApplicationDocumentsSerializer(
-            application, 
-            context={'request': request}
-        )
-        return Response(serializer.data)
+        """Create a new application with file uploads"""
+        data = request.data.copy()
+        files = request.FILES
+        
+        # Handle course mapping if course_id is provided
+        if 'course_id' in data:
+            data['form_course_id'] = data['course_id']
+        
+        serializer = self.get_serializer(data=data, context={'request': request})
+        if serializer.is_valid():
+            application = serializer.save()
+            # Handle file uploads explicitly if needed, but ModelSerializer usually handles it
+            application.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['patch'])
     def approve(self, request, pk=None):
-        """Approve an application"""
+        """Approve an application and create student record"""
         application = self.get_object()
         application.status = 'approved'
         application.save()
         
-        # Create student record if approved
         if not hasattr(application, 'student_record'):
             Student.objects.create(
                 application=application,
@@ -255,113 +128,43 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                 email=application.email,
                 phone=application.mobile,
                 course=application.course,
-                address=application.address
+                address=application.address,
+                age=application.age,
+                id_number=application.id_number,
+                country=application.country,
+                education_level=application.education_level,
+                previous_school=application.previous_school,
+                fees_status='Pending'
             )
-        
-        return Response({
-            'message': 'Application approved successfully',
-            'status': 'approved'
-        })
+        return Response({'message': 'Application approved', 'status': 'approved'})
     
     @action(detail=True, methods=['patch'])
     def reject(self, request, pk=None):
-        """Reject an application"""
         application = self.get_object()
         application.status = 'rejected'
         application.rejection_reason = request.data.get('reason', '')
         application.save()
-        
-        return Response({
-            'message': 'Application rejected successfully',
-            'status': 'rejected',
-            'reason': application.rejection_reason
-        })
-    
-    @action(detail=True, methods=['patch'])
-    def verify_fee(self, request, pk=None):
-        """Verify payment fee"""
-        application = self.get_object()
-        application.fee_verified = True
-        application.save()
-        
-        return Response({
-            'message': 'Fee verified successfully',
-            'fee_verified': True
-        })
-    
-    @action(detail=True, methods=['patch'])
-    def unverify_fee(self, request, pk=None):
-        """Unverify payment fee"""
-        application = self.get_object()
-        application.fee_verified = False
-        application.save()
-        
-        return Response({
-            'message': 'Fee verification removed',
-            'fee_verified': False
-        })
-    
-    @action(detail=False, methods=['get'])
-    def pending(self, request):
-        """Get all pending applications"""
-        queryset = Application.objects.filter(status='pending').order_by('-applied_date')
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def stats(self, request):
-        """Get application statistics"""
-        total = Application.objects.count()
-        pending = Application.objects.filter(status='pending').count()
-        approved = Application.objects.filter(status='approved').count()
-        rejected = Application.objects.filter(status='rejected').count()
-        fee_verified = Application.objects.filter(fee_verified=True).count()
-        
-        return Response({
-            'total': total,
-            'pending': pending,
-            'approved': approved,
-            'rejected': rejected,
-            'fee_verified': fee_verified,
-        })
+        return Response({'message': 'Application rejected', 'status': 'rejected'})
 
 # ========== COURSE VIEWS ==========
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by('display_order', '-created_at')
     serializer_class = CourseSerializer
     permission_classes = [AllowAny]
-    lookup_field = 'id'
-    
-    def get_queryset(self):
-        # Allow admin to see all courses (including inactive)
-        is_admin = self.request.query_params.get('admin', 'false').lower() == 'true'
-        if is_admin:
-            return Course.objects.all().order_by('display_order', '-created_at')
-        return Course.objects.filter(is_active=True).order_by('display_order', '-created_at')
-    
-    def get_serializer_context(self):
-        """Pass request context to serializer"""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class CourseRequirementViewSet(viewsets.ModelViewSet):
     queryset = CourseRequirement.objects.all()
     serializer_class = CourseRequirementSerializer
     permission_classes = [AllowAny]
 
-# ========== OTHER VIEWS ==========
+# ========== STUDENT VIEWS ==========
 class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by('-enrollment_date')
     serializer_class = StudentSerializer
     permission_classes = [AllowAny]
 
     @action(detail=False, methods=['post'])
     def bulk_enroll(self, request):
-        """
-        Bulk enroll students from a list of student data (e.g., from a CSV/Excel file).
-        Expects a list of objects.
-        """
         students_data = request.data
         if not isinstance(students_data, list):
             return Response({'error': 'Expected a list of students'}, status=status.HTTP_400_BAD_REQUEST)
@@ -370,44 +173,33 @@ class StudentViewSet(viewsets.ModelViewSet):
         errors = []
         
         try:
-            # Get all courses once to avoid multiple DB hits in the loop
             courses_map = {}
             for c in Course.objects.filter(is_active=True):
-                if c.title:
-                    courses_map[c.title.lower()] = c
-                if getattr(c, 'short_title', None):
-                    courses_map[c.short_title.lower()] = c
+                if c.title: courses_map[c.title.lower()] = c
+                if getattr(c, 'short_title', None): courses_map[c.short_title.lower()] = c
 
             for index, student_data in enumerate(students_data):
                 try:
-                    # Normalize keys to lowercase and strip whitespace to handle headers like 'NAME', ' SURNAME '
                     if isinstance(student_data, dict):
                         normalized_data = {str(k).lower().strip(): v for k, v in student_data.items()}
                     else:
                         normalized_data = {}
 
-                    # --- Find Course ---
                     course_name = str(normalized_data.get('course', '')).lower().strip()
-                    course = None
-                    if course_name:
-                        # Direct match first
-                        course = courses_map.get(course_name)
-                        # Partial match if no direct match found
-                        if not course:
-                            for title, course_obj in courses_map.items():
-                                if course_name in title:
-                                    course = course_obj
-                                    break
+                    course = courses_map.get(course_name)
+                    if not course:
+                        for title, course_obj in courses_map.items():
+                            if course_name in title:
+                                course = course_obj
+                                break
                     
-                    # --- Map Data ---
-                    # Be flexible with column names from spreadsheet
                     name = normalized_data.get('name') or normalized_data.get('names') or normalized_data.get('first_name')
                     surname = normalized_data.get('surname') or normalized_data.get('surnames') or normalized_data.get('last_name')
                     email = normalized_data.get('email')
                     phone = normalized_data.get('phone') or normalized_data.get('number') or normalized_data.get('mobile')
 
                     if not all([name, surname, email, phone]):
-                        errors.append({'row': index + 2, 'data': student_data, 'errors': 'Missing required fields: name, surname, email, phone.'})
+                        errors.append({'row': index + 2, 'errors': 'Missing required fields'})
                         continue
 
                     data = {
@@ -416,8 +208,14 @@ class StudentViewSet(viewsets.ModelViewSet):
                         'email': str(email).strip(),
                         'phone': str(phone).strip(),
                         'course': course.id if course else None,
-                        'status': 'enrolled',  # Default to 'enrolled', matching STATUS_CHOICES
-                        # Removed fees_status as it is not in Student model
+                        'status': 'enrolled',
+                        'age': normalized_data.get('age'),
+                        'id_number': normalized_data.get('id_number') or normalized_data.get('id') or normalized_data.get('passport'),
+                        'country': normalized_data.get('country', 'South Africa'),
+                        'education_level': normalized_data.get('education_level') or normalized_data.get('education'),
+                        'previous_school': normalized_data.get('previous_school') or normalized_data.get('school'),
+                        'fees_status': normalized_data.get('fees_status') or normalized_data.get('payment_status') or 'Pending',
+                        'address': normalized_data.get('address', '')
                     }
 
                     serializer = self.get_serializer(data=data)
@@ -425,28 +223,21 @@ class StudentViewSet(viewsets.ModelViewSet):
                         student = serializer.save()
                         created_students.append(self.get_serializer(student).data)
                     else:
-                        errors.append({'row': index + 2, 'data': student_data, 'errors': serializer.errors})
+                        errors.append({'row': index + 2, 'errors': serializer.errors})
                 except Exception as e:
-                    errors.append({'row': index + 2, 'data': student_data, 'errors': str(e)})
-
-            if errors:
-                return Response({
-                    'message': f'Upload complete. {len(created_students)} students enrolled, {len(errors)} rows failed.',
-                    'created_count': len(created_students),
-                    'error_count': len(errors),
-                    'errors': errors
-                }, status=status.HTTP_207_MULTI_STATUS)
+                    errors.append({'row': index + 2, 'errors': str(e)})
 
             return Response({
-                'message': f'Successfully enrolled {len(created_students)} students.',
+                'message': f'Processed {len(students_data)} rows. {len(created_students)} successful.',
                 'created_count': len(created_students),
-            }, status=status.HTTP_201_CREATED)
+                'error_count': len(errors),
+                'errors': errors
+            }, status=status.HTTP_201_CREATED if not errors else status.HTTP_207_MULTI_STATUS)
             
         except Exception as e:
-            return Response({
-                'error': 'An unexpected error occurred during bulk upload',
-                'details': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ========== OTHER VIEWSETS ==========
 class NewsletterViewSet(viewsets.ModelViewSet):
     queryset = Newsletter.objects.filter(is_active=True)
     serializer_class = NewsletterSerializer
@@ -455,44 +246,17 @@ class NewsletterViewSet(viewsets.ModelViewSet):
 class GalleryImageViewSet(viewsets.ModelViewSet):
     queryset = GalleryImage.objects.filter(is_active=True)
     serializer_class = GalleryImageSerializer
-    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [AllowAny]
-    
-    def get_serializer_context(self):
-        """Pass request context to serializer"""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class NewsPostViewSet(viewsets.ModelViewSet):
     queryset = NewsPost.objects.all().order_by('-created_at')
     serializer_class = NewsPostSerializer
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
     permission_classes = [AllowAny]
-    
-    def get_queryset(self):
-        is_admin = self.request.query_params.get('admin', 'false').lower() == 'true'
-        if is_admin:
-            return NewsPost.objects.all().order_by('-created_at')
-        return NewsPost.objects.filter(is_published=True).order_by('-created_at')
-    
-    def get_serializer_context(self):
-        """Pass request context to serializer"""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class TeamMemberViewSet(viewsets.ModelViewSet):
     queryset = TeamMember.objects.filter(is_active=True).order_by('order')
     serializer_class = TeamMemberSerializer
-    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [AllowAny]
-    
-    def get_serializer_context(self):
-        """Pass request context to serializer"""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class TestimonialViewSet(viewsets.ModelViewSet):
     queryset = Testimonial.objects.all()
@@ -502,26 +266,14 @@ class TestimonialViewSet(viewsets.ModelViewSet):
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.filter(is_active=True).order_by('-created_at')
     serializer_class = VideoSerializer
-    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [AllowAny]
-    
-    def get_serializer_context(self):
-        """Pass request context to serializer"""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class DirectorMessageViewSet(viewsets.ModelViewSet):
     queryset = DirectorMessage.objects.all().order_by('-created_at')
     serializer_class = DirectorMessageSerializer
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
     permission_classes = [AllowAny]
     
-    def dispatch(self, request, *args, **kwargs):
-        print(f"🔍 [DISPATCH] {request.method} {request.path}")
-        return super().dispatch(request, *args, **kwargs)
     def get_serializer_context(self):
-        """Pass request context to serializer"""
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
@@ -533,61 +285,26 @@ class DirectorMessageViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(message, context={'request': request})
             return Response(serializer.data)
         return Response({})
-    
-    def create(self, request, *args, **kwargs):
-        print(f"🎬 Creating new Director Message. Files: {list(request.FILES.keys())}")
-        try:
-            DirectorMessage.objects.filter(is_active=True).update(is_active=False)
-            response = super().create(request, *args, **kwargs)
-            return response
-        except Exception as e:
-            print(f"❌ Create Error: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def update(self, request, *args, **kwargs):
-        print(f"📝 Updating Director Message {kwargs.get('pk')}. Files: {list(request.FILES.keys())}")
-        try:
-            return super().update(request, *args, **kwargs)
-        except Exception as e:
-            print(f"❌ Update Error: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def partial_update(self, request, *args, **kwargs):
-        print(f"🩹 Partial Update Director Message {kwargs.get('pk')}. Files: {list(request.FILES.keys())}")
-        try:
-            return super().partial_update(request, *args, **kwargs)
-        except Exception as e:
-            print(f"❌ Partial Update Error: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-# Simple view to get PDF URL
 @api_view(['GET'])
 def get_course_pdf(request, course_id):
     """Get direct URL to course PDF"""
     course = get_object_or_404(Course, id=course_id)
-    
     if not course.course_pdf_url:
-        return Response({"error": "No PDF available for this course"}, status=404)
-    
+        return Response({"error": "No PDF available"}, status=404)
     pdf_filename = course.course_pdf_url.split('/')[-1]
     pdf_url = request.build_absolute_uri(f"/pdfs/course-outlines/{pdf_filename}")
-    
     return Response({"pdf_url": pdf_url})
 
-# ========== DASHBOARD STATS ==========
 @api_view(['GET'])
 def dashboard_stats(request):
-    """Get dashboard statistics"""
     total_applications = Application.objects.count()
     pending_applications = Application.objects.filter(status='pending').count()
-    approved_applications = Application.objects.filter(status='approved').count()
     total_students = Student.objects.count()
     active_courses = Course.objects.filter(is_active=True).count()
-    
     return Response({
         'total_applications': total_applications,
         'pending_applications': pending_applications,
-        'approved_applications': approved_applications,
         'total_students': total_students,
         'active_courses': active_courses,
     })

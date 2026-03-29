@@ -177,7 +177,7 @@ class Application(models.Model):
     message = models.TextField(blank=True, help_text="Why do you want to join this course?")
     rejection_reason = models.TextField(blank=True, null=True, help_text="Reason for rejection")
     
-    # Document fields - FIXED: Using proper upload paths
+    # Document fields
     id_document = models.FileField(
         upload_to=id_document_upload_path,
         validators=[FileExtensionValidator(['pdf', 'jpg', 'jpeg', 'png'])],
@@ -217,51 +217,30 @@ class Application(models.Model):
     notes = models.TextField(blank=True, help_text="Admin notes")
     
     def save(self, *args, **kwargs):
-        """Save application with course mapping - FIXED"""
-        print(f"🔍 Application.save() - Course: {self.course}, form_course_id: {self.form_course_id}")
-        
-        # Try to find course by form_course_id if course is not set
+        """Save application with course mapping"""
         if not self.course and self.form_course_id:
             try:
-                # Map form course IDs to actual Course objects
                 course_mapping = {
                     'automotive_engine_repairer': 'Automotive Engine Repairer',
                     'automotive_clutch_brake_repairer': 'Automotive Clutch and Brake Repairer',
                     'automotive_suspension_fitter': 'Automotive Suspension Fitter',
                     'automotive_workshop_assistant': 'Automotive Workshop Assistant',
                 }
-                
                 if self.form_course_id in course_mapping:
                     course_title = course_mapping[self.form_course_id]
-                    print(f"🔍 Looking for course with title containing: {course_title}")
-                    
-                    # Try contains first
                     course = Course.objects.filter(title__icontains=course_title).first()
-                    
-                    # If not found, try exact match
                     if not course:
                         course = Course.objects.filter(title=course_title).first()
-                    
                     if course:
                         self.course = course
                         self.course_title = course.title
-                        print(f"✅ SUCCESS: Set course to: {course.title} (ID: {course.id})")
-                    else:
-                        print(f"⚠️ WARNING: No course found for: {course_title}")
-                        
-                        # List all available courses for debugging
-                        all_courses = Course.objects.all()
-                        print(f"📚 Available courses: {[c.title for c in all_courses]}")
             except Exception as e:
-                print(f"❌ Error in save method: {e}")
+                print(f"Error in save method: {e}")
         
-        # Automatically set course_title from course if not set
         if not self.course_title and self.course:
             self.course_title = self.course.title
-            print(f"📝 Set course_title from course: {self.course_title}")
         
         super().save(*args, **kwargs)
-        print(f"✅ Application {self.id} saved with course: {self.course}")
     
     @property
     def documents_status(self):
@@ -295,7 +274,6 @@ class Application(models.Model):
                 'size': doc.size if hasattr(doc, 'size') else 0,
                 'uploaded_at': self.applied_date,
             }
-            
             if hasattr(doc, 'url'):
                 if request:
                     info['url'] = request.build_absolute_uri(doc.url)
@@ -329,10 +307,27 @@ class Student(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='students')
     
+    # New fields for comprehensive records
+    age = models.IntegerField(null=True, blank=True)
+    id_number = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=100, blank=True, default='South Africa')
+    education_level = models.CharField(max_length=200, blank=True)
+    previous_school = models.CharField(max_length=200, blank=True)
+
     # Enrollment details
     enrollment_date = models.DateField(auto_now_add=True)
     completion_date = models.DateField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='enrolled')
+    
+    # Fee status
+    FEE_STATUS_CHOICES = [
+        ('Paid', 'Paid'),
+        ('Partial', 'Partial'),
+        ('Outstanding', 'Outstanding'),
+        ('Pending', 'Pending'),
+    ]
+    fees_status = models.CharField(max_length=20, choices=FEE_STATUS_CHOICES, default='Pending')
+    
     certificate_id = models.CharField(max_length=100, blank=True)
     address = models.TextField(blank=True)
     

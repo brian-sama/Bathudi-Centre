@@ -21,7 +21,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
               <img 
-                src="/images/logo1.jpg" 
+                src="/images/bathudi-logo.png" 
                 alt="Bathudi Automotive Technical Center Logo" 
                 className="h-12 w-auto"
                 onError={(e) => {
