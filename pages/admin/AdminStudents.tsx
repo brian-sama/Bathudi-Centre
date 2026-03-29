@@ -206,7 +206,7 @@ const AdminStudents: React.FC = () => {
       } = selectedStudent;
 
       const response = await fetch(`${API_BASE_URL}/students/${id}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name, surname, email, phone, address,
@@ -219,13 +219,18 @@ const AdminStudents: React.FC = () => {
       });
 
       if (response.ok) {
+        const result = await response.json();
+        setStudents(students.map(s => s.id === id ? result : s));
         alert(`\u2705 Student details updated successfully!`);
         setShowEditModal(false);
         setSelectedStudent(null);
-        fetchStudents();
       } else {
-        const error = await response.json();
-        alert(`\u274C Failed to update student: ${error.message || 'Unknown error'}`);
+        const errorData = await response.json();
+        const errorDetail = typeof errorData === 'object' 
+          ? Object.entries(errorData).map(([f, e]) => `${f}: ${e}`).join('\n')
+          : 'Unknown error';
+        alert(`\u274C Update failed:\n${errorDetail}`);
+        console.error('Update failed:', errorData);
       }
     } catch (error) {
       console.error('Error updating student:', error);
@@ -493,8 +498,9 @@ const AdminStudents: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Upload Spreadsheet</label>
+                <label htmlFor="student-file-upload" className="block text-sm text-gray-400 mb-2">Upload Spreadsheet</label>
                 <input 
+                  id="student-file-upload"
                   type="file" 
                   accept=".xlsx, .xls, .csv"
                   onChange={handleFileSelect}
@@ -590,53 +596,61 @@ const AdminStudents: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">First Name</label>
-                  <input type="text" value={selectedStudent.name} 
+                  <label htmlFor="edit-name" className="block text-sm text-gray-400 mb-1">First Name</label>
+                  <input id="edit-name" type="text" value={selectedStudent.name} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, name: e.target.value})}
+                    placeholder="First name"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Last Name</label>
-                  <input type="text" value={selectedStudent.surname} 
+                  <label htmlFor="edit-surname" className="block text-sm text-gray-400 mb-1">Last Name</label>
+                  <input id="edit-surname" type="text" value={selectedStudent.surname} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, surname: e.target.value})}
+                    placeholder="Last name"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Email</label>
-                  <input type="email" value={selectedStudent.email} 
+                  <label htmlFor="edit-email" className="block text-sm text-gray-400 mb-1">Email</label>
+                  <input id="edit-email" type="email" value={selectedStudent.email} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, email: e.target.value})}
+                    placeholder="Email address"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Phone</label>
-                  <input type="text" value={selectedStudent.phone} 
+                  <label htmlFor="edit-phone" className="block text-sm text-gray-400 mb-1">Phone</label>
+                  <input id="edit-phone" type="text" value={selectedStudent.phone} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, phone: e.target.value})}
+                    placeholder="Phone number"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Age</label>
-                  <input type="number" value={selectedStudent.age || ''} 
+                  <label htmlFor="edit-age" className="block text-sm text-gray-400 mb-1">Age</label>
+                  <input id="edit-age" type="number" value={selectedStudent.age || ''} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, age: parseInt(e.target.value) || undefined})}
+                    placeholder="Age"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">ID Number</label>
-                  <input type="text" value={selectedStudent.id_number || ''} 
+                  <label htmlFor="edit-id_number" className="block text-sm text-gray-400 mb-1">ID Number</label>
+                  <input id="edit-id_number" type="text" value={selectedStudent.id_number || ''} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, id_number: e.target.value})}
+                    placeholder="ID number"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Course</label>
-                  <select value={selectedStudent.course} 
+                  <label htmlFor="edit-course" className="block text-sm text-gray-400 mb-1">Course</label>
+                  <select id="edit-course" value={selectedStudent.course} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, course: parseInt(e.target.value)})}
+                    title="Select course"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     {availableCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Fee Status</label>
-                  <select value={selectedStudent.fees_status} 
+                  <label htmlFor="edit-fees-status" className="block text-sm text-gray-400 mb-1">Fee Status</label>
+                  <select id="edit-fees-status" value={selectedStudent.fees_status} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, fees_status: e.target.value as FeeStatus})}
+                    title="Select fee status"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     <option value={FeeStatus.Paid}>Paid</option>
                     <option value={FeeStatus.Partial}>Partial</option>
@@ -645,9 +659,10 @@ const AdminStudents: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Status</label>
-                  <select value={selectedStudent.status} 
+                  <label htmlFor="edit-status" className="block text-sm text-gray-400 mb-1">Status</label>
+                  <select id="edit-status" value={selectedStudent.status} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, status: e.target.value as StudentStatus})}
+                    title="Select student status"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     <option value={StudentStatus.Active}>Active</option>
                     <option value={StudentStatus.Inactive}>Inactive</option>
@@ -656,9 +671,10 @@ const AdminStudents: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Address</label>
-                  <input type="text" value={selectedStudent.address || ''} 
+                  <label htmlFor="edit-address" className="block text-sm text-gray-400 mb-1">Address</label>
+                  <input id="edit-address" type="text" value={selectedStudent.address || ''} 
                     onChange={(e) => setSelectedStudent({...selectedStudent, address: e.target.value})}
+                    placeholder="Residential address"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
               </div>
@@ -708,11 +724,17 @@ const AdminStudents: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+        <select 
+          title="Filter by Course"
+          className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+        >
           <option>All Courses</option>
           {availableCourses.map(c => <option key={c.id}>{c.title}</option>)}
         </select>
-        <select className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+        <select 
+          title="Filter by Status"
+          className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+        >
           <option>All Statuses</option>
           <option>Active</option>
           <option>Inactive</option>
