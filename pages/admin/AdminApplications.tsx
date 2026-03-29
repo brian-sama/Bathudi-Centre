@@ -1,30 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Application, ApplicationStatus } from '../../types';
 
-// Define types for the application
-interface Application {
-  id: number;
-  name: string;
-  surname: string;
-  age: number;
-  country: string;
-  mobile: string;
-  email: string;
-  id_number: string;
-  address: string;
-  education_level: string;
-  previous_school: string;
-  course: string;
-  course_title: string;
-  status: 'pending' | 'approved' | 'rejected';
-  fee_verified: boolean;
-  created_at: string;
-  formatted_date: string;
-  documents_status: {
-    id: boolean;
-    matric: boolean;
-    pop: boolean;
-  };
-}
+// Application-specific document types
 
 interface ApplicationDocuments {
   id_document: {
@@ -63,7 +40,7 @@ const AdminApplications: React.FC = () => {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [documentUrls, setDocumentUrls] = useState<ApplicationDocuments | null>(null);
   const [processing, setProcessing] = useState<number | null>(null);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [filter, setFilter] = useState<ApplicationStatus | 'all'>('all');
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
@@ -82,9 +59,9 @@ const AdminApplications: React.FC = () => {
 
   const calculateStats = () => {
     const total = applications.length;
-    const pending = applications.filter(app => app.status === 'pending').length;
-    const approved = applications.filter(app => app.status === 'approved').length;
-    const rejected = applications.filter(app => app.status === 'rejected').length;
+    const pending = applications.filter(app => app.status === ApplicationStatus.Pending).length;
+    const approved = applications.filter(app => app.status === ApplicationStatus.Approved).length;
+    const rejected = applications.filter(app => app.status === ApplicationStatus.Rejected).length;
     const feeVerified = applications.filter(app => app.fee_verified).length;
     
     setStats({ total, pending, approved, rejected, feeVerified });
@@ -143,11 +120,10 @@ const AdminApplications: React.FC = () => {
         country: application.country,
         education_level: application.education_level,
         previous_school: application.previous_school,
-        course: application.course, // This should be course ID
+        course: typeof application.course === 'string' ? parseInt(application.course) : application.course,
         status: 'Active',
         fees_status: application.fee_verified ? 'Paid' : 'Pending',
-        // Document status from application
-        documents_status: application.documents_status
+        application: application.id
       };
 
       console.log('Adding to students:', studentData);
@@ -375,20 +351,20 @@ const AdminApplications: React.FC = () => {
               All ({stats.total})
             </button>
             <button 
-              onClick={() => setFilter('pending')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'pending' ? 'bg-amber-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
+              onClick={() => setFilter(ApplicationStatus.Pending)}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === ApplicationStatus.Pending ? 'bg-amber-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
             >
               Pending ({stats.pending})
             </button>
             <button 
-              onClick={() => setFilter('approved')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'approved' ? 'bg-green-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
+              onClick={() => setFilter(ApplicationStatus.Approved)}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === ApplicationStatus.Approved ? 'bg-green-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
             >
               Approved ({stats.approved})
             </button>
             <button 
-              onClick={() => setFilter('rejected')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'rejected' ? 'bg-red-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
+              onClick={() => setFilter(ApplicationStatus.Rejected)}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === ApplicationStatus.Rejected ? 'bg-red-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
             >
               Rejected ({stats.rejected})
             </button>
@@ -671,7 +647,7 @@ const AdminApplications: React.FC = () => {
                   {selectedApp.fee_verified ? '\u2713 Fee Verified' : 'Verify Fee'}
                 </button>
                 {/* FIXED: Use type guard to check if status is not 'approved' */}
-                {selectedApp.status !== 'approved' && (
+                {selectedApp.status !== ApplicationStatus.Approved && (
                   <>
                     <button 
                       onClick={() => handleReject(selectedApp.id)}

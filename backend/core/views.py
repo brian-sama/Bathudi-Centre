@@ -302,10 +302,13 @@ def dashboard_stats(request):
     total_applications = Application.objects.count()
     pending_applications = Application.objects.filter(status='pending').count()
     total_students = Student.objects.count()
+    active_students = Student.objects.filter(status='Active').count()
     active_courses = Course.objects.filter(is_active=True).count()
+    
     return Response({
         'total_applications': total_applications,
         'pending_applications': pending_applications,
         'total_students': total_students,
+        'active_students': active_students,
         'active_courses': active_courses,
     })

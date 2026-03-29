@@ -28,42 +28,51 @@ const AdminDashboard: React.FC = () => {
       const [appsResponse, studentsResponse, statsResponse] = await Promise.all([
         fetch(`${API_BASE_URL}/applications/?limit=3`),
         fetch(`${API_BASE_URL}/students/`),
-        fetch(`${API_BASE_URL}/applications/stats/`)
+        fetch(`${API_BASE_URL}/dashboard/stats/`)
       ]);
-
-      if (appsResponse.ok && studentsResponse.ok && statsResponse.ok) {
-        const [appsData, studentsData, statsData] = await Promise.all([
-          appsResponse.json(),
-          studentsResponse.json(),
-          statsResponse.json()
-        ]);
-
-        const totalStudents = studentsData.length || 0;
-        const activeLearners = studentsData.filter((s: any) => s.status === 'Active').length || 0;
-        const pendingApplications = statsData.pending || 0;
-        const revenue = `R${(totalStudents * 200).toLocaleString()}`;
-
-        setStats({
-          totalStudents,
-          activeLearners,
-          newApplications: pendingApplications,
-          pendingApplications,
-          revenue,
-          totalAnnouncements: 3,
-          recentContent: 5
-        });
-
-        const recentApplications = appsData.results?.slice(0, 3).map((app: any) => ({
-          id: app.id,
-          name: `${app.name} ${app.surname}`,
-          course: app.course_title || app.course || 'Not specified',
-          date: app.formatted_date || new Date(app.created_at).toLocaleDateString(),
-          status: app.status as ApplicationStatus,
-          avatarLetter: app.name?.[0] || '?'
-        })) || [];
-
-        setRecentApps(recentApplications);
+      
+      let studentsData = [];
+      let appsData: any = { results: [] };
+      let statsData: any = {};
+      
+      if (studentsResponse.ok) {
+        studentsData = await studentsResponse.json();
       }
+      
+      if (appsResponse.ok) {
+        appsData = await appsResponse.json();
+      }
+      
+      if (statsResponse.ok) {
+        statsData = await statsResponse.json();
+      }
+
+      const totalStudentsFromStats = statsData.total_students ?? (studentsData.length || 0);
+      const activeLearnersFromStats = statsData.active_students ?? (studentsData.filter((s: any) => s.status === 'Active').length || 0);
+      const pendingApplications = statsData.pending_applications || 0;
+      const revenue = statsData.total_students ? `R${(statsData.total_students * 200).toLocaleString()}` : `R${(studentsData.length * 200).toLocaleString()}`;
+
+      setStats({
+        totalStudents: totalStudentsFromStats,
+        activeLearners: activeLearnersFromStats,
+        newApplications: pendingApplications,
+        pendingApplications,
+        revenue,
+        totalAnnouncements: 3,
+        recentContent: 5
+      });
+
+      const recentApplications = (Array.isArray(appsData) ? appsData : (appsData.results || [])).slice(0, 3).map((app: any) => ({
+        id: app.id,
+        name: `${app.name} ${app.surname}`,
+        course: app.course_title || app.course || 'Not specified',
+        date: app.formatted_date || new Date(app.created_at).toLocaleDateString(),
+        status: app.status as ApplicationStatus,
+        avatarLetter: app.name?.[0] || '?'
+      }));
+
+      setRecentApps(recentApplications);
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {

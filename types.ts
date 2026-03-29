@@ -142,6 +142,7 @@ export interface Student {
   country?: string;
   education_level?: string;
   previous_school?: string;
+  user?: number; // User ID
   
   // Backward compatibility fields
   feesStatus?: FeeStatus;
@@ -163,12 +164,16 @@ export interface Application {
   age: number;
   country: string;
   mobile: string;
+  email: string;
+  address: string;
+  id_number: string;
   education_level: string;
   previous_school: string;
   course: number; // Course ID
   course_title: string; // Course name from serializer
   status: ApplicationStatus;
   date_submitted: string;
+  created_at: string;
   formatted_date: string;
   id_document: string; // File path
   matric_certificate: string; // File path
@@ -284,10 +289,10 @@ export interface ApplicationStats {
 }
 
 export enum ApplicationStatus {
-  Pending = 'Pending',
-  Approved = 'Approved',
-  Rejected = 'Rejected',
-  Contacted = 'Contacted'
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected',
+  Contacted = 'contacted'
 }
 
 // Content Management Stats

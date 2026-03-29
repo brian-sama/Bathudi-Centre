@@ -157,9 +157,19 @@ const AdminStudents: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...newStudent,
-          course: newStudent.course_id,
+          name: newStudent.name,
+          surname: newStudent.surname,
+          email: newStudent.email,
+          phone: newStudent.phone,
+          address: newStudent.address,
+          id_number: newStudent.id_number,
           age: parseInt(newStudent.age) || null,
+          country: newStudent.country,
+          education_level: newStudent.education_level,
+          previous_school: newStudent.previous_school,
+          course: newStudent.course_id,
+          status: newStudent.status,
+          fees_status: newStudent.fees_status,
         }),
       });
 
@@ -187,10 +197,25 @@ const AdminStudents: React.FC = () => {
     
     setProcessing(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/students/${selectedStudent.id}/`, {
+      // Filter out read-only and frontend-only fields
+      const { 
+        id, name, surname, email, phone, address, 
+        id_number, age, country, education_level, 
+        previous_school, course, status, fees_status,
+        application, user
+      } = selectedStudent;
+
+      const response = await fetch(`${API_BASE_URL}/students/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(selectedStudent),
+        body: JSON.stringify({
+          name, surname, email, phone, address,
+          id_number, 
+          age: typeof age === 'string' ? (parseInt(age) || null) : age,
+          country, education_level, previous_school,
+          course, status, fees_status,
+          application, user
+        }),
       });
 
       if (response.ok) {
@@ -366,50 +391,50 @@ const AdminStudents: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <h3 className="md:col-span-2 text-lg font-semibold text-blue-400 border-b border-white/10 pb-2">Personal Details</h3>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">First Name *</label>
-                  <input type="text" name="name" value={newStudent.name} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-name" className="block text-sm text-gray-400 mb-1">First Name *</label>
+                  <input id="student-name" type="text" name="name" value={newStudent.name} onChange={handleInputChange} placeholder="First name" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Last Name *</label>
-                  <input type="text" name="surname" value={newStudent.surname} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-surname" className="block text-sm text-gray-400 mb-1">Last Name *</label>
+                  <input id="student-surname" type="text" name="surname" value={newStudent.surname} onChange={handleInputChange} placeholder="Last name" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Email *</label>
-                  <input type="email" name="email" value={newStudent.email} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-email" className="block text-sm text-gray-400 mb-1">Email *</label>
+                  <input id="student-email" type="email" name="email" value={newStudent.email} onChange={handleInputChange} placeholder="Email address" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Phone *</label>
-                  <input type="text" name="phone" value={newStudent.phone} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-phone" className="block text-sm text-gray-400 mb-1">Phone *</label>
+                  <input id="student-phone" type="text" name="phone" value={newStudent.phone} onChange={handleInputChange} placeholder="Phone number" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">ID Number</label>
-                  <input type="text" name="id_number" value={newStudent.id_number} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-id_number" className="block text-sm text-gray-400 mb-1">ID Number</label>
+                  <input id="student-id_number" type="text" name="id_number" value={newStudent.id_number} onChange={handleInputChange} placeholder="ID number" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Age</label>
-                  <input type="number" name="age" value={newStudent.age} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
+                  <label htmlFor="student-age" className="block text-sm text-gray-400 mb-1">Age</label>
+                  <input id="student-age" type="number" name="age" value={newStudent.age} onChange={handleInputChange} placeholder="Age" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-400 mb-1">Address</label>
-                  <textarea name="address" value={newStudent.address} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white min-h-[80px]"></textarea>
+                  <label htmlFor="student-address" className="block text-sm text-gray-400 mb-1">Address</label>
+                  <textarea id="student-address" name="address" value={newStudent.address} onChange={handleInputChange} placeholder="Residential address" className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white min-h-[80px]"></textarea>
                 </div>
 
                 <h3 className="md:col-span-2 text-lg font-semibold text-blue-400 border-b border-white/10 pb-2 mt-4">Enrollment Details</h3>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Course *</label>
-                  <select name="course_id" value={newStudent.course_id} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                  <label htmlFor="student-course" className="block text-sm text-gray-400 mb-1">Course *</label>
+                  <select id="student-course" name="course_id" value={newStudent.course_id} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     {availableCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Student Status</label>
-                  <select name="status" value={newStudent.status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                  <label htmlFor="student-status" className="block text-sm text-gray-400 mb-1">Student Status</label>
+                  <select id="student-status" name="status" value={newStudent.status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     {Object.values(StudentStatus).map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Fee Status</label>
-                  <select name="fees_status" value={newStudent.fees_status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
+                  <label htmlFor="student-fees-status" className="block text-sm text-gray-400 mb-1">Fee Status</label>
+                  <select id="student-fees-status" name="fees_status" value={newStudent.fees_status} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white">
                     {Object.values(FeeStatus).map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
