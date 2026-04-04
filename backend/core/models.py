@@ -44,7 +44,7 @@ class Course(models.Model):
     
     # Old fee fields (kept for compatibility)
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=661.25, help_text="Non-refundable registration fee")
+    registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=200.00, help_text="Non-refundable registration fee")
     
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
     
