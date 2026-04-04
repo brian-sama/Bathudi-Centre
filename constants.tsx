@@ -12,7 +12,7 @@ export const COURSES: Course[] = [
     deposit_amount: 6612.50,
     monthly_payment: 5514.83,
     total_payment: 140290.80,
-    assessment_fee: 661.25,
+    assessment_fee: 0,
     fee: 140290.80,
     registration_fee: 661.25,
     level: "beginner",
@@ -39,7 +39,7 @@ export const COURSES: Course[] = [
     deposit_amount: 6612.50,
     monthly_payment: 4959.38,
     total_payment: 47610,
-    assessment_fee: 661.25,
+    assessment_fee: 0,
     fee: 47610,
     registration_fee: 661.25,
     level: "beginner",
@@ -66,7 +66,7 @@ export const COURSES: Course[] = [
     deposit_amount: 6612.50,
     monthly_payment: 4131.38,
     total_payment: 40986,
-    assessment_fee: 661.25,
+    assessment_fee: 0,
     fee: 40986,
     registration_fee: 661.25,
     level: "intermediate",
@@ -75,7 +75,7 @@ export const COURSES: Course[] = [
     requirements: "Grade 12 certificate. Previous mechanical experience beneficial.",
     career_opportunities: "Suspension Technician, Wheel Alignment Specialist, Automotive Repairer, Chassis Specialist",
     course_pdf_url: "/pdfs/course-outlines/Automotive Suspension Repairer.pdf",
-    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: `/images/${['1.jpg', '2.jpg', '3.jpg', '4.jpg', '13.jpeg', '14.jpeg', '7.jpg', '8.jpg', '9.jpg', '16.jpeg','17.jpeg','18.jpeg','32.jpeg'][Math.floor(Math.random() * 13)]}`,
     image_url: "",
     is_math_required: true,
     is_featured: true,
@@ -93,7 +93,7 @@ export const COURSES: Course[] = [
     deposit_amount: 6612.50,
     monthly_payment: 5290.00,
     total_payment: 60835.00,
-    assessment_fee: 661.25,
+    assessment_fee: 0,
     fee: 60835.00,
     registration_fee: 661.25,
     level: "beginner",
@@ -122,7 +122,7 @@ export const BANKING_DETAILS = {
 export const FEE_NOTES = {
   includes: [
     'COIDA insurance for the training period',
-    'Assessment fee of R661.25 for all courses',
+    'Registration and Assessment fee of R661.25 for all courses',
     'Training materials provided by the institution'
   ],
   excludes: [
@@ -230,9 +230,9 @@ export const ADMISSION_REQUIREMENTS = [
   },
   {
     type: 'fee',
-    title: 'Registration Fee',
-    description: 'R661.25 non-refundable registration fee',
-    icon: '\uD83D\uDCB0',
+    title: 'Registration & Assessment Fee',
+    description: 'R661.25 non-refundable fee for both',
+    icon: '💰',
     is_required: true
   },
   {

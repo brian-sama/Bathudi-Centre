@@ -36,7 +36,7 @@ const ElegantPreloader: React.FC = () => {
               <img 
                 src="/images/bathudi-logo.png" 
                 alt="Bathudi Logo" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover p-2"
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                   const img = e.currentTarget;
                   console.error("❌ Preloader logo failed to load. Attempted path:", img.src);

@@ -34,7 +34,7 @@ def seed_production_data():
         quote='WELCOME TO BATHUDI!!!!',
         defaults={
             'is_active': True,
-            'video_url': '',  # As per SQL dump
+            'video_url': 'https://www.youtube.com/watch?v=LXb3EKWsInQ',  # Example placeholder video
         }
     )
     if created:

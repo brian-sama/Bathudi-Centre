@@ -243,18 +243,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
               </div>
             </div>
             
-            {/* FIXED: Only showing registration fee and assessment fee */}
             <div className="md:w-1/3 p-8 bg-white/5 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">{formatCurrency(course.registration_fee)}</div>
-                <div className="text-gray-400 mb-4">Registration Fee</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between border-t border-white/10 pt-2">
-                    <span className="text-gray-400">Assessment Fee:</span>
-                    <span className="text-white font-bold">{formatCurrency(course.assessment_fee)}</span>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-4">Non-refundable registration fee</p>
+                <div className="text-gray-400 mb-4">Registration & Assessment Fee</div>
+                <p className="text-xs text-gray-500 mt-4">Non-refundable fee</p>
               </div>
             </div>
           </div>
@@ -514,14 +507,9 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                       </thead>
                       <tbody>
                         <tr className="border-b border-white/5">
-                          <td className="py-4 px-6 text-gray-300">Registration Fee</td>
+                          <td className="py-4 px-6 text-gray-300">Registration & Assessment Fee</td>
                           <td className="py-4 px-6 text-white font-bold">{formatCurrency(course.registration_fee)}</td>
-                          <td className="py-4 px-6 text-gray-400">Non-refundable, due with application</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                          <td className="py-4 px-6 text-gray-300">Assessment Fee</td>
-                          <td className="py-4 px-6 text-white font-bold">{formatCurrency(course.assessment_fee)}</td>
-                          <td className="py-4 px-6 text-gray-400">Final assessment and certification</td>
+                          <td className="py-4 px-6 text-gray-400">Non-refundable, due with application. Covers both registration and final assessment.</td>
                         </tr>
                       </tbody>
                     </table>

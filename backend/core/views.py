@@ -147,6 +147,13 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         application.save()
         return Response({'message': 'Application rejected', 'status': 'rejected'})
 
+    @action(detail=True, methods=['get'])
+    def documents(self, request, pk=None):
+        """Get document details for an application"""
+        application = self.get_object()
+        serializer = ApplicationDocumentsSerializer(application, context={'request': request})
+        return Response(serializer.data)
+
 # ========== COURSE VIEWS ==========
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by('display_order', '-created_at')

@@ -243,7 +243,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                   >
                     <div className="relative h-40 sm:h-48 overflow-hidden">
                       <img 
-                        src={news.image_url} 
+                        src={news.image_url || '/images/1.jpg'} 
                         alt={news.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
