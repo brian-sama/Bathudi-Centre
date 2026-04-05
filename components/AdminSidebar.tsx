@@ -16,6 +16,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
     { id: Page.AdminDashboard, label: 'Dashboard', icon: '\uD83D\uDCCA' },
     { id: Page.AdminStudents, label: 'Students', icon: '\uD83D\uDC65' },
     { id: Page.AdminApplications, label: 'Applications', icon: '\uD83D\uDCDD' },
+    { id: Page.AdminStaff, label: 'Staff', icon: '\uD83D\uDC64' },
   ];
 
   // Content Management items

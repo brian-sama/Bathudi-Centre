@@ -13,6 +13,7 @@ export enum Page {
   AdminStudents = 'AdminStudents',
   AdminApplications = 'AdminApplications',
   AdminCMS = 'AdminCMS',
+  AdminStaff = 'AdminStaff',
   AdminSettings = 'AdminSettings',
   StudentContent = 'StudentContent',
   StudentNotifications = 'StudentNotifications',
@@ -79,9 +80,20 @@ export interface Value {
 }
 
 export interface TeamMember {
+  id: number;
   name: string;
-  role: string;
+  position: string;
+  bio?: string;
+  email?: string;
+  phone?: string;
   image: string;
+  order: number;
+  is_active: boolean;
+  facebook?: string;
+  twitter?: string;
+  linkedin?: string;
+  // Frontend backward compatibility
+  role?: string; 
 }
 
 export interface NewsletterPost {

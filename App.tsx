@@ -16,6 +16,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminStudents from './pages/admin/AdminStudents';
 import AdminApplications from './pages/admin/AdminApplications';
 import AdminCMS from './pages/admin/AdminCMS';
+import AdminStaff from './pages/admin/AdminStaff';
 import AdminLogin from './pages/admin/AdminLogin';
 import PaymentSuccess from './pages/PaymentSuccess';  
 import PaymentCancel from './pages/PaymentCancel';
@@ -156,6 +157,8 @@ const App: React.FC = () => {
         return <AdminApplications />;
       case Page.AdminCMS:
         return <AdminCMS />;
+      case Page.AdminStaff:
+        return <AdminStaff />;
       case Page.StudentContent:
         return <StudentContent onNavigate={setCurrentPage} />;
       case Page.StudentNotifications:
