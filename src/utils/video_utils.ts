@@ -42,7 +42,8 @@ export const getGoogleDriveEmbedUrl = (url: string): string | null => {
 export const getGoogleDriveDirectUrl = (url: string): string | null => {
   const fileId = getGoogleDriveId(url);
   if (fileId) {
-    return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    // Note: use uc?export=view (less restrictive than download for some browsers)
+    return `https://drive.google.com/uc?export=view&id=${fileId}`;
   }
   return null;
 };

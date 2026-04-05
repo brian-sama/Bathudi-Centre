@@ -22,7 +22,7 @@ const Team: React.FC = () => {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const res = await fetch(`${API_BASE}/team-members/`);
+        const res = await fetch(`${API_BASE}/team/`);
         if (res.ok) {
           const data = await res.json();
           if (data.length > 0) {

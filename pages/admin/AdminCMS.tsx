@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getYoutubeEmbedUrl } from '../../src/utils/youtube';
-import { getGoogleDriveEmbedUrl, isGoogleDriveUrl } from '../../src/utils/video_utils';
+import { getGoogleDriveEmbedUrl, getGoogleDriveDirectUrl, isGoogleDriveUrl } from '../../src/utils/video_utils';
 
 // FIXED: Use environment variable for API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
@@ -71,7 +71,7 @@ const AdminCMS: React.FC = () => {
       const [news, gallery, team, director] = await Promise.all([
         fetch(`${API_BASE}/news-posts/`),
         fetch(`${API_BASE}/gallery/`),
-        fetch(`${API_BASE}/team-members/`),
+        fetch(`${API_BASE}/team/`),
         fetch(`${API_BASE}/director-message/active//`),
       ]);
 
@@ -347,7 +347,7 @@ const AdminCMS: React.FC = () => {
         formData.append('image', selectedStaffImage);
       }
 
-      const res = await fetch(`${API_BASE}/team-members/`, {
+      const res = await fetch(`${API_BASE}/team/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': getCsrfToken() || '' },
         body: formData,
@@ -373,7 +373,7 @@ const AdminCMS: React.FC = () => {
   const handleDeleteStaff = async (id: number) => {
     if (!confirm('Are you sure you want to delete this staff member?')) return;
     try {
-      const res = await fetch(`${API_BASE}/team-members/${id}/`, {
+      const res = await fetch(`${API_BASE}/team/${id}/`, {
         method: 'DELETE',
         headers: { 'X-CSRFToken': getCsrfToken() || '' },
         credentials: 'include',
@@ -937,12 +937,13 @@ const AdminCMS: React.FC = () => {
                         <source src={directorMessage.video_file} type="video/mp4" />
                       </video>
                     ) : (directorMessage.video_url && isGoogleDriveUrl(directorMessage.video_url)) ? (
-                      <iframe 
-                        src={getGoogleDriveEmbedUrl(directorMessage.video_url) || ''} 
-                        className="w-full h-full"
-                        allowFullScreen
-                        title="Director Video (Drive)"
-                      ></iframe>
+                      <video 
+                        controls 
+                        className="w-full h-full object-cover"
+                        src={getGoogleDriveDirectUrl(directorMessage.video_url) || ''}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
                     ) : directorMessage.video_url ? (
                       <iframe 
                         src={getYoutubeEmbedUrl(directorMessage.video_url)} 
