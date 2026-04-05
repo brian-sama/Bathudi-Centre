@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getYoutubeEmbedUrl } from '../src/utils/youtube';
+import { getGoogleDriveEmbedUrl, isGoogleDriveUrl } from '../src/utils/video_utils';
 import { Page } from '../types';
 import { VALUES } from '../constants';
 
@@ -303,12 +304,19 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                         <source src={directorData.video_file} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
+                    ) : (directorData.video_url && isGoogleDriveUrl(directorData.video_url)) ? (
+                      <iframe 
+                        src={getGoogleDriveEmbedUrl(directorData.video_url) || ''} 
+                        className="w-full h-full"
+                        allowFullScreen
+                        title="Director Message (Drive)"
+                      ></iframe>
                     ) : directorData.video_url ? (
                       <iframe 
                         src={getYoutubeEmbedUrl(directorData.video_url)} 
                         className="w-full h-full" 
                         allowFullScreen
-                        title="Director's Message"
+                        title="Director Message (YouTube)"
                       ></iframe>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-blue-900/20 to-slate-800/20">

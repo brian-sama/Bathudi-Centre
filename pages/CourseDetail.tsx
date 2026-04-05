@@ -245,9 +245,14 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
             
             <div className="md:w-1/3 p-8 bg-white/5 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">{formatCurrency(course.registration_fee)}</div>
-                <div className="text-gray-400 mb-4">Registration & Assessment Fee</div>
-                <p className="text-xs text-gray-500 mt-4">Non-refundable fee</p>
+                <div className="text-3xl font-bold text-white mb-2">
+                  {formatCurrency((course.registration_fee || 0) + (course.assessment_fee || 0))}
+                </div>
+                <div className="text-gray-400 mb-4 font-medium uppercase tracking-wider text-xs">Total Registration & Assessment Fee</div>
+                <div className="flex flex-col items-center gap-1 mt-4 pt-4 border-t border-white/5">
+                   <div className="text-xs text-gray-500">Reg: {formatCurrency(course.registration_fee)}</div>
+                   <div className="text-xs text-gray-500">Assmnt: {formatCurrency(course.assessment_fee)}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -496,7 +501,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
               <div>
                 <h3 className="text-2xl font-bold text-white mb-6">Fees & Payment Information</h3>
                 <div className="prose prose-invert max-w-none">
-                  <div className="overflow-hidden rounded-xl border border-white/10">
+                  <div className="overflow-hidden rounded-xl border border-white/10 shadow-lg">
                     <table className="w-full">
                       <thead>
                         <tr className="bg-white/5">
@@ -507,9 +512,21 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                       </thead>
                       <tbody>
                         <tr className="border-b border-white/5">
-                          <td className="py-4 px-6 text-gray-300">Registration & Assessment Fee</td>
+                          <td className="py-4 px-6 text-gray-300">Registration Fee</td>
                           <td className="py-4 px-6 text-white font-bold">{formatCurrency(course.registration_fee)}</td>
-                          <td className="py-4 px-6 text-gray-400">Non-refundable, due with application. Covers both registration and final assessment.</td>
+                          <td className="py-4 px-6 text-gray-400">Non-refundable, due with application.</td>
+                        </tr>
+                        <tr className="border-b border-white/5">
+                          <td className="py-4 px-6 text-gray-300">Assessment Fee</td>
+                          <td className="py-4 px-6 text-white font-bold">{formatCurrency(course.assessment_fee)}</td>
+                          <td className="py-4 px-6 text-gray-400">Covers final examination and assessment costs.</td>
+                        </tr>
+                        <tr className="bg-white/5">
+                          <td className="py-4 px-6 text-white font-bold">Total Initial Payment</td>
+                          <td className="py-4 px-6 text-blue-400 font-extrabold text-xl">
+                            {formatCurrency((course.registration_fee || 0) + (course.assessment_fee || 0))}
+                          </td>
+                          <td className="py-4 px-6 text-gray-300 font-medium font-bold">Total due to secure enrollment.</td>
                         </tr>
                       </tbody>
                     </table>

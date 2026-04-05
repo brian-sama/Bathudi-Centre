@@ -13,21 +13,50 @@ from django.core.files.base import ContentFile
 def seed_production_data():
     print("🚀 Seeding production data from SQL dump...")
 
-    # 1. Team Member: Ignatia Sekonyela
-    team_member, created = TeamMember.objects.get_or_create(
-        name='Ignatia Sekonyela',
-        defaults={
+    # 1. Team Members
+    team_members_data = [
+        {
+            'name': 'Ignatia Sekonyela',
             'position': 'CEO and Founder',
             'email': 'info@bathudi.co.za',
             'phone': '+27 68 917 6294',
             'order': 1,
-            'is_active': True
+        },
+        {
+            'name': 'Michael More',
+            'position': 'Senior Technical Trainer',
+            'email': 'michael@bathudi.co.za',
+            'order': 2,
+        },
+        {
+            'name': 'Kearabetswe Sekonyela',
+            'position': 'Communications Manager',
+            'email': 'kearabetswe@bathudi.co.za',
+            'order': 3,
+        },
+        {
+            'name': 'Bongeka Ntiemeza',
+            'position': 'Assistant Trainer',
+            'email': 'bongeka@bathudi.co.za',
+            'order': 4,
         }
-    )
-    if created:
-        print(f"✅ Created Team Member: {team_member.name}")
-    else:
-        print(f"ℹ️ Team Member {team_member.name} already exists.")
+    ]
+
+    for member_data in team_members_data:
+        member, created = TeamMember.objects.get_or_create(
+            name=member_data['name'],
+            defaults={
+                'position': member_data['position'],
+                'email': member_data.get('email', ''),
+                'phone': member_data.get('phone', ''),
+                'order': member_data['order'],
+                'is_active': True
+            }
+        )
+        if created:
+            print(f"✅ Created Team Member: {member.name}")
+        else:
+            print(f"ℹ️ Team Member {member.name} already exists.")
 
     # 2. Director's Message
     director_message, created = DirectorMessage.objects.get_or_create(

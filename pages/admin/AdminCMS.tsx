@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getYoutubeEmbedUrl } from '../../src/utils/youtube';
+import { getGoogleDriveEmbedUrl, isGoogleDriveUrl } from '../../src/utils/video_utils';
 
 // FIXED: Use environment variable for API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
@@ -21,7 +22,7 @@ const getCsrfToken = () => {
   return cookieValue;
 };
 
-type Tab = 'news' | 'gallery' | 'video';
+type Tab = 'news' | 'gallery' | 'staff' | 'video';
 
 const AdminCMS: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('news');
@@ -35,6 +36,7 @@ const AdminCMS: React.FC = () => {
   // ---------------- STATE ----------------
   const [newsPosts, setNewsPosts] = useState<any[]>([]);
   const [galleryImages, setGalleryImages] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [directorMessage, setDirectorMessage] = useState<any>(null);
 
   const [newPost, setNewPost] = useState({
@@ -51,15 +53,26 @@ const AdminCMS: React.FC = () => {
   const [quote, setQuote] = useState('');
   const [useYouTube, setUseYouTube] = useState(true);
 
+  // New staff state
+  const [newStaff, setNewStaff] = useState({
+    name: '',
+    position: '',
+    bio: '',
+    email: '',
+  });
+  const [selectedStaffImage, setSelectedStaffImage] = useState<File | null>(null);
+  const [staffImagePreview, setStaffImagePreview] = useState<string>('');
+
   // ---------------- FETCH DATA ----------------
   const fetchData = async () => {
     try {
       console.log('Fetching from:', API_BASE);
       
-      const [news, gallery, director] = await Promise.all([
+      const [news, gallery, team, director] = await Promise.all([
         fetch(`${API_BASE}/news-posts/`),
         fetch(`${API_BASE}/gallery/`),
-        fetch(`${API_BASE}/director-message/active/`),
+        fetch(`${API_BASE}/team-members/`),
+        fetch(`${API_BASE}/director-message/active//`),
       ]);
 
       console.log('News response status:', news.status);
@@ -81,6 +94,11 @@ const AdminCMS: React.FC = () => {
       if (gallery.ok) {
         const galleryData = await gallery.json();
         setGalleryImages(galleryData);
+      }
+
+      if (team.ok) {
+        const teamData = await team.json();
+        setTeamMembers(teamData);
       }
 
       if (director.ok) {
@@ -297,6 +315,77 @@ const AdminCMS: React.FC = () => {
       fetchData();
     } catch (error) {
       showStatus('Failed to delete image', 'error');
+    }
+  };
+
+  // ---------------- STAFF ----------------
+  const handleStaffImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedStaffImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setStaffImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveStaff = async () => {
+    if (!newStaff.name || !newStaff.position) {
+      showStatus('Name and Position are required', 'error');
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', newStaff.name);
+      formData.append('position', newStaff.position);
+      formData.append('bio', newStaff.bio);
+      formData.append('email', newStaff.email);
+      formData.append('is_active', 'true');
+      if (selectedStaffImage) {
+        formData.append('image', selectedStaffImage);
+      }
+
+      const res = await fetch(`${API_BASE}/team-members/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCsrfToken() || '' },
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        showStatus('Staff member added successfully!', 'success');
+        setNewStaff({ name: '', position: '', bio: '', email: '' });
+        setSelectedStaffImage(null);
+        setStaffImagePreview('');
+        fetchData();
+      } else {
+        throw new Error('Failed to add staff member');
+      }
+    } catch (error: any) {
+      showStatus(error.message, 'error');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteStaff = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this staff member?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/team-members/${id}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCsrfToken() || '' },
+        credentials: 'include',
+      });
+      if (res.ok) {
+        showStatus('Staff member deleted', 'success');
+        fetchData();
+      } else {
+        throw new Error('Delete failed');
+      }
+    } catch (error) {
+      showStatus('Failed to delete staff', 'error');
     }
   };
 
@@ -700,6 +789,134 @@ const AdminCMS: React.FC = () => {
           </div>
         )}
 
+        {/* STAFF TAB */}
+        {activeTab === 'staff' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Add New Staff */}
+            <div className="lg:col-span-2 bg-gray-800 rounded-xl p-6">
+              <h2 className="text-2xl font-bold mb-6 text-white">Add New Staff Member</h2>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Full Name *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Tjedu Moyo"
+                      value={newStaff.name}
+                      onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Position / Role *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Executive Director"
+                      value={newStaff.position}
+                      onChange={(e) => setNewStaff({ ...newStaff, position: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="e.g. tjedu@bathudi.co.za"
+                    value={newStaff.email}
+                    onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-300">Bio / Description</label>
+                  <textarea
+                    placeholder="Short professional biography..."
+                    value={newStaff.bio}
+                    onChange={(e) => setNewStaff({ ...newStaff, bio: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white min-h-[120px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-300">Profile Image</label>
+                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleStaffImageSelect}
+                      className="hidden"
+                      id="staff-image-upload"
+                    />
+                    <label htmlFor="staff-image-upload" className="cursor-pointer block">
+                      {staffImagePreview ? (
+                        <div className="relative">
+                          <img src={staffImagePreview} alt="Preview" className="mx-auto max-h-48 rounded-lg mb-4" />
+                          <p className="text-sm text-blue-400">Click to change image</p>
+                        </div>
+                      ) : (
+                        <>
+                          <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <p className="text-gray-300 mb-2">Click to upload profile photo</p>
+                          <button type="button" onClick={() => document.getElementById('staff-image-upload')?.click()} className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                            Choose Image
+                          </button>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleSaveStaff}
+                  disabled={isUpdating}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isUpdating ? 'Saving...' : 'Add Staff Member'}
+                </button>
+              </div>
+            </div>
+
+            {/* Staff List */}
+            <div className="bg-gray-800 rounded-xl p-6">
+              <h2 className="text-2xl font-bold mb-6 text-white">Current Staff ({teamMembers.length})</h2>
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                {teamMembers.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No staff members found in database</p>
+                ) : (
+                  teamMembers.map((member) => (
+                    <div key={member.id} className="bg-gray-900 rounded-lg p-4 border border-gray-700 flex items-center space-x-4">
+                      <img 
+                        src={member.image_url || '/images/5.jpg'} 
+                        alt={member.name}
+                        className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-white truncate">{member.name}</h3>
+                        <p className="text-blue-400 text-xs uppercase tracking-wider font-bold truncate">{member.position}</p>
+                        <p className="text-gray-500 text-xs truncate">{member.email}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteStaff(member.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors p-2"
+                        title="Delete Staff"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* VIDEO TAB */}
         {activeTab === 'video' && (
           <div className="max-w-4xl mx-auto">
@@ -719,12 +936,19 @@ const AdminCMS: React.FC = () => {
                       <video controls className="w-full h-full">
                         <source src={directorMessage.video_file} type="video/mp4" />
                       </video>
+                    ) : (directorMessage.video_url && isGoogleDriveUrl(directorMessage.video_url)) ? (
+                      <iframe 
+                        src={getGoogleDriveEmbedUrl(directorMessage.video_url) || ''} 
+                        className="w-full h-full"
+                        allowFullScreen
+                        title="Director Video (Drive)"
+                      ></iframe>
                     ) : directorMessage.video_url ? (
                       <iframe 
                         src={getYoutubeEmbedUrl(directorMessage.video_url)} 
                         className="w-full h-full"
                         allowFullScreen
-                        title="Current Director Video"
+                        title="Director Video (YouTube)"
                       ></iframe>
                     ) : null}
                   </div>
