@@ -272,11 +272,21 @@ class NewsPostSerializer(serializers.ModelSerializer):
         return None
 
 class DirectorMessageSerializer(serializers.ModelSerializer):
+    video_file = serializers.SerializerMethodField()
+    
     class Meta:
         model = DirectorMessage
         fields = ['id', 'quote', 'video_file', 'video_url', 'is_active', 
                  'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
+    
+    def get_video_file(self, obj):
+        if obj.video_file and hasattr(obj.video_file, 'url'):
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.video_file.url)
+            return obj.video_file.url
+        return None
 
 class TestimonialSerializer(serializers.ModelSerializer):
     course_title = serializers.CharField(source='course.title', read_only=True, allow_null=True)

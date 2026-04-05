@@ -21,11 +21,11 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
               <img 
-                src="/images/bathudi-logo.png" 
+                src="/images/bathudi%20logo%20background.jpg" 
                 alt="Bathudi Automotive Technical Center Logo" 
-                className="h-12 w-auto"
+                className="h-12 w-12 rounded-lg object-cover"
                 onError={(e) => {
-                   (e.target as HTMLImageElement).src = 'https://picsum.photos/50/50';
+                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
               <div className="flex flex-col">

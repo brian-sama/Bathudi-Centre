@@ -34,9 +34,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
             <div className="relative w-24 h-24 mx-auto mb-6">
               {!logoError ? (
                 <img 
-                  src="/images/bathudi-logo.png" 
+                  src="/images/bathudi%20logo%20background.jpg" 
                   alt="Bathudi Automotive Technical Center Logo" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover rounded-2xl"
                   onError={() => setLogoError(true)}
                 />
               ) : (

@@ -103,9 +103,9 @@ const AdminDashboard: React.FC = () => {
           <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden glass border border-white/10 flex-shrink-0">
             {!logoError ? (
               <img 
-                src="/images/bathudi-logo.png" 
+                src="/images/bathudi%20logo%20background.jpg" 
                 alt="Bathudi Logo" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
                 onError={() => setLogoError(true)}
               />
             ) : (

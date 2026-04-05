@@ -7,6 +7,23 @@ import * as XLSX from 'xlsx';
 // API Base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
+// Helper to get CSRF token from cookies
+const getCsrfToken = () => {
+  const name = 'csrftoken';
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+};
+
 interface NewStudentForm {
   name: string;
   surname: string;
@@ -153,9 +170,14 @@ const AdminStudents: React.FC = () => {
         }
       };
 
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/students/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+        },
+        credentials: 'include',
         body: JSON.stringify({
           name: newStudent.name,
           surname: newStudent.surname,
@@ -205,9 +227,14 @@ const AdminStudents: React.FC = () => {
         application, user
       } = selectedStudent;
 
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/students/${id}/`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+        },
+        credentials: 'include',
         body: JSON.stringify({
           name, surname, email, phone, address,
           id_number, 
@@ -245,8 +272,13 @@ const AdminStudents: React.FC = () => {
     if (!confirm(`Are you sure you want to delete ${student.name} ${student.surname}? This action cannot be undone.`)) return;
     
     try {
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/students/${student.id}/`, {
         method: 'DELETE',
+        headers: {
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+        },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -320,9 +352,14 @@ const AdminStudents: React.FC = () => {
     if (!parsedData) return alert('No data to upload.');
     setProcessing(true);
     try {
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/students/bulk_enroll/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+        },
+        credentials: 'include',
         body: JSON.stringify(parsedData),
       });
       const result = await response.json();

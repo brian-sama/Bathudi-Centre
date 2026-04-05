@@ -77,11 +77,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
         <div className="p-4 sm:p-6 border-b border-white/5">
           <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
             <img 
-              src="/images/bathudi-logo.png" 
-              alt="Logo" 
-              className="h-8 sm:h-10 w-auto flex-shrink-0"
+              src="/images/bathudi%20logo%20background.jpg" 
+              alt="Bathudi Logo" 
+              className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 rounded-lg object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://picsum.photos/40/40';
+                (e.target as HTMLImageElement).style.display = 'none';
               }}
             />
             {showLabels && (

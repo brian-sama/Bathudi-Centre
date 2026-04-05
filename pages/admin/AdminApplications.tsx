@@ -34,6 +34,23 @@ interface ApplicationDocuments {
 // FIXED: Use import.meta.env for Vite instead of process.env
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
+// Helper to get CSRF token from cookies
+const getCsrfToken = () => {
+  const name = 'csrftoken';
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+};
+
 const AdminApplications: React.FC = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -128,11 +145,14 @@ const AdminApplications: React.FC = () => {
 
       console.log('Adding to students:', studentData);
 
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/students/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
         },
+        credentials: 'include',
         body: JSON.stringify(studentData),
       });
 
@@ -157,11 +177,14 @@ const AdminApplications: React.FC = () => {
         setProcessing(appId);
         
         // First, approve the application
+        const csrfToken = getCsrfToken();
         const response = await fetch(`${API_BASE_URL}/applications/${appId}/approve/`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
+            ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
           },
+          credentials: 'include',
         });
         
         if (response.ok) {
@@ -207,11 +230,14 @@ const AdminApplications: React.FC = () => {
     if (window.confirm(`Reject application with reason: "${reason}"?`)) {
       try {
         setProcessing(appId);
+        const csrfToken = getCsrfToken();
         const response = await fetch(`${API_BASE_URL}/applications/${appId}/reject/`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
+            ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
           },
+          credentials: 'include',
           body: JSON.stringify({ reason })
         });
         
@@ -238,11 +264,14 @@ const AdminApplications: React.FC = () => {
   const handleVerifyFee = async (appId: number) => {
     try {
       setProcessing(appId);
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_BASE_URL}/applications/${appId}/verify_fee/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
         },
+        credentials: 'include',
       });
       
       if (response.ok) {
