@@ -4,6 +4,30 @@ import { getGoogleDriveEmbedUrl, getGoogleDriveDirectUrl, isGoogleDriveUrl } fro
 import { Page } from '../types';
 import { VALUES } from '../constants';
 
+// Helper function to construct proper video URL from API response
+const getVideoUrl = (videoFile: string | null): string | null => {
+  if (!videoFile) return null;
+  
+  // If it's already an absolute URL (starts with http), return as is
+  if (videoFile.startsWith('http')) {
+    return videoFile;
+  }
+  
+  // If it starts with /media, prepend the API base without /api
+  if (videoFile.startsWith('/media')) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE_URL.replace('/api', '');
+    return baseUrl + videoFile;
+  }
+  
+  // If it's a relative path without /media, prepend it
+  if (!videoFile.startsWith('/')) {
+    return '/media/' + videoFile;
+  }
+  
+  return videoFile;
+};
+
 interface Slogan {
   id: number;
   text: string;
@@ -208,16 +232,19 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-white mb-6">Accreditation</h3>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-8 rounded-full"></div>
             <p className="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Bathudi Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
+              BBathudi Automotive Technical Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
             </p>
-            <div className="mt-4 inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
-              Accreditation No: SDP210225153101
+            <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
+              <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
+                Accreditation No: SDP210225153101
+              </div>
+              <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
+                MERSETA: 17-QA/ACC/3423/24
+              </div>
             </div>
-            <div className="mt-10 flex justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-               {/* Placeholders for accreditation logos */}
-               <div className="text-4xl">{'\uD83D\uDCDC'}</div>
-               <div className="text-4xl">{'\u2705'}</div>
-               <div className="text-4xl">{'\uD83C\uDFC6'}</div>
+            <div className="mt-10 flex justify-center gap-8 flex-wrap">
+              <img src="/images/merseta.png" alt="MERSETA Accreditation" className="h-16 object-contain" />
+              <img src="/images/qcto.png" alt="QCTO Accreditation" className="h-16 object-contain" />
             </div>
           </div>
         </div>
@@ -301,7 +328,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                   {directorData ? (
                     directorData.video_file ? (
                       <video controls className="w-full h-full object-cover">
-                        <source src={directorData.video_file} type="video/mp4" />
+                        <source src={getVideoUrl(directorData.video_file) || ''} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
                     ) : (directorData.video_url && isGoogleDriveUrl(directorData.video_url)) ? (

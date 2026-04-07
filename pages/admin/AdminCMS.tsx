@@ -392,7 +392,25 @@ const AdminCMS: React.FC = () => {
   // ---------------- DIRECTOR MESSAGE ----------------
   const handleVideoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedVideoFile(e.target.files[0]);
+      const file = e.target.files[0];
+      
+      // Validate file type
+      const validVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska', 'video/mpeg'];
+      const isValidType = validVideoTypes.includes(file.type) || file.name.match(/\.(mp4|webm|mov|avi|mkv|m4v)$/i);
+      
+      if (!isValidType) {
+        showStatus('Please upload a valid video file (MP4, WebM, MOV, AVI, MKV, M4V)', 'error');
+        return;
+      }
+      
+      // Check file size (max 500MB)
+      const maxSize = 500 * 1024 * 1024; // 500MB
+      if (file.size > maxSize) {
+        showStatus(`File size must be less than 500MB. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`, 'error');
+        return;
+      }
+      
+      setSelectedVideoFile(file);
       setVideoUrl(''); // Clear YouTube URL when file is selected
       setUseYouTube(false);
     }
@@ -450,9 +468,13 @@ const AdminCMS: React.FC = () => {
       formData.append('is_active', 'true');
 
       if (!useYouTube && selectedVideoFile) {
+        console.log('📹 Appending video file:', selectedVideoFile.name, 'Size:', (selectedVideoFile.size / (1024 * 1024)).toFixed(2) + 'MB');
         formData.append('video_file', selectedVideoFile);
       } else if (useYouTube && videoUrl) {
+        console.log('🎬 Using YouTube URL:', videoUrl);
         formData.append('video_url', videoUrl);
+      } else if (!useYouTube && !selectedVideoFile) {
+        console.log('⚠️ No video file selected, updating quote only');
       }
 
       let method = 'POST';
@@ -464,14 +486,14 @@ const AdminCMS: React.FC = () => {
         url = `${API_BASE}/director-message/${directorMessage.id}/`;
       }
 
-      console.log('Sending director message to:', url);
+      console.log('Sending director message to:', url, 'Method:', method);
       
-      // Add timeout for large files (5 minutes)
+      // Add timeout for large files (10 minutes for video uploads)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+      const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutes
 
       const csrfToken = getCsrfToken();
-      console.log(`\uD83D\uDE80 ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}`);
+      console.log(`\uD83D\uDE80 ${method} Director Message - URL: ${url}, CSRF Present: ${!!csrfToken}, Has Video: ${!useYouTube && !!selectedVideoFile}`);
 
       const res = await fetch(url, {
         method: method,
@@ -488,7 +510,7 @@ const AdminCMS: React.FC = () => {
       if (!res.ok) {
         const errorText = await res.text();
         console.error('Server error response:', errorText.substring(0, 500));
-        throw new Error(`Server error: ${res.status}`);
+        throw new Error(`Server error: ${res.status} - ${errorText.substring(0, 200)}`);
       }
 
       const result = await res.json();
@@ -510,9 +532,9 @@ const AdminCMS: React.FC = () => {
       });
       
       if (error.name === 'AbortError') {
-        showStatus('Upload timeout: Video file may be too large (max 100MB recommended)', 'error');
+        showStatus('Upload timeout: Video file may be too large or network is slow. Please try again or use a smaller file.', 'error');
       } else {
-        showStatus('Network/Server error: ' + error.message, 'error');
+        showStatus('Error: ' + error.message, 'error');
       }
     } finally {
       setIsUpdating(false);
@@ -1013,10 +1035,10 @@ const AdminCMS: React.FC = () => {
                     </div>
 
                     {!useYouTube ? (
-                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                         <input
                           type="file"
-                          accept="video/*"
+                          accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska,.mp4,.webm,.mov,.avi,.mkv,.m4v"
                           onChange={handleVideoFileSelect}
                           className="hidden"
                           id="video-upload"
@@ -1029,22 +1051,25 @@ const AdminCMS: React.FC = () => {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                               </div>
-                              <p className="text-gray-300 mb-1">{selectedVideoFile.name}</p>
+                              <p className="text-gray-300 mb-1 font-medium">{selectedVideoFile.name}</p>
                               <p className="text-sm text-gray-400">Size: {(selectedVideoFile.size / (1024 * 1024)).toFixed(2)} MB</p>
-                              <p className="text-sm text-red-400 mt-2">Max recommended: 100MB. Larger files may time out.</p>
-                              <p className="text-sm text-blue-400 mt-2">Click to change video</p>
+                              <p className="text-sm text-blue-400 mt-3 cursor-pointer hover:text-blue-300">Click to change video</p>
                             </>
                           ) : (
                             <>
                               <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
-                              <p className="text-gray-300 mb-2">Click to select a video file</p>
-                              <p className="text-sm text-gray-400">Supports MP4, WebM, MOV (Max 100MB)</p>
+                              <p className="text-gray-300 mb-2 font-medium">Click to select a video file</p>
+                              <p className="text-sm text-gray-400">Supports: MP4, WebM, MOV, AVI, MKV, M4V</p>
+                              <p className="text-sm text-gray-400 mt-1">(Max 500MB)</p>
                               <button
                                 type="button"
-                                onClick={() => document.getElementById('video-upload')?.click()}
-                                className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  document.getElementById('video-upload')?.click();
+                                }}
+                                className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                               >
                                 Choose Video File
                               </button>

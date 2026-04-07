@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
               BATHUDI
             </span>
             <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm text-red-400 font-medium tracking-widest uppercase">
-              SKILLS DEVELOPMENT TRAINING CENTRE
+              AUTOMOTIVE TECHNICAL TRAINING CENTRE
             </span>
           </div>
         </div>

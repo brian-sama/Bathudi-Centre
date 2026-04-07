@@ -64,7 +64,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500 transition-all"
-                placeholder="admin@bathudi.co.za"
               />
             </div>
 
@@ -76,7 +75,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500 transition-all"
-                placeholder="........"
               />
             </div>
 

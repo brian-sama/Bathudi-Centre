@@ -128,7 +128,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </p>
             <p className="text-gray-400 text-sm">
               <span className="block text-blue-400 font-medium mb-1 uppercase text-xs tracking-wider">Email</span>
-              info@bathudi.co.za
+              infobathuditraing@gmail.com
             </p>
           </div>
         </div>
