@@ -306,11 +306,22 @@ def get_course_pdf(request, course_id):
 
 @api_view(['GET'])
 def dashboard_stats(request):
+    from django.db.models import Sum, F, DecimalField
+    
     total_applications = Application.objects.count()
     pending_applications = Application.objects.filter(status='pending').count()
     total_students = Student.objects.count()
     active_students = Student.objects.filter(status='Active').count()
     active_courses = Course.objects.filter(is_active=True).count()
+    
+    # Calculate revenue from students with paid fees
+    # Revenue = (assessment_fee + registration_fee) per student
+    students_with_paid_fees = Student.objects.filter(fees_status='Paid').select_related('course')
+    
+    total_revenue = 0
+    for student in students_with_paid_fees:
+        if student.course:
+            total_revenue += float(student.course.assessment_fee or 0) + float(student.course.registration_fee or 0)
     
     return Response({
         'total_applications': total_applications,
@@ -318,4 +329,5 @@ def dashboard_stats(request):
         'total_students': total_students,
         'active_students': active_students,
         'active_courses': active_courses,
+        'total_revenue': total_revenue,
     })

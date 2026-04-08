@@ -50,7 +50,7 @@ const AdminDashboard: React.FC = () => {
       const totalStudentsFromStats = statsData.total_students ?? (studentsData.length || 0);
       const activeLearnersFromStats = statsData.active_students ?? (studentsData.filter((s: any) => s.status === 'Active').length || 0);
       const pendingApplications = statsData.pending_applications || 0;
-      const revenue = statsData.total_students ? `R${(statsData.total_students * 200).toLocaleString()}` : `R${(studentsData.length * 200).toLocaleString()}`;
+      const revenue = statsData.total_revenue ? `R${(statsData.total_revenue).toLocaleString()}` : 'R0';
 
       setStats({
         totalStudents: totalStudentsFromStats,

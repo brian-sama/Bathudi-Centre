@@ -40,11 +40,11 @@ class Course(models.Model):
     deposit_amount = models.DecimalField(max_digits=10, decimal_places=2, default=6612.50, help_text="Deposit amount")
     monthly_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Monthly payment amount")
     total_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Total payment for the course")
-    assessment_fee = models.DecimalField(max_digits=10, decimal_places=2, default=661.25, help_text="Assessment fee")
+    assessment_fee = models.DecimalField(max_digits=10, decimal_places=2, default=665.00, help_text="Assessment fee")
     
     # Old fee fields (kept for compatibility)
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=661.25, help_text="Non-refundable registration fee")
+    registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=665.00, help_text="Non-refundable registration fee")
     
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
     
