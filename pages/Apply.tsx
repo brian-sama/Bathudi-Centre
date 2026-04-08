@@ -291,7 +291,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
             Apply for Admission
           </h2>
           <div className="inline-flex flex-col sm:flex-row items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-4 sm:mb-6">
-            <span className="text-amber-400 font-bold text-sm sm:text-base">{'\uD83D\uDCE2'} Registration Fee: R661.25</span>
+            <span className="text-amber-400 font-bold text-sm sm:text-base">{'📢'} Registration Fee: R665</span>
             <span className="hidden sm:inline mx-3 text-gray-400">&bull;</span>
             <span className="text-gray-300 text-xs sm:text-sm">Please upload proof of payment below</span>
           </div>
@@ -665,7 +665,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                 {/* Proof of Payment */}
                 <div className="space-y-2 sm:space-y-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
-                    Proof of Payment (R661.25) *
+                    Proof of Payment (R665) *
                   </label>
                   
                   <div className="space-y-4">
@@ -827,7 +827,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     <ul className="text-[10px] sm:text-xs text-gray-400 space-y-1">
                       <li>&bull; Maximum file size: 5MB per document</li>
                       <li>&bull; Accepted formats: PDF, JPG, JPEG, PNG, DOC, DOCX</li>
-                      <li>&bull; Registration fee of R661.25 is non-refundable</li>
+                      <li>&bull; Registration fee of R665 is non-refundable</li>
                       <li>&bull; You can pay online via PayFast or upload proof of payment</li>
                     </ul>
                   </div>
