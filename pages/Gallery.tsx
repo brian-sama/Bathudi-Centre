@@ -168,11 +168,6 @@ const Gallery: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  {img.isBackendImage && (
-                    <div className="absolute top-2 right-2 bg-blue-600/80 text-white text-[8px] px-1.5 py-0.5 rounded z-10">
-                      Admin
-                    </div>
-                  )}
                 </div>
               );
             })}
