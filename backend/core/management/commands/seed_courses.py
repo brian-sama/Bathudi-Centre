@@ -131,8 +131,8 @@ class Command(BaseCommand):
                 # Extract form_course_id for mapping reference
                 form_course_id = course_data.pop('form_course_id')
                 
-                # Check if course already exists
-                course, created = Course.objects.update_or_create(
+                # Only create if course doesn't exist - DO NOT update to preserve customizations
+                course, created = Course.objects.get_or_create(
                     id=course_data['id'],
                     defaults=course_data
                 )
@@ -141,7 +141,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.SUCCESS(f'  ✅ CREATED: {course.title}'))
                     created_count += 1
                 else:
-                    self.stdout.write(self.style.WARNING(f'  🔄 UPDATED: {course.title}'))
+                    self.stdout.write(self.style.SUCCESS(f'  ✓ EXISTS (preserved): {course.title}'))
                     updated_count += 1
                 
                 # Create course requirements
@@ -208,8 +208,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('=' * 60))
         self.stdout.write(self.style.SUCCESS('📊 SEEDING COMPLETE'))
         self.stdout.write(self.style.SUCCESS('=' * 60))
-        self.stdout.write(self.style.SUCCESS(f'  ✅ Created: {created_count} courses'))
-        self.stdout.write(self.style.SUCCESS(f'  🔄 Updated: {updated_count} courses'))
+        self.stdout.write(self.style.SUCCESS(f'  ✅ Created: {created_count} new courses'))
+        self.stdout.write(self.style.SUCCESS(f'  ✓ Preserved: {updated_count} existing courses (no overwrites)'))
         if error_count > 0:
             self.stdout.write(self.style.ERROR(f'  ❌ Errors: {error_count} courses'))
         else:
