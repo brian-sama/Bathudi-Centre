@@ -332,13 +332,12 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                         Your browser does not support the video tag.
                       </video>
                     ) : (directorData.video_url && isGoogleDriveUrl(directorData.video_url)) ? (
-                      <video 
-                        controls 
-                        className="w-full h-full object-cover"
-                        src={getGoogleDriveDirectUrl(directorData.video_url) || ''}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
+                      <iframe
+                        src={getGoogleDriveEmbedUrl(directorData.video_url) || ''}
+                        className="w-full h-full"
+                        allow="autoplay; encrypted-media"
+                        title="Director Message (Google Drive)"
+                      ></iframe>
                     ) : directorData.video_url ? (
                       <iframe 
                         src={getYoutubeEmbedUrl(directorData.video_url)} 
