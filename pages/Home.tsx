@@ -181,7 +181,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
           </h1>
           
           <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 font-light px-4">
-            Empowering South African youth with world-class automotive training. Join the masters of mechanics today.
+            Empowering South African youth with world class automotive technical skills
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
@@ -232,7 +232,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-white mb-6">Accreditation</h3>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-8 rounded-full"></div>
             <p className="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              BBathudi Automotive Technical Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
+              Bathudi Automotive Technical Training Centre provides <span className="text-blue-400 font-bold">accredited training programmes</span> that equip learners with the professional and practical skills required for excellence in the modern automotive industry. Our curriculum is designed to meet international standards while addressing local market needs.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
               <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">

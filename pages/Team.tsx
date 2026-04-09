@@ -82,7 +82,7 @@ const Team: React.FC = () => {
             Meet Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-rose-500">Mentors</span>
           </h3>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
-            The core of <span className="text-white font-semibold">BaThUdi AutoMoTiVe</span>. Our professionals bring decades of field-tested engineering expertise to every training program.
+            The core of <span className="text-white font-semibold">Bathudi Automotive</span>. Our professionals bring decades of field-tested engineering expertise to every training program.
           </p>
         </div>
 
