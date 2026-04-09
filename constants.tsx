@@ -58,7 +58,7 @@ export const COURSES: Course[] = [
   {
     id: 3,
     title: "Occupational Certificate: Automotive Suspension Fitter",
-    short_title: "Suspension Specialist",
+    short_title: "Suspension Fitter",
     description: "Specialized training program focusing on automotive suspension systems, steering components, and wheel alignment. Students learn to diagnose, repair, and maintain suspension systems for various vehicle types.",
     short_description: "Master automotive suspension and steering system repair",
     duration: "9 months",
