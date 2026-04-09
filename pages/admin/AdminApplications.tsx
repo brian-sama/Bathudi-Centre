@@ -565,7 +565,7 @@ const AdminApplications: React.FC = () => {
               {/* Proof of Payment */}
               <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-white font-bold">Proof of Payment (R661.25)</h3>
+                  <h3 className="text-white font-bold">Proof of Payment (R1,330)</h3>
                   <span className={`text-xs px-2 py-1 rounded ${selectedApp.documents_status.pop ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                     {selectedApp.documents_status.pop ? 'Uploaded' : 'Missing'}
                   </span>
@@ -777,7 +777,7 @@ const AdminApplications: React.FC = () => {
                       </span>
                     </div>
                     <div className="text-center" title="Proof of Payment">
-                      <p className="text-[9px] uppercase tracking-widest text-blue-400 mb-1 font-bold">R661.25 POP</p>
+                      <p className="text-[9px] uppercase tracking-widest text-blue-400 mb-1 font-bold">R1,330 POP</p>
                       <span className={app.documents_status.pop ? "text-green-500 text-lg" : "text-gray-600 text-lg"}>
                         {app.documents_status.pop ? "\u2714" : "\u274C"}
                       </span>

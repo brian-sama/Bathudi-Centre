@@ -75,7 +75,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
               total_payment: localCourse.total_payment,
               assessment_fee: localCourse.assessment_fee || 0,
               fee: localCourse.fee || 0,
-              registration_fee: localCourse.registration_fee || 661.25,
+              registration_fee: localCourse.registration_fee || 665,
+              assessment_fee: localCourse.assessment_fee || 665,
               level: localCourse.level || 'beginner',
               curriculum: localCourse.curriculum || 'Comprehensive curriculum covering all essential aspects of automotive technology including engine systems, electrical systems, braking systems, suspension, diagnostics, and repair techniques.',
               prerequisites: localCourse.prerequisites || 'No specific prerequisites required. Suitable for beginners with interest in automotive technology.',
@@ -457,7 +458,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                           <svg className="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          Proof of Registration Fee Payment (R661.25)
+                          Proof of Registration Fee Payment (R{course.registration_fee})
                         </li>
                       </ul>
                     </div>

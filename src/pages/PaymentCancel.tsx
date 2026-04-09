@@ -41,7 +41,7 @@ const PaymentCancel: React.FC<PaymentCancelProps> = ({ onNavigate }) => {
               <p><span className="text-gray-500">Account Holder:</span> Tucoprox (PTY) Ltd t/a Bathudi Automotive</p>
               <p><span className="text-gray-500">Account Number:</span> 63097751622</p>
               <p><span className="text-gray-500">Branch Code:</span> 250655</p>
-              <p><span className="text-gray-500">Amount:</span> R661.25</p>
+              <p><span className="text-gray-500">Amount:</span> R1,330 (Registration + Assessment)</p>
               <p><span className="text-gray-500">Reference:</span> Your Name + ID Number</p>
             </div>
           </div>
