@@ -68,7 +68,7 @@ class CourseAdmin(admin.ModelAdmin):
                       'assessment_fee', 'fee', 'registration_fee')
         }),
         ('Course Details', {
-            'fields': ('curriculum', 'prerequisites', 'requirements', 'career_opportunities')
+            'fields': ('curriculum', 'requirements', 'career_opportunities')
         }),
         ('Documents', {
             'fields': ('course_pdf', 'course_pdf_url')

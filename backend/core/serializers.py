@@ -28,7 +28,6 @@ class CourseSerializer(serializers.ModelSerializer):
             'registration_fee',
             'level',
             'curriculum',
-            'prerequisites',
             'requirements',
             'career_opportunities',
             'course_pdf_url',

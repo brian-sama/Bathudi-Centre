@@ -419,26 +419,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                     {course.requirements}
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-6 rounded-xl bg-white/5">
-                      <h4 className="text-lg font-bold text-white mb-4">Prerequisites</h4>
-                      <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-                        {course.prerequisites}
-                      </div>
-                      
-                      {course.is_math_required && (
-                        <div className="mt-4 p-4 rounded-lg bg-amber-600/10 border border-amber-500/20">
-                          <div className="flex items-center">
-                            <svg className="w-5 h-5 text-amber-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-amber-300 font-medium">Mathematics Required</span>
-                          </div>
-                          <p className="text-amber-200/80 text-sm mt-2">Basic mathematics knowledge is required for this course</p>
-                        </div>
-                      )}
-                    </div>
-                    
+                  <div className="grid grid-cols-1 gap-6">
                     <div className="p-6 rounded-xl bg-white/5">
                       <h4 className="text-lg font-bold text-white mb-4">Documentation Needed</h4>
                       <ul className="space-y-3 text-gray-300">
