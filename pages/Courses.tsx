@@ -177,10 +177,18 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
                 </div>
                 
                 <div className="p-8">
-                  <div className="flex justify-between items-start mb-4">
-                    <h4 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {course.short_title || course.title}
+                  <div className="flex flex-col mb-4">
+                    <h4 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors mb-2">
+                      {course.title}
                     </h4>
+                    <div className="space-y-1 text-sm text-gray-300">
+                      {course.saqa_id && (
+                        <p>SAQA ID: {course.saqa_id}</p>
+                      )}
+                      {course.nqf_level && (
+                        <p>NQF Level: {course.nqf_level}</p>
+                      )}
+                    </div>
                   </div>
                   
                   <p className="text-gray-400 text-sm leading-relaxed mb-6">

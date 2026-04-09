@@ -3,8 +3,8 @@ import { Course, Value, TeamMember, NewsletterPost } from './types';
 export const COURSES: Course[] = [
   {
     id: 1,
-    title: "Occupational Certificate: Automotive Engine Repairer",
-    short_title: "Automotive Engine Repairer",
+    title: "Occupational Certificate: Automotive Engine Fitter",
+    short_title: "Automotive Engine Fitter",
     description: "Specialized training program focused on automotive engine fitting, assembly, and repair. Students learn engine diagnosis, component fitting, assembly techniques, and testing procedures for various engine types.",
     short_description: "Become a certified automotive engine fitter with specialized training",
     duration: "36 months",
@@ -25,13 +25,14 @@ export const COURSES: Course[] = [
     image_url: "",
     is_math_required: true,
     is_featured: true,
-    saqa_id: "SAQA12345",
+    saqa_id: "119423",
+    nqf_level: "04",
     is_visible: true
   },
   {
     id: 2,
     title: "Occupational Certificate: Automotive Clutch and Brake Repairer",
-    short_title: " Automotive Clutch and Brake Repairer",
+    short_title: "Automotive Clutch and Brake Repairer",
     description: "Comprehensive training program specializing in automotive clutch and brake systems. Covers diagnosis, repair, and maintenance of braking systems, clutch assemblies, and related components.",
     short_description: "Specialize in automotive clutch and brake system repair",
     duration: "12 months",
@@ -52,13 +53,14 @@ export const COURSES: Course[] = [
     image_url: "",
     is_math_required: false,
     is_featured: true,
-    saqa_id: "SAQA12346",
+    saqa_id: "118729",
+    nqf_level: "02",
     is_visible: true
   },
   {
     id: 3,
-    title: "Occupational Certificate: Automotive Suspension Fitter",
-    short_title: "Suspension Fitter",
+    title: "Occupational Certificate: Automotive Suspension Repairer",
+    short_title: "Automotive Suspension Repairer",
     description: "Specialized training program focusing on automotive suspension systems, steering components, and wheel alignment. Students learn to diagnose, repair, and maintain suspension systems for various vehicle types.",
     short_description: "Master automotive suspension and steering system repair",
     duration: "9 months",
@@ -79,13 +81,14 @@ export const COURSES: Course[] = [
     image_url: "",
     is_math_required: true,
     is_featured: true,
-    saqa_id: "SAQA12347",
+    saqa_id: "117471",
+    nqf_level: "02",
     is_visible: true
   },
   {
     id: 4,
     title: "Occupational Certificate: Automotive Workshop Assistant",
-    short_title: "Workshop Assistant",
+    short_title: "Automotive Workshop Assistant",
     description: "Foundational training program for automotive workshop operations. Covers workshop safety, basic maintenance, tool usage, and assistance procedures for automotive repair and maintenance.",
     short_description: "Start your career as an automotive workshop assistant",
     duration: "14 months",
@@ -106,7 +109,8 @@ export const COURSES: Course[] = [
     image_url: "",
     is_math_required: false,
     is_featured: true,
-    saqa_id: "SAQA12348",
+    saqa_id: "118729",
+    nqf_level: "02",
     is_visible: true
   }
 ];

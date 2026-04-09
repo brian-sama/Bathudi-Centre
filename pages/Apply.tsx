@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Page } from '../types';
+import FundingSelection from '../components/FundingSelection';
 
 interface ApplyProps {
   onNavigate: (page: Page) => void;
 }
 
 const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
+  const [showFundingSelection, setShowFundingSelection] = useState(true);
   const [loading, setLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -23,6 +25,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     education_level: '',
     previous_school: '',
     course: '', // This will store the course ID as string
+    funding_type: 'self_funded' as 'self_funded' | 'funding_needed',
   });
   
   const [files, setFiles] = useState({
@@ -271,18 +274,37 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     onNavigate(Page.Courses);
   };
 
+  const handleFundingSelection = (fundingType: 'self_funded' | 'funding_needed') => {
+    setFormData(prev => ({
+      ...prev,
+      funding_type: fundingType
+    }));
+    setShowFundingSelection(false);
+  };
+
+  // Show funding selection first
+  if (showFundingSelection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 to-gray-900 pt-20 sm:pt-24 pb-12 sm:pb-16 px-3 sm:px-4">
+        <div className="max-w-6xl mx-auto">
+          <FundingSelection onSelect={handleFundingSelection} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-gray-900 pt-20 sm:pt-24 pb-12 sm:pb-16 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={handleBackToCourses}
+          onClick={() => setShowFundingSelection(true)}
           className="flex items-center text-gray-400 hover:text-white mb-6 sm:mb-8 transition-colors group text-sm sm:text-base"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Back to All Courses
+          Back to Funding Selection
         </button>
 
         {/* Header with Registration Fee Notice */}

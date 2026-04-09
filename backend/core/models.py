@@ -58,6 +58,10 @@ class Course(models.Model):
     course_pdf = models.FileField(upload_to='course_pdfs/', blank=True, null=True, help_text="PDF file with full course details")
     course_pdf_url = models.CharField(max_length=500, blank=True, help_text="External PDF URL or static file path")
     
+    # Accreditation fields
+    saqa_id = models.CharField(max_length=50, blank=True, help_text="SAQA ID for the qualification")
+    nqf_level = models.CharField(max_length=10, blank=True, help_text="NQF Level (e.g., 02, 04)")
+    
     # Status and display
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -170,6 +174,13 @@ class Application(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='applications', null=True, blank=True)
     course_title = models.CharField(max_length=200, blank=True, help_text="Full course title")
     form_course_id = models.CharField(max_length=100, blank=True, help_text="Course ID from the form")
+    
+    # Funding type
+    FUNDING_CHOICES = [
+        ('self_funded', 'Self Funded'),
+        ('funding_needed', 'Funding Needed'),
+    ]
+    funding_type = models.CharField(max_length=20, choices=FUNDING_CHOICES, default='self_funded', help_text="Whether applicant needs funding")
     
     # Additional fields
     qualification = models.TextField(blank=True)

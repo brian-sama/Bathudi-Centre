@@ -37,6 +37,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'is_featured',
             'is_active',
             'display_order',
+            'saqa_id',
+            'nqf_level',
             'created_at',
             'updated_at',
         ]
@@ -127,7 +129,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'course', 'form_course_id', 'course_title', 'qualification', 'experience', 
             'message', 'id_document', 'matric_certificate', 'proof_of_payment',
             'additional_doc_1', 'additional_doc_2', 'status', 'fee_verified',
-            'applied_date', 'formatted_date', 'documents_status', 'notes'
+            'applied_date', 'formatted_date', 'documents_status', 'notes', 'funding_type'
         ]
         read_only_fields = ['applied_date', 'formatted_date', 'documents_status']
     

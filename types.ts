@@ -41,6 +41,7 @@ export interface Course {
   image: string;
   duration: string;
   saqa_id?: string;
+  nqf_level?: string;
   credits?: number;
   is_visible?: boolean;
   // Frontend display fields
@@ -191,6 +192,7 @@ export interface Application {
   matric_certificate: string; // File path
   proof_of_payment: string; // File path
   fee_verified: boolean;
+  funding_type?: 'self_funded' | 'funding_needed'; // Funding type
   documents_status: {
     id: boolean;
     matric: boolean;

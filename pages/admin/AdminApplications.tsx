@@ -464,6 +464,12 @@ const AdminApplications: React.FC = () => {
                   <p className="text-sm text-gray-400">Email</p>
                   <p className="text-white font-medium">{selectedApp.email}</p>
                 </div>
+                <div>
+                  <p className="text-sm text-gray-400">Funding Type</p>
+                  <p className={`font-medium ${selectedApp.funding_type === 'self_funded' ? 'text-emerald-400' : 'text-blue-400'}`}>
+                    {selectedApp.funding_type === 'self_funded' ? '💰 Self-Funded' : '🎓 Funding Needed'}
+                  </p>
+                </div>
                 <div className="md:col-span-2">
                   <p className="text-sm text-gray-400">Address</p>
                   <p className="text-white font-medium">{selectedApp.address}</p>
