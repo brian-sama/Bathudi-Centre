@@ -24,7 +24,7 @@ export const HARDCODED_SLOGANS: Slogan[] = [
   },
   {
     id: 4,
-    text: "LEARN TODAY LEAD TOMORROW",
-    highlightWord: ["LEARN", "LEAD"] // Array for multiple highlighted words
+    text: "RECOVERING YOUTH EMPOWERING THE NATION",
+    highlightWord: ["RECOVERING", "EMPOWERING"] // Array for multiple highlighted words
   }
 ];

@@ -17,6 +17,17 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
   
   // Map each course to a specific cover image
   const getCourseCoverImage = (courseId: string | number, courseIndex: number) => {
+    // Specific course to image mappings
+    const courseImageMap: {[key: string]: string} = {
+      '3': '29.jpeg', // Automotive Suspension Repairer
+      '4': '6.jpg'    // Automotive Workshop Assistant
+    };
+    
+    // Return specific mapping if exists, otherwise use index-based
+    if (courseImageMap[String(courseId)]) {
+      return courseImageMap[String(courseId)];
+    }
+    
     const imageIndex = courseIndex % coverImages.length;
     return coverImages[imageIndex];
   };

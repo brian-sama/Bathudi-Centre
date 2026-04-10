@@ -66,7 +66,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
   const [bgImageIdx, setBgImageIdx] = useState(0);
   const [directorData, setDirectorData] = useState<any>(null);
   
-  const bgImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '13.jpeg', '14.jpeg', '7.jpg', '8.jpg', '9.jpg', '16.jpeg','17.jpeg','18.jpeg','32.jpeg'];
+  const bgImages = ['1.jpg', '2.jpg', '3.jpg', '34.jpg', '13.jpeg', '14.jpeg', '7.jpg', '8.jpg', '9.jpg', '16.jpeg','17.jpeg','18.jpeg','32.jpeg'];
 
   useEffect(() => {
     const fetchData = async () => {
