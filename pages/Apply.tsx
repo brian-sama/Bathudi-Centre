@@ -33,6 +33,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const [files, setFiles] = useState({
     id_document: null as File | null,
     matric_certificate: null as File | null,
+    proof_of_payment: null as File | null,
     additional_doc_1: null as File | null,
     additional_doc_2: null as File | null,
   });
@@ -234,6 +235,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         setFiles({
           id_document: null,
           matric_certificate: null,
+          proof_of_payment: null,
           additional_doc_1: null,
           additional_doc_2: null,
         });
@@ -687,23 +689,75 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Payment Registration Fee via PayFast */}
+                {/* Payment Registration Fee */}
                 <div className="space-y-2 sm:space-y-3 lg:col-span-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
                     Registration Fee Payment (R665) *
                   </label>
                   
-                  <div className="p-4 sm:p-5 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl">
-                    <p className="text-xs sm:text-sm text-blue-300 mb-4 leading-relaxed">
-                      💳 <span className="font-semibold">Secure Payment Method:</span> You will be redirected to PayFast after submitting your application to complete your registration fee payment. PayFast is PCI-DSS compliant and handles all payment information securely.
-                    </p>
-                    <p className="text-xs sm:text-sm text-blue-300">
-                      ✓ Your payment information is never stored by us
-                      <br />
-                      ✓ Secure and trusted by thousands of South African businesses
-                      <br />
-                      ✓ Instant payment confirmation
-                    </p>
+                  <div className="space-y-4">
+                    {!files.proof_of_payment ? (
+                      <div className="relative">
+                        <input
+                          type="file"
+                          name="proof_of_payment"
+                          title="Upload Proof of Payment"
+                          onChange={handleFileChange}
+                          className="block w-full text-xs sm:text-sm text-gray-400 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-3 sm:file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30 cursor-pointer bg-black/30 border border-white/10 rounded-xl"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">
+                          If you already paid via EFT or bank deposit, upload your receipt here.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-3 sm:p-4 bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                              <span className="text-amber-400 text-sm sm:text-base">{'\uD83D\uDCB0'}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs sm:text-sm font-medium text-white truncate" title={files.proof_of_payment.name}>
+                                {formatFileName(files.proof_of_payment.name)}
+                              </p>
+                              <p className="text-[10px] sm:text-xs text-gray-400">
+                                {formatFileSize(files.proof_of_payment.size)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                            <span className="text-green-400 text-xs sm:text-sm">{'\u2713'}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFile('proof_of_payment')}
+                              className="text-red-400 hover:text-red-300 text-base sm:text-lg font-bold"
+                              title="Remove file"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-4 sm:p-5 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl">
+                      <p className="text-xs sm:text-sm text-blue-300 mb-4 leading-relaxed">
+                        <span className="font-semibold">Pay online with PayFast:</span> If you have not paid yet, submit your application first and then use the secure PayFast button below to complete your registration fee payment online.
+                      </p>
+                      <p className="text-xs sm:text-sm text-blue-300 mb-4">
+                        Payment options:
+                        <br />
+                        Upload a receipt if you already paid manually, or use PayFast if you still need to pay now.
+                      </p>
+
+                      <PayFastButton
+                        applicationId={applicationId}
+                        customerName={`${formData.name} ${formData.surname}`.trim()}
+                        customerEmail={formData.email}
+                        buttonText="Pay R665 with PayFast"
+                      />
+                    </div>
                   </div>
                 </div>
 

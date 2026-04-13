@@ -26,6 +26,7 @@ interface Course {
   requirements: string;
   career_opportunities: string;
   course_pdf: string;
+  course_pdf_url?: string;
   image: string;
   image_url: string;
   is_math_required: boolean;
@@ -117,24 +118,14 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
       return;
     }
     
-    const pdfPath = course.course_pdf;
+    const pdfPath = course.course_pdf || course.course_pdf_url || '';
     
     if (!pdfPath) {
       alert('No PDF available for this course');
       return;
     }
-    
-    const pdfFilename = pdfPath.split('/').pop();
-    
-    if (!pdfFilename) {
-      alert('Invalid PDF filename');
-      return;
-    }
-    
-    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-    const baseUrl = API_BASE_URL.replace('/api', '');
-    const pdfUrl = `${baseUrl}/pdfs/course-outlines/${pdfFilename}`;
-    window.open(pdfUrl, '_blank');
+
+    window.open(pdfPath, '_blank');
   };
 
   const parseFee = (val: any) => {

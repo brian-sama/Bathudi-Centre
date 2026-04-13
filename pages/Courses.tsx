@@ -99,30 +99,22 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
     setLoading(prev => ({ ...prev, [String(courseId)]: true }));
     
     try {
-      const course = COURSES.find(c => String(c.id) === String(courseId));
-      
-      if (course && course.course_pdf_url) {
-        const pdfFilename = course.course_pdf_url.split('/').pop();
-        
-        if (pdfFilename) {
-          const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-          const baseUrl = API_BASE_URL.replace('/api', '');
-          const pdfUrl = `${baseUrl}/pdfs/course-outlines/${pdfFilename}`;
-          window.open(pdfUrl, '_blank');
-        } else {
-          throw new Error('Invalid PDF filename');
-        }
-      } else {
-        const pdfUrl = coursePdfs[String(courseId)];
-        if (pdfUrl) {
-          window.open(pdfUrl, '_blank');
-        } else {
-          throw new Error('No PDF available for this course');
-        }
+      const uploadedOrApiPdfUrl = coursePdfs[String(courseId)];
+      if (uploadedOrApiPdfUrl) {
+        window.open(uploadedOrApiPdfUrl, '_blank');
+        return;
       }
+
+      const course = COURSES.find(c => String(c.id) === String(courseId));
+      if (course?.course_pdf_url) {
+        window.open(course.course_pdf_url, '_blank');
+        return;
+      }
+
+      throw new Error(`No PDF available for ${courseTitle}`);
     } catch (error) {
       console.error('Error opening PDF:', error);
-      alert('Failed to open PDF. Please make sure the PDF file exists in the pdfs folder.');
+      alert('Failed to open PDF. Please upload the course PDF in Django admin and try again.');
     } finally {
       setLoading(prev => ({ ...prev, [String(courseId)]: false }));
     }
