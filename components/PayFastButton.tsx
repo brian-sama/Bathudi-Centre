@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 interface PayFastButtonProps {
   applicationId: number | null;
+  getApplicationId?: () => Promise<number | null>;
   customerName?: string;
   customerEmail?: string;
   onPaymentInitiated?: () => void;
@@ -13,6 +14,7 @@ interface PayFastButtonProps {
 
 const PayFastButton: React.FC<PayFastButtonProps> = ({
   applicationId,
+  getApplicationId,
   customerName = '',
   customerEmail = '',
   onPaymentInitiated,
@@ -30,17 +32,19 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
   const handlePayment = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!applicationId) {
-      const errorMsg = 'Application ID is required';
-      setError(errorMsg);
-      onError?.(errorMsg);
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
+      let resolvedApplicationId = applicationId;
+      if (!resolvedApplicationId && getApplicationId) {
+        resolvedApplicationId = await getApplicationId();
+      }
+
+      if (!resolvedApplicationId) {
+        throw new Error('Please complete the required application details before paying.');
+      }
+
       const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
       const currentUrl = window.location.origin;
       const returnUrl = `${currentUrl}/payment-success`;
@@ -52,7 +56,7 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          application_id: applicationId,
+          application_id: resolvedApplicationId,
           return_url: returnUrl,
           cancel_url: cancelUrl,
         }),
@@ -100,7 +104,7 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
     <div className="space-y-2 sm:space-y-3">
       <button
         onClick={handlePayment}
-        disabled={disabled || loading || !applicationId}
+        disabled={disabled || loading}
         type="button"
         className={`
           w-full px-6 py-3 sm:py-4
@@ -147,7 +151,7 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
         <div className="p-3 sm:p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
           <p className="text-xs sm:text-sm text-amber-400">
             <span className="font-semibold">Note: </span>
-            Application information is needed to process payment
+            When you click pay, your application will be submitted first and then you will be redirected to PayFast.
           </p>
         </div>
       )}

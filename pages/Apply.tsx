@@ -57,6 +57,13 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     }
   };
 
+  const getDisplayCourseTitle = (course: any) => {
+    if (course?.title === 'Occupational Certificate: Automotive Engine Repairer') {
+      return 'Occupational Certificate: Automotive Engine Fitter';
+    }
+    return course?.title || '';
+  };
+
   // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -109,60 +116,67 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   };
 
   // Validate form
-  const validateForm = () => {
+  const validateForm = (): string | null => {
     const requiredFields = ['name', 'surname', 'age', 'mobile', 'email', 'id_number', 'address', 'education_level', 'previous_school', 'course'];
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
-        setErrorMessage(`Please fill in ${field.replace('_', ' ')}`);
-        return false;
+        const message = `Please fill in ${field.replace('_', ' ')}`;
+        setErrorMessage(message);
+        return message;
       }
     }
 
     const age = parseInt(formData.age);
     if (isNaN(age) || age < 16 || age > 65) {
-      setErrorMessage('Age must be between 16 and 65');
-      return false;
+      const message = 'Age must be between 16 and 65';
+      setErrorMessage(message);
+      return message;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setErrorMessage('Please enter a valid email address');
-      return false;
+      const message = 'Please enter a valid email address';
+      setErrorMessage(message);
+      return message;
     }
 
     const mobileRegex = /^(\+27|0)[1-9][0-9]{8}$/;
     const cleanMobile = formData.mobile.replace(/\s/g, '');
     if (!mobileRegex.test(cleanMobile)) {
-      setErrorMessage('Please enter a valid South African mobile number (e.g., 083 123 4567 or +27831234567)');
-      return false;
+      const message = 'Please enter a valid South African mobile number (e.g., 083 123 4567 or +27831234567)';
+      setErrorMessage(message);
+      return message;
     }
 
     const requiredFiles = ['id_document', 'matric_certificate'];
     for (const fileField of requiredFiles) {
       if (!files[fileField as keyof typeof files]) {
-        setErrorMessage(`Please upload ${fileField.replace('_', ' ')}`);
-        return false;
+        const message = `Please upload ${fileField.replace('_', ' ')}`;
+        setErrorMessage(message);
+        return message;
       }
     }
 
     const maxSize = 5 * 1024 * 1024;
     for (const [field, file] of Object.entries(files)) {
       if (file && file.size > maxSize) {
-        setErrorMessage(`${field.replace('_', ' ')} is too large. Maximum size is 5MB`);
-        return false;
+        const message = `${field.replace('_', ' ')} is too large. Maximum size is 5MB`;
+        setErrorMessage(message);
+        return message;
       }
     }
 
-    return true;
+    return null;
   };
 
-  // Submit form - FIXED: Send course as ID number, not course_id
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      alert(`\u274C Validation Error: ${errorMessage}`);
-      return;
+  const submitApplication = async (options?: { showSuccessAlert?: boolean; resetAfterSubmit?: boolean }) => {
+    const showSuccessAlert = options?.showSuccessAlert ?? true;
+    const resetAfterSubmit = options?.resetAfterSubmit ?? true;
+
+    const validationMessage = validateForm();
+    if (validationMessage) {
+      alert(`\u274C Validation Error: ${validationMessage}`);
+      throw new Error(validationMessage);
     }
 
     setLoading(true);
@@ -213,33 +227,38 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         
         // Store application ID for PayFast payment
         setApplicationId(data.id);
-        
-        alert(`\u2705 Application Submitted Successfully!\n\n\uD83D\uDCCB Application ID: ${data.id || 'Pending'}\n\uD83D\uDC64 Name: ${formData.name} ${formData.surname}\n\uD83C\uDF93 Course ID: ${formData.course}\n\n\uD83D\uDCEC We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.\n\nYou will now proceed to pay your registration fee via PayFast.`);
-        
+
+        if (showSuccessAlert) {
+          alert(`\u2705 Application Submitted Successfully!\n\n\uD83D\uDCCB Application ID: ${data.id || 'Pending'}\n\uD83D\uDC64 Name: ${formData.name} ${formData.surname}\n\uD83C\uDF93 Course ID: ${formData.course}\n\n\uD83D\uDCEC We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.\n\nYou will now proceed to pay your registration fee via PayFast.`);
+        }
+
         setSubmitStatus('success');
-        
-        // Reset form
-        setFormData({
-          name: '',
-          surname: '',
-          age: '',
-          country: 'South Africa',
-          mobile: '',
-          email: '',
-          id_number: '',
-          address: '',
-          education_level: '',
-          previous_school: '',
-          course: '',
-        });
-        setFiles({
-          id_document: null,
-          matric_certificate: null,
-          proof_of_payment: null,
-          additional_doc_1: null,
-          additional_doc_2: null,
-        });
-        
+
+        if (resetAfterSubmit) {
+          setFormData({
+            name: '',
+            surname: '',
+            age: '',
+            country: 'South Africa',
+            mobile: '',
+            email: '',
+            id_number: '',
+            address: '',
+            education_level: '',
+            previous_school: '',
+            course: '',
+            funding_type: formData.funding_type,
+          });
+          setFiles({
+            id_document: null,
+            matric_certificate: null,
+            proof_of_payment: null,
+            additional_doc_1: null,
+            additional_doc_2: null,
+          });
+        }
+
+        return data.id as number;
       } else {
         const errorText = await response.text();
         console.error('\u274C Error response:', errorText);
@@ -254,6 +273,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           
           setSubmitStatus('error');
           setErrorMessage(errorMsg);
+          throw new Error(errorMsg);
         } catch (parseError) {
           console.error('Error parsing error response:', parseError);
           const errorMsg = `Server error (${response.status})`;
@@ -262,6 +282,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           
           setSubmitStatus('error');
           setErrorMessage(errorMsg);
+          throw new Error(errorMsg);
         }
       }
     } catch (error: any) {
@@ -269,8 +290,20 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       alert(`Network error: ${error.message}. Please check your connection.`);
       setSubmitStatus('error');
       setErrorMessage(error.message);
+      throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Submit form - FIXED: Send course as ID number, not course_id
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await submitApplication();
+    } catch {
+      return;
     }
   };
 
@@ -566,7 +599,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     {/* IMPORTANT: Use course.id as the value (number) */}
                     {availableCourses.map(course => (
                       <option key={course.id} value={course.id} className="bg-gray-800 text-white">
-                        {course.title}
+                        {getDisplayCourseTitle(course)}
                       </option>
                     ))}
                   </select>
@@ -753,9 +786,11 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
 
                       <PayFastButton
                         applicationId={applicationId}
+                        getApplicationId={() => submitApplication({ showSuccessAlert: false, resetAfterSubmit: false })}
                         customerName={`${formData.name} ${formData.surname}`.trim()}
                         customerEmail={formData.email}
                         buttonText="Pay R665 with PayFast"
+                        disabled={loading}
                       />
                     </div>
                   </div>

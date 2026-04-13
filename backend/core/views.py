@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -82,6 +82,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = ApplicationSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     permission_classes = [AllowAny]
+    authentication_classes = []
     
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -353,6 +354,8 @@ def dashboard_stats(request):
 
 # ========== PAYFAST PAYMENT VIEWS ==========
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def initiate_payfast_payment(request):
     """
     Initiate a PayFast payment for an application
@@ -429,6 +432,8 @@ def initiate_payfast_payment(request):
 
 
 @api_view(['POST', 'GET'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def payfast_notify(request):
     """
     PayFast webhook/notification endpoint
@@ -542,6 +547,8 @@ def payfast_notify(request):
 
 
 @api_view(['GET'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def get_payment_status(request, application_id):
     """Get payment status for an application"""
     try:
