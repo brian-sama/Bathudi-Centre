@@ -225,6 +225,7 @@ BATHUDI_WHATSAPP_NUMBER = os.environ.get('BATHUDI_WHATSAPP_NUMBER', '+2768917629
 BATHUDI_EMAIL = os.environ.get('BATHUDI_EMAIL', 'info@bathudi.co.za')
 BATHUDI_ADDRESS = os.environ.get('BATHUDI_ADDRESS', '123 Training Street, Johannesburg, South Africa')
 BATHUDI_WEBSITE = os.environ.get('BATHUDI_WEBSITE', 'https://bathudi.co.za')
+PAYFAST_NOTIFY_BASE_URL = os.environ.get('PAYFAST_NOTIFY_BASE_URL', BATHUDI_WEBSITE).rstrip('/')
 
 # ========== WHATSAPP NOTIFICATION SETTINGS ==========
 WHATSAPP_PROVIDER = os.environ.get('WHATSAPP_PROVIDER', 'twilio')
@@ -281,7 +282,7 @@ LOGGING = {
 os.makedirs(os.path.join(BASE_DIR, 'logs'), exist_ok=True)
 
 # ========== REGISTRATION FEE ==========
-REGISTRATION_FEE_AMOUNT = os.environ.get('REGISTRATION_FEE_AMOUNT', '661.25')
+REGISTRATION_FEE_AMOUNT = os.environ.get('REGISTRATION_FEE_AMOUNT', '665.00')
 REGISTRATION_FEE_CURRENCY = os.environ.get('REGISTRATION_FEE_CURRENCY', 'ZAR')
 
 # ========== COURSE MAPPING ==========

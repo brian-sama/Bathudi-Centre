@@ -83,7 +83,7 @@ You have been ACCEPTED into the {course_name} programme at Bathudi Automotive Tr
 1. Visit our offices for registration
 2. Bring your ID document
 3. Bring your Matric certificate
-4. Bring proof of payment (R661.25)
+4. Bring proof of payment (R665.00)
 
 📍 Address: 123 Training Street, Johannesburg
 📞 Contact: +27 68 917 6294

@@ -5,7 +5,8 @@ from .views import (
     NewsletterViewSet, GalleryImageViewSet, NewsPostViewSet,
     TeamMemberViewSet, TestimonialViewSet,
     VideoViewSet, DirectorMessageViewSet,
-    get_course_pdf, dashboard_stats, serve_document, debug_courses
+    get_course_pdf, dashboard_stats, serve_document, debug_courses,
+    initiate_payfast_payment, payfast_notify, get_payment_status
 )
 
 router = DefaultRouter()
@@ -25,6 +26,11 @@ urlpatterns = [
     
     # Debug endpoint
     path('debug/courses/', debug_courses, name='debug-courses'),
+    
+    # PayFast Payment Gateway endpoints
+    path('payfast/initiate/', initiate_payfast_payment, name='payfast-initiate'),
+    path('payfast/notify/', payfast_notify, name='payfast-notify'),
+    path('payfast/status/<int:application_id>/', get_payment_status, name='payfast-status'),
     
     # Document serving endpoint - IMPORTANT: This must come before media serving
     re_path(r'^media/(?P<file_path>.+)$', serve_document, name='serve-document'),

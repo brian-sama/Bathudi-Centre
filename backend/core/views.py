@@ -9,6 +9,10 @@ from django.http import FileResponse, Http404
 from django.conf import settings
 import os
 import mimetypes
+import json
+import logging
+from decimal import Decimal
+from urllib.parse import urljoin
 
 from .models import (
     Course, CourseRequirement, Application, Student, 
@@ -23,6 +27,20 @@ from .serializers import (
     NewsPostSerializer, TeamMemberSerializer,
     TestimonialSerializer, VideoSerializer, DirectorMessageSerializer
 )
+from .services.payfast import PayFastService, get_payfast_service
+
+logger = logging.getLogger(__name__)
+
+
+def _get_application_registration_fee(application: Application) -> Decimal:
+    return Decimal(str(settings.REGISTRATION_FEE_AMOUNT))
+
+
+def _build_payfast_notify_url(request) -> str:
+    configured_base = getattr(settings, 'PAYFAST_NOTIFY_BASE_URL', '').strip()
+    if configured_base:
+        return urljoin(f'{configured_base}/', 'api/payfast/notify/')
+    return request.build_absolute_uri('/api/payfast/notify/')
 
 # ========== DOCUMENT SERVING VIEW ==========
 @api_view(['GET'])
@@ -331,3 +349,219 @@ def dashboard_stats(request):
         'active_courses': active_courses,
         'total_revenue': total_revenue,
     })
+
+
+# ========== PAYFAST PAYMENT VIEWS ==========
+@api_view(['POST'])
+def initiate_payfast_payment(request):
+    """
+    Initiate a PayFast payment for an application
+    
+    Expected POST data:
+    {
+        "application_id": 123,
+        "return_url": "https://yourdomain.com/payment-success",
+        "cancel_url": "https://yourdomain.com/payment-cancel"
+    }
+    """
+    try:
+        application_id = request.data.get('application_id')
+        return_url = request.data.get('return_url', '')
+        cancel_url = request.data.get('cancel_url', '')
+        
+        # Validate required fields
+        if not application_id or not return_url or not cancel_url:
+            return Response(
+                {"error": "Missing required fields: application_id, return_url, cancel_url"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get application
+        try:
+            application = Application.objects.select_related('course').get(id=application_id)
+        except Application.DoesNotExist:
+            return Response(
+                {"error": f"Application with ID {application_id} not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Initialize PayFast service
+        payfast = get_payfast_service()
+        if not all([payfast.merchant_id, payfast.merchant_key, payfast.security_passphrase]):
+            logger.error("PayFast credentials are missing in the server environment")
+            return Response(
+                {"error": "Payment gateway is not configured yet. Please contact support."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        amount = _get_application_registration_fee(application)
+
+        # Build notify URL (webhook URL)
+        notify_url = _build_payfast_notify_url(request)
+        
+        # Create payment form data
+        payment_data = payfast.create_payment_form_data(
+            application_id=application_id,
+            amount=amount,
+            return_url=return_url,
+            cancel_url=cancel_url,
+            notify_url=notify_url,
+            email_address=application.email,
+            payer_name=f"{application.name} {application.surname}"
+        )
+        
+        logger.info("Payment initiation for application %s, amount: %s", application_id, amount)
+
+        return Response({
+            "success": True,
+            "payfast_url": payfast.get_payfast_url(),
+            "form_data": payment_data,
+            "notify_url": notify_url,
+            "amount": f"{amount:.2f}",
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error initiating PayFast payment: {str(e)}")
+        return Response(
+            {"error": f"Error initiating payment: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['POST', 'GET'])
+def payfast_notify(request):
+    """
+    PayFast webhook/notification endpoint
+    Called by PayFast when payment is processed
+    
+    This URL should be set in your PayFast merchant settings as the "Notify URL"
+    Notify URL should be: https://yourdomain.com/api/payfast/notify/
+    """
+    try:
+        # Get POST data from PayFast
+        if request.method != 'POST':
+            return Response(
+                {"error": "Method not allowed"},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
+
+        post_data = request.POST.dict()
+
+        logger.info("PayFast notification received: %s", post_data.get('m_payment_id'))
+        
+        # Initialize PayFast service
+        payfast = get_payfast_service()
+        
+        # Validate the notification
+        if not payfast.validate_payment(post_data):
+            logger.warning("Invalid PayFast signature for payment %s", post_data.get('m_payment_id'))
+            return Response(
+                {"error": "Invalid signature"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Extract payment information
+        m_payment_id = post_data.get('m_payment_id')
+        payment_status = post_data.get('payment_status', 'failed')
+        pf_payment_id = post_data.get('pf_payment_id')
+        amount_gross = post_data.get('amount_gross')
+        
+        # Get the application
+        try:
+            application = Application.objects.select_related('course').get(id=m_payment_id)
+        except Application.DoesNotExist:
+            logger.error("Application with ID %s not found for payment %s", m_payment_id, pf_payment_id)
+            return Response(
+                {"error": f"Application not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        expected_amount = _get_application_registration_fee(application)
+        try:
+            received_amount = Decimal(str(amount_gross))
+        except Exception:
+            logger.error("Invalid amount received for application %s: %s", m_payment_id, amount_gross)
+            return Response(
+                {"error": "Invalid payment amount"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if received_amount.quantize(Decimal('0.01')) != expected_amount.quantize(Decimal('0.01')):
+            logger.error(
+                "Amount mismatch for application %s: expected %s, received %s",
+                m_payment_id,
+                expected_amount,
+                received_amount,
+            )
+            return Response(
+                {"error": "Payment amount mismatch"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Process payment based on status
+        if payment_status == 'COMPLETE':
+            # Payment is complete and verified
+            application.fee_verified = True
+            application.payment_reference = application.payment_reference or m_payment_id
+            application.save()
+
+            logger.info("Payment verified for application %s, PayFast ID: %s", m_payment_id, pf_payment_id)
+            
+            # You can add email notification here
+            # send_payment_confirmation_email(application)
+            
+            return Response({
+                "status": "success",
+                "message": "Payment processed successfully"
+            }, status=status.HTTP_200_OK)
+            
+        elif payment_status == 'FAILED':
+            # Payment failed
+            logger.warning("Payment failed for application %s", m_payment_id)
+            
+            return Response({
+                "status": "failed",
+                "message": "Payment processing failed"
+            }, status=status.HTTP_200_OK)
+            
+        else:
+            # Payment is pending or in other state
+            logger.info("Payment status for application %s: %s", m_payment_id, payment_status)
+            
+            return Response({
+                "status": "pending",
+                "message": f"Payment status: {payment_status}"
+            }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.error(f"Error processing PayFast notification: {str(e)}")
+        return Response(
+            {"error": f"Error processing notification: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['GET'])
+def get_payment_status(request, application_id):
+    """Get payment status for an application"""
+    try:
+        application = Application.objects.get(id=application_id)
+        
+        return Response({
+            "application_id": application.id,
+            "fee_verified": application.fee_verified,
+            "payment_reference": application.payment_reference,
+            "status": "paid" if application.fee_verified else "pending"
+        }, status=status.HTTP_200_OK)
+        
+    except Application.DoesNotExist:
+        return Response(
+            {"error": f"Application with ID {application_id} not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        logger.error(f"Error getting payment status: {str(e)}")
+        return Response(
+            {"error": f"Error getting payment status: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
