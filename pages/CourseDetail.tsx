@@ -21,7 +21,6 @@ interface Course {
   fee: number;
   registration_fee: number;
   level: string;
-  curriculum: string;
   prerequisites: string;
   requirements: string;
   career_opportunities: string;
@@ -79,7 +78,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
               registration_fee: localCourse.registration_fee || 665,
               assessment_fee: localCourse.assessment_fee || 665,
               level: localCourse.level || 'beginner',
-              curriculum: localCourse.curriculum || 'Comprehensive curriculum covering all essential aspects of automotive technology including engine systems, electrical systems, braking systems, suspension, diagnostics, and repair techniques.',
               prerequisites: localCourse.prerequisites || 'No specific prerequisites required. Suitable for beginners with interest in automotive technology.',
               requirements: localCourse.requirements || 'Basic understanding of automotive concepts. Willingness to learn and hands-on practice.',
               career_opportunities: localCourse.career_opportunities || 'Automotive Technician, Mechanic, Service Advisor, Workshop Manager, Diagnostic Specialist, Automotive Electrician',
@@ -267,12 +265,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                 Overview
               </button>
               <button
-                onClick={() => setActiveTab('curriculum')}
-                className={`px-6 py-4 font-medium whitespace-nowrap ${activeTab === 'curriculum' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}
-              >
-                Curriculum
-              </button>
-              <button
                 onClick={() => setActiveTab('requirements')}
                 className={`px-6 py-4 font-medium whitespace-nowrap ${activeTab === 'requirements' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}
               >
@@ -362,41 +354,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                         </li>
                       </ul>
                     </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {activeTab === 'curriculum' && (
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-6">Course Curriculum</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-                    {course.curriculum.split('\n').map((line, index) => (
-                      <p key={index} className="mb-4">{line}</p>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-8 p-6 rounded-xl bg-blue-600/10 border border-blue-500/20">
-                    <h4 className="text-lg font-bold text-white mb-3">Learning Outcomes</h4>
-                    <ul className="space-y-3 text-gray-300">
-                      <li className="flex items-start">
-                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">1</div>
-                        <span>Develop comprehensive understanding of automotive systems and components</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">2</div>
-                        <span>Master diagnostic techniques using modern automotive tools</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">3</div>
-                        <span>Gain hands-on experience with repair and maintenance procedures</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">4</div>
-                        <span>Understand safety protocols and industry best practices</span>
-                      </li>
-                    </ul>
                   </div>
                 </div>
               </div>
