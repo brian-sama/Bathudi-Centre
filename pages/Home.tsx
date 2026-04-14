@@ -236,15 +236,15 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             </p>
             <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
               <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
-                Accreditation No: SDP210225153101
+                Accreditation No: 07-QCTO/SDP210225153101
               </div>
               <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
                 MERSETA: 17-QA/ACC/3423/24
               </div>
             </div>
             <div className="mt-10 flex justify-center gap-8 flex-wrap">
-              <img src="/images/merseta.png" alt="MERSETA Accreditation" className="h-16 object-contain" />
               <img src="/images/qcto.png" alt="QCTO Accreditation" className="h-16 object-contain" />
+              <img src="/images/merseta.png" alt="MERSETA Accreditation" className="h-16 object-contain" />
             </div>
           </div>
         </div>
