@@ -33,7 +33,10 @@ class PayFastService:
         """Initialize PayFast service with credentials from environment"""
         self.merchant_id = os.getenv('PAYFAST_MERCHANT_ID', '')
         self.merchant_key = os.getenv('PAYFAST_MERCHANT_KEY', '')
-        self.security_passphrase = os.getenv('PAYFAST_SECURITY_PASSPHRASE', '')
+        self.security_passphrase = (
+            os.getenv('PAYFAST_SECURITY_PASSPHRASE', '')
+            or os.getenv('PAYFAST_PASSPHRASE', '')
+        )
         self.use_sandbox = os.getenv('PAYFAST_USE_SANDBOX', 'False').lower() == 'true'
         
         if not all([self.merchant_id, self.merchant_key, self.security_passphrase]):

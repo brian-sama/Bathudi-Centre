@@ -50,8 +50,8 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
     },
     {
       id: 2,
-      text: "LEARN TODAY LEAD TOMORROW",
-      highlightWord: ["LEARN", "LEAD"]
+      text: "Skilling the youth-empowering the nation",
+      highlightWord: ["Skilling", "empowering"]
     },
     {
       id: 4,
