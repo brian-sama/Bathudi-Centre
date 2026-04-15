@@ -53,17 +53,16 @@ class PayFastService:
         Returns:
             MD5 hash signature
         """
-        # Remove empty values and sort by key. PayFast expects trimmed values.
+        # Remove empty values and preserve the submitted field order.
+        # PayFast signature validation is sensitive to parameter order.
         clean_data = {
             k: str(v).strip()
             for k, v in data.items()
             if v is not None and str(v).strip() != ''
         }
 
-        # Sort and create query string
-        sorted_items = sorted(clean_data.items())
         query_string = '&'.join(
-            [f'{k}={quote_plus(v)}' for k, v in sorted_items]
+            [f'{k}={quote_plus(v)}' for k, v in clean_data.items()]
         )
 
         # Add passphrase if required
