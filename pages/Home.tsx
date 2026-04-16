@@ -236,7 +236,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
             </p>
             <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
               <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
-                Accreditation No: 07-QCTO/SDP210225153101
+                QCTO Accreditation No: 07-QCTO/SDP210225153101
               </div>
               <div className="inline-block px-5 py-2 bg-blue-900/40 border border-blue-500 rounded-full text-blue-200">
                 MERSETA: 17-QA/ACC/3423/24
