@@ -146,7 +146,7 @@ const Team: React.FC = () => {
 
         {/* Dynamic CTA */}
         <div className="mt-24 text-center">
-           <p className="text-gray-500 text-sm mb-6">Want to join our faculty?</p>
+           <p className="text-gray-500 text-sm mb-6">Want to join our Team ?</p>
            <button className="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all font-medium">
              Submit Professional Inquiry
            </button>

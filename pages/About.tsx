@@ -29,7 +29,7 @@ const About: React.FC = () => {
             <p className="text-gray-300 leading-relaxed mb-6">
               Founded in Hermanstad, Pretoria, Bathudi is more than a training centre—we are a bridge to opportunity. Our mission is to uplift, equip, and inspire youth by giving them the tools they need to succeed, regardless of their academic past. </p>
             <p className="text-gray-300 leading-relaxed mb-10">
-              Bathudi Automotive Technical Training Centre is committed to giving South African youth a genuine second chance. In a world where lacking a matric can close countless doors, we aim to reopen them—providing accessible, practical pathways into the automotive industry.
+              Bathudi Automotive Technical Training Centre is committed to giving South African youth a genuine second chance ,creating pathways to employment,growth and a brighter future through skills development. In a world where lacking a matric can close countless doors, we aim to reopen them—providing accessible, practical pathways into the automotive industry.
 
              We empower young people to build real skills with their hands, gain confidence in their abilities, and shape sustainable futures through accredited technical training. As a QCTO–accredited institution, we offer high-quality, industry-aligned automotive skills programmes that prepare learners for employment, entrepreneurship, and lifelong growth.</p>
 
