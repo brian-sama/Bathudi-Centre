@@ -11,6 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [isFeesModalOpen, setIsFeesModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +37,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
     { label: 'About', page: Page.About },
     { label: 'Gallery', page: Page.Gallery },
     { label: 'Team', page: Page.Team },
+    { label: 'Fees', isAction: true, action: () => setIsFeesModalOpen(true) },
   ];
 
   const handleLogoClick = () => {
@@ -50,17 +52,16 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'py-2 md:py-3 glass-dark shadow-lg' 
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? 'py-2 md:py-3 glass-dark shadow-lg'
         : 'py-3 md:py-4 bg-gradient-to-b from-slate-950/90 to-transparent'
-    }`}>
+      }`}>
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo Section - UPDATED HEADING */}
         <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group" onClick={handleLogoClick}>
           <div className="relative">
-            <img 
-              src="/images/bathudi%20logo%20background.jpg" 
+            <img
+              src="/images/bathudi%20logo%20background.jpg"
               alt="Bathudi Training Centre Logo"
               className="h-8 w-8 sm:h-10 sm:w-10 object-cover rounded-md"
               onLoad={() => console.log("✅ Navbar logo loaded successfully")}
@@ -85,30 +86,35 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
         <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
           {menuItems.map((item) => (
             <button
-              key={item.page}
-              onClick={() => handleNavClick(item.page)}
-              className={`relative text-xs xl:text-sm font-semibold uppercase tracking-wider transition-all duration-300 ${
-                currentPage === item.page 
-                  ? 'text-red-500' 
+              key={item.label}
+              onClick={() => {
+                if (item.isAction && item.action) {
+                  item.action();
+                } else if (item.page) {
+                  handleNavClick(item.page);
+                }
+              }}
+              className={`relative text-xs xl:text-sm font-semibold uppercase tracking-wider transition-all duration-300 ${!item.isAction && currentPage === item.page
+                  ? 'text-red-500'
                   : 'text-gray-300 hover:text-red-400'
-              }`}
+                }`}
             >
               {item.label}
-              {currentPage === item.page && (
+              {!item.isAction && currentPage === item.page && (
                 <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></span>
               )}
             </button>
           ))}
           <div className="h-6 w-[1px] bg-white/10 mx-2" />
           {onStudentPortal && (
-            <button 
+            <button
               onClick={onStudentPortal}
               className="text-[10px] xl:text-xs font-bold text-blue-400 hover:text-white transition-colors uppercase tracking-widest"
             >
               Student Portal
             </button>
           )}
-          <button 
+          <button
             onClick={() => handleNavClick(Page.Apply)}
             className="relative px-5 xl:px-6 py-2 xl:py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white rounded-full font-bold transition-all transform hover:scale-105 shadow-lg shadow-red-500/25 active:scale-95 group overflow-hidden text-xs xl:text-sm"
           >
@@ -118,7 +124,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           className="lg:hidden p-2 text-white hover:text-red-400 transition-colors relative z-50 focus:outline-none"
           onClick={(e) => {
             e.stopPropagation();
@@ -127,22 +133,19 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           <div className="w-5 h-5 sm:w-6 sm:h-6 flex flex-col justify-center items-center">
-            <span className={`block h-0.5 w-5 sm:w-6 bg-current transform transition-transform duration-300 ${
-              isMobileMenuOpen ? 'rotate-45 translate-y-1.5 sm:translate-y-1.5' : '-translate-y-1 sm:-translate-y-1'
-            }`}></span>
-            <span className={`block h-0.5 w-5 sm:w-6 bg-current transition-opacity duration-300 ${
-              isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
-            }`}></span>
-            <span className={`block h-0.5 w-5 sm:w-6 bg-current transform transition-transform duration-300 ${
-              isMobileMenuOpen ? '-rotate-45 -translate-y-1.5 sm:-translate-y-1.5' : 'translate-y-1 sm:translate-y-1'
-            }`}></span>
+            <span className={`block h-0.5 w-5 sm:w-6 bg-current transform transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5 sm:translate-y-1.5' : '-translate-y-1 sm:-translate-y-1'
+              }`}></span>
+            <span className={`block h-0.5 w-5 sm:w-6 bg-current transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
+              }`}></span>
+            <span className={`block h-0.5 w-5 sm:w-6 bg-current transform transition-transform duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5 sm:-translate-y-1.5' : 'translate-y-1 sm:translate-y-1'
+              }`}></span>
           </div>
         </button>
       </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-slate-950/98 backdrop-blur-md pt-20 z-40 animate-fadeIn"
           onClick={() => setIsMobileMenuOpen(false)}
         >
@@ -150,32 +153,38 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
             <div className="space-y-2 animate-slideDown">
               {menuItems.map((item) => (
                 <button
-                  key={item.page}
-                  onClick={() => handleNavClick(item.page)}
-                  className={`block w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold transition-all duration-300 ${
-                    currentPage === item.page 
-                      ? 'bg-red-600/30 text-red-400 border-l-4 border-red-400' 
+                  key={item.label}
+                  onClick={() => {
+                    if (item.isAction && item.action) {
+                      item.action();
+                      setIsMobileMenuOpen(false);
+                    } else if (item.page) {
+                      handleNavClick(item.page);
+                    }
+                  }}
+                  className={`block w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold transition-all duration-300 ${!item.isAction && currentPage === item.page
+                      ? 'bg-red-600/30 text-red-400 border-l-4 border-red-400'
                       : 'text-gray-300 hover:bg-red-950/30 hover:text-red-300 hover:border-l-4 hover:border-red-400/50'
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </button>
               ))}
               {onStudentPortal && (
-                <button 
+                <button
                   onClick={onStudentPortal}
                   className="block w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 transition-all duration-300"
                 >
                   Student Portal
                 </button>
               )}
-              <button 
+              <button
                 onClick={() => handleNavClick(Page.Apply)}
                 className="block w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 transform hover:scale-[1.02] active:scale-95"
               >
                 APPLY NOW
               </button>
-              
+
               {/* Contact Info in Mobile Menu */}
               <div className="mt-8 pt-8 border-t border-white/10">
                 <div className="space-y-4 text-gray-400">
@@ -201,6 +210,47 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onStudentPorta
       {/* Current Page Indicator (Desktop) */}
       {currentPage !== Page.Home && (
         <div className="hidden lg:block absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/20 to-transparent"></div>
+      )}
+
+      {/* Fees Modal */}
+      {isFeesModalOpen && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl animate-slideDown">
+            <button
+              onClick={() => setIsFeesModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2 font-orbitron">2026 Fees Structure</h3>
+              <p className="text-gray-400 text-sm">
+                Download our comprehensive fee structure for the 2026 academic year, including course fees, registration, and payment plans.
+              </p>
+            </div>
+
+            <a
+              href="/2026_fees_structure.pdf"
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-3 px-4 rounded-xl font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-500/25"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Download PDF</span>
+            </a>
+          </div>
+        </div>
       )}
 
       <style>{`
