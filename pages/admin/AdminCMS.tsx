@@ -22,6 +22,21 @@ const getCsrfToken = () => {
   return cookieValue;
 };
 
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
+
 type Tab = 'news' | 'gallery' | 'staff' | 'video';
 
 const AdminCMS: React.FC = () => {
@@ -913,7 +928,7 @@ const AdminCMS: React.FC = () => {
                   teamMembers.map((member) => (
                     <div key={member.id} className="bg-gray-900 rounded-lg p-4 border border-gray-700 flex items-center space-x-4">
                       <img 
-                        src={member.image_url || '/images/5.jpg'} 
+                        src={getImageUrl(member.image_url || member.image, '/images/5.jpg')} 
                         alt={member.name}
                         className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30"
                       />

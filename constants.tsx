@@ -209,7 +209,7 @@ export const NEWSLETTER: NewsletterPost[] = [
   }
 ];
 
-export const GALLERY_IMAGES = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg'];
+export const GALLERY_IMAGES = ['1.jpg', '2.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '13.jpeg'];
 
 export const SLOGANS = [
   { text: "BUILD YOUR ", highlight: "TOMORROW" },

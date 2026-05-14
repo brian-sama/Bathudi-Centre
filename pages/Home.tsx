@@ -28,6 +28,22 @@ const getVideoUrl = (videoFile: string | null): string | null => {
   return videoFile;
 };
 
+// Helper function to construct proper image URL
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
+
 interface Slogan {
   id: number;
   text: string;
@@ -66,7 +82,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
   const [bgImageIdx, setBgImageIdx] = useState(0);
   const [directorData, setDirectorData] = useState<any>(null);
   
-  const bgImages = ['1.jpg', '2.jpg', '3.jpg', '34.jpg', '13.jpeg', '14.jpeg', '7.jpg', '8.jpg', '9.jpg', '16.jpeg','17.jpeg','18.jpeg','32.jpeg'];
+  const bgImages = ['1.jpg', '2.jpg', '4.jpg', '34.jpeg', '13.jpeg', '14.jpeg', '7.jpg', '8.jpg', '9.jpg', '16.jpeg','17.jpeg','18.jpeg','32.jpeg'];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -271,7 +287,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onViewNews }) => {
                   >
                     <div className="relative h-40 sm:h-48 overflow-hidden">
                       <img 
-                        src={news.image_url || '/images/1.jpg'} 
+                        src={getImageUrl(news.image_url, '/images/1.jpg')} 
                         alt={news.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

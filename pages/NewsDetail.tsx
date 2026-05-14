@@ -4,6 +4,21 @@ import { Page } from '../types';
 // FIXED: Use environment variable for API URL
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
+
 interface NewsDetailProps {
   newsId: string | null;
   onBack: () => void;
@@ -152,7 +167,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId, onBack }) => {
         {news.image_url && (
           <div className="mb-12 rounded-2xl overflow-hidden glass border border-white/10">
             <img
-              src={news.image_url}
+              src={getImageUrl(news.image_url, '')}
               alt={news.title}
               className="w-full h-auto max-h-[600px] object-cover"
               onError={(e) => {

@@ -3,6 +3,21 @@ import { TEAM } from '../constants';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
+
 interface TeamMember {
   id: number;
   name: string;
@@ -95,7 +110,7 @@ const Team: React.FC = () => {
               {/* Image Section */}
               <div className="relative aspect-[4/5] w-full overflow-hidden">
                 <img 
-                  src={member.image_url || member.image || '/images/5.jpg'} 
+                  src={getImageUrl(member.image_url || member.image, '/images/5.jpg')} 
                   alt={member.name} 
                   className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                   onError={(e) => {

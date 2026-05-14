@@ -21,6 +21,21 @@ const getCsrfToken = () => {
   return cookieValue;
 };
 
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
+
 const AdminStaff: React.FC = () => {
   const [staff, setStaff] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -240,7 +255,7 @@ const AdminStaff: React.FC = () => {
           <div key={member.id} className="glass p-6 rounded-3xl border border-white/5 relative group hover:border-red-500/30 transition-all overflow-hidden">
             <div className="flex items-start justify-between mb-4">
               <div className="w-20 h-20 rounded-2xl overflow-hidden glass border border-white/10">
-                <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                <img src={getImageUrl(member.image, '/images/5.jpg')} alt={member.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex space-x-2">
                 <button 

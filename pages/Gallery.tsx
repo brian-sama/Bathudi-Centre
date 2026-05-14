@@ -1,4 +1,21 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+const getImageUrl = (imgPath: string | null | undefined, fallback: string): string => {
+  if (!imgPath) return fallback;
+  if (imgPath.startsWith('http')) return imgPath;
+  if (imgPath.startsWith('/images/')) return imgPath;
+  if (imgPath.startsWith('/media')) {
+    const API_BASE = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = API_BASE.replace(/\/api\/?$/, '');
+    return baseUrl + imgPath;
+  }
+  if (!imgPath.startsWith('/')) {
+    return `/images/${imgPath}`;
+  }
+  return imgPath;
+};
 
 const Gallery: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<any | null>(null);
@@ -6,12 +23,12 @@ const Gallery: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-
   const generateLocalImages = () => {
     const localImages = [];
     
+    // Skip 3 since 3.jpg doesn't exist
     for (let i = 1; i <= 11; i++) {
+      if (i === 3) continue;
       localImages.push({
         id: i,
         jpgPath: `/images/${i}.jpg`,
@@ -51,7 +68,7 @@ const Gallery: React.FC = () => {
             
             const formattedBackendImages = backendImages.map((img: any, index: number) => ({
               id: `backend-${img.id || index}`,
-              image: img.image_url || img.image,
+              image: getImageUrl(img.image_url || img.image, ''),
               label: img.title || `Admin Upload ${index + 1}`,
               isBackendImage: true
             }));
