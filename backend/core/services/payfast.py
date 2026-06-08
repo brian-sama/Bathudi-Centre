@@ -53,25 +53,31 @@ class PayFastService:
         Returns:
             MD5 hash signature
         """
-        # Remove empty values and preserve the submitted field order.
-        # PayFast signature validation is sensitive to parameter order.
-        clean_data = {
-            k: str(v).strip()
-            for k, v in data.items()
-            if v is not None and str(v).strip() != ''
-        }
+        # Sort keys to ensure consistent order between signature calculation and form submission.
+        # PayFast is sensitive to field order in the query string.
+        # We also exclude 'signature' field if it happens to be in the input.
+        sorted_keys = sorted([k for k in data.keys() if k != 'signature'])
+        
+        clean_pairs = []
+        for k in sorted_keys:
+            v = data[k]
+            # PayFast ignores empty values in signature calculation.
+            # Convert to string and strip whitespace.
+            v_str = str(v).strip() if v is not None else ""
+            if v_str != '':
+                clean_pairs.append(f'{k}={quote_plus(v_str)}')
 
-        query_string = '&'.join(
-            [f'{k}={quote_plus(v)}' for k, v in clean_data.items()]
-        )
+        query_string = '&'.join(clean_pairs)
 
         # Add passphrase if required
+        # IMPORTANT: PayFast expects the raw passphrase appended to the already-encoded query string.
+        # Do not use quote_plus on the passphrase itself unless it's explicitly required by your dashboard settings.
         if include_passphrase and self.security_passphrase:
-            query_string += f'&passphrase={quote_plus(self.security_passphrase.strip())}'
+            query_string += f'&passphrase={self.security_passphrase.strip()}'
         
         # Generate MD5 hash
         signature = hashlib.md5(query_string.encode()).hexdigest()
-        logger.debug(f'Generated signature for: {list(clean_data.keys())}')
+        logger.debug(f'Generated signature for fields: {sorted_keys}')
         
         return signature
     
@@ -104,8 +110,9 @@ class PayFastService:
         # Convert amount to string with 2 decimal places
         amount_str = f'{float(amount):.2f}'
         
-        # Create base data
-        data = {
+        # Create base data dictionary
+        # We define them here, but we will filter out empty ones before signing.
+        raw_data = {
             'merchant_id': self.merchant_id,
             'merchant_key': self.merchant_key,
             'return_url': return_url,
@@ -117,16 +124,27 @@ class PayFastService:
             'reference': f'APP-{application_id}',
             'm_payment_id': f'{application_id}',
             'amount': amount_str,
-            'item_name': f'Bathudi Training Centre - Registration Fee',
+            'item_name': 'Bathudi Training Centre - Registration Fee',
             'item_description': f'Application Registration Fee - Application ID: {application_id}',
         }
         
-        # Generate and add signature
-        data['signature'] = self.generate_signature(data)
+        # CRITICAL: Filter out any empty values so they are not sent in the form or included in the signature.
+        # This prevents discrepancies between what is signed and what is submitted.
+        data = {
+            k: str(v).strip()
+            for k, v in raw_data.items()
+            if v is not None and str(v).strip() != ''
+        }
+        
+        # Sort the dictionary keys alphabetically to ensure consistent field order in the form
+        sorted_data = {k: data[k] for k in sorted(data.keys())}
+        
+        # Generate and add signature to the sorted data
+        sorted_data['signature'] = self.generate_signature(sorted_data)
         
         logger.info(f'Created payment form for application {application_id}, amount: {amount_str}')
         
-        return data
+        return sorted_data
     
     def validate_payment(self, data: Dict[str, str]) -> bool:
         """

@@ -46,30 +46,8 @@ const App: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Check for existing session on load
-  useEffect(() => {
-    const adminToken = localStorage.getItem('adminToken');
-    // const studentData = localStorage.getItem('studentData'); // COMMENTED OUT
-    
-    if (adminToken) {
-      setIsAuthenticated(true);
-      setViewMode('admin');
-      setCurrentPage(Page.AdminDashboard);
-    } 
-    // STUDENT PORTAL - COMMENTED OUT
-    /*
-    else if (studentData) {
-      try {
-        const student = JSON.parse(studentData);
-        setCurrentUser(student);
-        setIsAuthenticated(true);
-        setViewMode('student');
-        setCurrentPage(Page.StudentDashboard);
-      } catch (error) {
-        localStorage.removeItem('studentData');
-      }
-    }
-    */
-  }, []);
+  // (Removed client-side token auto-login for security)
+
 
   // Public pages routing - FIXED: Added PaymentSuccess and PaymentCancel
   const renderPublicPage = () => {
@@ -246,7 +224,7 @@ const App: React.FC = () => {
       setViewMode('admin');
       setCurrentPage(Page.AdminDashboard);
       setShowLogin(null);
-      localStorage.setItem('adminToken', 'admin-logged-in');
+      // Note: In a real app, implement secure authentication and session handling.
     }
   };
 
@@ -271,8 +249,8 @@ const App: React.FC = () => {
     setNewsId(null);
     setSelectedCourseId(null);
     
-    localStorage.removeItem('adminToken');
-    // localStorage.removeItem('studentData'); // COMMENTED OUT
+    // Remove any client-side auth tokens if present (not used in this version)
+    // localStorage.removeItem('adminToken'); // Deprecated
   };
 
   // Toggle sidebar collapse - COMMENTED OUT (student only)
