@@ -576,11 +576,11 @@ const AdminApplications: React.FC = () => {
                     {selectedApp.documents_status.pop ? 'Uploaded' : 'Missing'}
                   </span>
                 </div>
-                {documentUrls.proof_of_payment.url ? (
+                {documentUrls.proof_of_payment?.url ? (
                   <>
-                    <a 
-                      href={documentUrls.proof_of_payment.url} 
-                      target="_blank" 
+                    <a
+                      href={documentUrls.proof_of_payment.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="block mb-2 p-3 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg border border-amber-500/20 transition-all"
                     >
@@ -597,8 +597,8 @@ const AdminApplications: React.FC = () => {
                         )}
                       </div>
                     </a>
-                    <a 
-                      href={documentUrls.proof_of_payment.url} 
+                    <a
+                      href={documentUrls.proof_of_payment.url}
                       download
                       className="block w-full py-2 text-center text-amber-400 hover:text-amber-300 text-sm font-bold border border-amber-500/20 rounded-lg hover:bg-amber-500/10 transition-all"
                     >

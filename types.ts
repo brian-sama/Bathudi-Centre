@@ -275,7 +275,7 @@ export interface ApplicationDocuments {
     url: string;
     name: string;
     size: number | null;
-  };
+  } | null;
 }
 
 // Application Form Data
