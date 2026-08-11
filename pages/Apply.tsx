@@ -14,6 +14,9 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
   const [applicationId, setApplicationId] = useState<number | null>(null);
+  // When true, applications are closed. Show the applications1 notice image and
+  // block access to the application form until we reopen applications.
+  const [applicationsClosed, setApplicationsClosed] = useState(true);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -321,6 +324,29 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   };
 
   // Show funding selection first
+  // APPLICATIONS CLOSED NOTICE: While applications are closed, show the
+  // applications1 image as a full-screen block so applicants cannot proceed
+  // to the form. Set `applicationsClosed` to false to reopen applications.
+  if (applicationsClosed) {
+    return (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center bg-gradient-to-b from-slate-950 to-gray-900 px-4">
+        <div className="animate-flowIn flex flex-col items-center max-w-lg w-full">
+          <img
+            src="/images/applications1.png"
+            alt="Applications are currently closed"
+            className="w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+          />
+          <button
+            onClick={() => onNavigate(Page.Home)}
+            className="mt-8 px-10 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/25"
+          >
+            ≡ Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (showFundingSelection) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 to-gray-900 pt-20 sm:pt-24 pb-12 sm:pb-16 px-3 sm:px-4">
@@ -956,7 +982,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
               
               <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10">
                 <p className="text-center text-gray-500 text-[10px] sm:text-xs">
-                  By submitting, you agree to our Terms of Service and confirm that all information is accurate.
+                  By submitting, you agree to our <button type="button" onClick={() => onNavigate(Page.PrivacyPolicy)} className="underline hover:text-gray-300">Privacy Policy</button> and Terms of Service, and confirm that all information is accurate.
                 </p>
               </div>
             </div>

@@ -12,6 +12,7 @@ import About from './pages/About';
 import Gallery from './pages/Gallery';
 import Team from './pages/Team';
 import Apply from './pages/Apply';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminStudents from './pages/admin/AdminStudents';
 import AdminApplications from './pages/admin/AdminApplications';
@@ -91,6 +92,8 @@ const App: React.FC = () => {
         return <Team />;
       case Page.Apply:
         return <Apply onNavigate={setCurrentPage} />;
+      case Page.PrivacyPolicy:
+        return <PrivacyPolicy onNavigate={setCurrentPage} />;
       case Page.NewsDetail:
         return <NewsDetail 
           newsId={newsId} 

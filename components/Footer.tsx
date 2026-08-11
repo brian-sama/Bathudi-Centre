@@ -95,6 +95,14 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   Apply Now
                 </button>
               </li>
+              <li>
+                <button 
+                  onClick={() => handleQuickLinkClick(Page.PrivacyPolicy)}
+                  className="text-gray-400 hover:text-white text-sm transition-colors"
+                >
+                  Privacy Policy
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -224,6 +232,14 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <p className="text-gray-500 text-xs">
             &copy; {new Date().getFullYear()} Bathudi Automotive Technical Center. All rights reserved. Professional Automotive Training.
           </p>
+          <div className="flex items-center justify-center gap-6 mt-4">
+            <button 
+              onClick={() => handleQuickLinkClick(Page.PrivacyPolicy)}
+              className="text-gray-500 hover:text-white text-xs transition-colors"
+            >
+              Privacy Policy
+            </button>
+          </div>
         </div>
       </div>
     </footer>

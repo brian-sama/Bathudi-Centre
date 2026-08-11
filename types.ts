@@ -8,6 +8,7 @@ export enum Page {
   Gallery = 'Gallery',
   Team = 'Our Team',
   Apply = 'Apply',
+  PrivacyPolicy = 'privacy-policy',
   // Admin Pages
   AdminDashboard = 'AdminDashboard',
   AdminStudents = 'AdminStudents',
