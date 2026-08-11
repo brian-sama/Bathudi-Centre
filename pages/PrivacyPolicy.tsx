@@ -184,7 +184,7 @@ const SECTIONS: Section[] = [
   },
 ];
 // Update this date whenever the policy is revised.
-const LAST_UPDATED = '8 November 2026';
+const LAST_UPDATED = '11 May 2026';
 
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onNavigate }) => {
   const goToApply = () => {
