@@ -18,7 +18,7 @@ def seed_production_data():
         {
             'name': 'Ignatia Sekonyela',
             'position': 'CEO and Founder',
-            'email': 'info@bathudi.co.za',
+            'email': 'Info@bathudi.co.za',
             'phone': '+27 68 917 6294',
             'order': 1,
         },

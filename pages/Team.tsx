@@ -62,7 +62,7 @@ const Team: React.FC = () => {
         name: m.name,
         position: m.role || 'Member',
         bio: 'Dedicated professional at Bathudi Training Centre with years of industry experience.',
-        email: 'info@bathudi.co.za',
+        email: 'Info@bathudi.co.za',
         phone: '',
         image: m.image,
         image_url: m.image,

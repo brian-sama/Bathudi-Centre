@@ -926,7 +926,7 @@ COPY public.core_student (id, student_id, name, surname, email, phone, enrollmen
 --
 
 COPY public.core_teammember (id, name, "position", bio, email, phone, image, "order", is_active, facebook, twitter, linkedin) FROM stdin;
-1	Ignatia Sekonyela	CEO and Founder		info@bathudi.co.za	+27 68 917 6294	team/7.jpg	1	t			
+1	Ignatia Sekonyela	CEO and Founder		Info@bathudi.co.za	+27 68 917 6294	team/7.jpg	1	t			
 \.
 
 

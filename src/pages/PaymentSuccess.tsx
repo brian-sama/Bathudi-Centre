@@ -81,7 +81,7 @@ const PaymentSuccess: React.FC<PaymentSuccessProps> = ({ onNavigate }) => {
         {/* Help Section */}
         <div className="mt-8 text-sm text-gray-500">
           <p>If you have any questions, contact us at:</p>
-          <p className="text-blue-400">info@bathudi.co.za | +27 68 917 6294</p>
+          <p className="text-blue-400">Info@bathudi.co.za | +27 68 917 6294</p>
         </div>
       </div>
     </div>

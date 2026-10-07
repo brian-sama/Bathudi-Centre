@@ -261,7 +261,7 @@ export const COURSE_FEATURES = [
 
 export const CONTACT_INFO = {
   phone: '+27 12 345 6789',
-  email: 'admissions@bathudi.edu',
+  email: 'Info@bathudi.co.za',
   address: '123 Automotive Street, Pretoria, South Africa',
   hours: 'Monday - Friday: 8:00 AM - 5:00 PM\nSaturday: 9:00 AM - 1:00 PM'
 };
@@ -332,7 +332,7 @@ export const QUICK_LINKS = [
 
 export const FOOTER_CONTACT = {
   phone: '+27 12 345 6789',
-  email: 'info@bathuditraining.co.za',
+  email: 'Info@bathudi.co.za',
   address: '123 Automotive Street, Industrial Area, Pretoria 0183',
   hours: 'Mon-Fri: 8:00 AM - 5:00 PM | Sat: 9:00 AM - 1:00 PM'
 };

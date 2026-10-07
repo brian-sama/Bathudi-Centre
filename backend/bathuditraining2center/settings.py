@@ -222,7 +222,7 @@ TWILIO_REJECTION_TEMPLATE_SID = os.environ.get('TWILIO_REJECTION_TEMPLATE_SID', 
 # ========== BATHUDI CONTACT INFORMATION ==========
 BATHUDI_PHONE_NUMBER = os.environ.get('BATHUDI_PHONE_NUMBER', '+27 68 917 6294')
 BATHUDI_WHATSAPP_NUMBER = os.environ.get('BATHUDI_WHATSAPP_NUMBER', '+27689176294')
-BATHUDI_EMAIL = os.environ.get('BATHUDI_EMAIL', 'info@bathudi.co.za')
+BATHUDI_EMAIL = os.environ.get('BATHUDI_EMAIL', 'Info@bathudi.co.za')
 BATHUDI_ADDRESS = os.environ.get('BATHUDI_ADDRESS', '123 Training Street, Johannesburg, South Africa')
 BATHUDI_WEBSITE = os.environ.get('BATHUDI_WEBSITE', 'https://bathudi.co.za')
 PAYFAST_NOTIFY_BASE_URL = os.environ.get('PAYFAST_NOTIFY_BASE_URL', BATHUDI_WEBSITE).rstrip('/')
