@@ -9,7 +9,7 @@ const CONTACT = {
   company: 'Bathudi Automotive Technical Training Centre',
   physical: '771 Helen Street, Hermanstad, Pretoria, South Africa',
   phone: '+27 68 917 6294',
-  email: 'infobathuditraing@gmail.com',
+  email: 'Info@bathudi.co.za',
 };
 
 interface Section {
