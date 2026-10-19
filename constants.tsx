@@ -182,11 +182,12 @@ export const VALUES: Value[] = [
 ];
 
 export const TEAM: TeamMember[] = [
-  { name: 'Ignatia Sekonyela', role: 'CEO/Founder', image: '5.jpg' },
-  { name: 'Michael More', role: 'Senior Technical Trainer', image: '6.jpg' },
-  { name: 'Kearabetswe Sekonyela', role: 'Communications Manager', image: '7.jpg' },
-  { name: 'Bongeka Ntiemeza', role: 'Assistant Trainer', image: '8.jpg' },
+  { id: 1, name: 'Ignatia Sekonyela', position: 'CEO/Founder', role: 'CEO/Founder', image: '5.jpg', order: 1, is_active: true },
+  { id: 2, name: 'Michael More', position: 'Senior Technical Trainer', role: 'Senior Technical Trainer', image: '6.jpg', order: 2, is_active: true },
+  { id: 3, name: 'Kearabetswe Sekonyela', position: 'Communications Manager', role: 'Communications Manager', image: '7.jpg', order: 3, is_active: true },
+  { id: 4, name: 'Bongeka Ntiemeza', position: 'Assistant Trainer', role: 'Assistant Trainer', image: '8.jpg', order: 4, is_active: true },
 ];
+
 
 export const NEWSLETTER: NewsletterPost[] = [
   {
