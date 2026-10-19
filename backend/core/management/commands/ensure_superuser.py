@@ -32,19 +32,30 @@ class Command(BaseCommand):
             ))
             return
 
-        User = get_user_model()
-        user, created = User.objects.get_or_create(
-            username=username,
-            defaults={'email': email},
-        )
-        user.email = email
-        user.is_staff = True
-        user.is_superuser = True
-        user.is_active = True
-        user.set_password(password)
-        user.save()
+        try:
+            User = get_user_model()
+            user = User.objects.filter(username=username).first()
+            if not user and email:
+                user = User.objects.filter(email=email).first()
 
-        action = 'Created' if created else 'Updated'
-        self.stdout.write(self.style.SUCCESS(
-            f'{action} superuser: {username} (password set from DJANGO_SUPERUSER_PASSWORD)'
-        ))
+            if not user:
+                user = User.objects.create_superuser(
+                    username=username,
+                    email=email,
+                    password=password,
+                )
+                self.stdout.write(self.style.SUCCESS(
+                    f'Created superuser: {username} (password set from DJANGO_SUPERUSER_PASSWORD)'
+                ))
+            else:
+                user.email = email
+                user.is_staff = True
+                user.is_superuser = True
+                user.is_active = True
+                user.set_password(password)
+                user.save()
+                self.stdout.write(self.style.SUCCESS(
+                    f'Updated superuser: {user.username} (password set from DJANGO_SUPERUSER_PASSWORD)'
+                ))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Error ensuring superuser: {e}'))

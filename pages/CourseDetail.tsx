@@ -73,10 +73,9 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
               deposit_amount: localCourse.deposit_amount,
               monthly_payment: localCourse.monthly_payment,
               total_payment: localCourse.total_payment,
-              assessment_fee: localCourse.assessment_fee || 0,
               fee: localCourse.fee || 0,
-              registration_fee: localCourse.registration_fee || 665,
-              assessment_fee: localCourse.assessment_fee || 665,
+              registration_fee: localCourse.registration_fee || 760,
+              assessment_fee: localCourse.assessment_fee || 760,
               level: localCourse.level || 'beginner',
               prerequisites: localCourse.prerequisites || 'No specific prerequisites required. Suitable for beginners with interest in automotive technology.',
               requirements: localCourse.requirements || 'Basic understanding of automotive concepts. Willingness to learn and hands-on practice.',
@@ -387,7 +386,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                           <svg className="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          Proof of Registration Fee Payment (R{course.registration_fee})
+                          Proof of Registration & Assessment Fee Payment ({formatCurrency(parseFee(course.registration_fee) + parseFee(course.assessment_fee))})
                         </li>
                       </ul>
                     </div>

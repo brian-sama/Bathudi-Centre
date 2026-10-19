@@ -25,11 +25,10 @@ else:
 PY
 fi
 
-python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
-python manage.py seed_courses
-python seed_production_data.py
-python manage.py ensure_superuser
+python manage.py seed_courses || echo "Warning: seed_courses exited with non-zero status"
+python seed_production_data.py || echo "Warning: seed_production_data exited with non-zero status"
+python manage.py ensure_superuser || echo "Warning: ensure_superuser exited with non-zero status"
 
 exec gunicorn bathuditraining2center.wsgi:application --bind 0.0.0.0:8000 --workers 3
