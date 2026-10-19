@@ -131,17 +131,26 @@ class Command(BaseCommand):
                 # Extract form_course_id for mapping reference
                 form_course_id = course_data.pop('form_course_id')
                 
-                # Only create if course doesn't exist - DO NOT update to preserve customizations
+                # Only create if course doesn't exist - but ALWAYS sync the
+                # registration/assessment fees so redeploys pick up fee changes.
                 course, created = Course.objects.get_or_create(
                     id=course_data['id'],
                     defaults=course_data
                 )
-                
+
                 if created:
                     self.stdout.write(self.style.SUCCESS(f'  ✅ CREATED: {course.title}'))
                     created_count += 1
                 else:
-                    self.stdout.write(self.style.SUCCESS(f'  ✓ EXISTS (preserved): {course.title}'))
+                    fee_updates = {
+                        'registration_fee': course_data.get('registration_fee', 760.00),
+                        'assessment_fee': course_data.get('assessment_fee', 760.00),
+                    }
+                    Course.objects.filter(id=course.id).update(**fee_updates)
+                    course.refresh_from_db()
+                    self.stdout.write(self.style.SUCCESS(
+                        f'  ✓ EXISTS (fees synced to R{course.registration_fee}/R{course.assessment_fee}): {course.title}'
+                    ))
                     updated_count += 1
                 
                 # Create course requirements
