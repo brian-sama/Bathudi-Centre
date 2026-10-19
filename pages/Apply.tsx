@@ -377,7 +377,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
             Apply for Admission
           </h2>
           <div className="inline-flex flex-col sm:flex-row items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-4 sm:mb-6">
-            <span className="text-amber-400 font-bold text-sm sm:text-base">{'📢'} Registration Fee: R665</span>
+            <span className="text-amber-400 font-bold text-sm sm:text-base">{'📢'} Registration Fee: R760 (Total R1,520 with Assessment)</span>
             <span className="hidden sm:inline mx-3 text-gray-400">&bull;</span>
             <span className="text-gray-300 text-xs sm:text-sm">Please upload proof of payment below</span>
           </div>
@@ -751,7 +751,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                 {/* Payment Registration Fee */}
                 <div className="space-y-2 sm:space-y-3 lg:col-span-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
-                    Registration Fee Payment (R665) *
+                    Registration Fee Payment (R760 — Total R1,520 with Assessment R760) *
                   </label>
                   
                   <div className="space-y-4">
@@ -815,7 +815,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         getApplicationId={() => submitApplication({ showSuccessAlert: false, resetAfterSubmit: false })}
                         customerName={`${formData.name} ${formData.surname}`.trim()}
                         customerEmail={formData.email}
-                        buttonText="Pay R665 with PayFast"
+                        buttonText="Pay R760 with PayFast"
                         disabled={loading}
                       />
                     </div>
@@ -933,7 +933,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                     <ul className="text-[10px] sm:text-xs text-gray-400 space-y-1">
                       <li>&bull; Maximum file size: 5MB per document</li>
                       <li>&bull; Accepted formats: PDF, JPG, JPEG, PNG, DOC, DOCX</li>
-                      <li>&bull; Registration fee of R665 is non-refundable</li>
+                      <li>&bull; Registration fee of R760 (Total R1,520 with assessment) is non-refundable</li>
                       <li>&bull; You can pay online via PayFast or upload proof of payment</li>
                     </ul>
                   </div>

@@ -30,5 +30,6 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 python manage.py seed_courses
 python seed_production_data.py
+python manage.py ensure_superuser
 
 exec gunicorn bathuditraining2center.wsgi:application --bind 0.0.0.0:8000 --workers 3

@@ -265,7 +265,7 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
         {/* Requirements Box */}
         <div className="mt-20 glass p-10 rounded-3xl border border-blue-500/20">
           <h4 className="text-2xl font-orbitron font-bold text-white mb-4">Admission Details</h4>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">Please note that all applications require a non-refundable R665 registration fee. Proof of payment must be uploaded during the application process.</p>
+          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">Please note that all applications require a non-refundable R1,520 registration & assessment fee (R760 + R760). Proof of payment must be uploaded during the application process.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-8">
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
               <span className="block text-2xl mb-2">{'\uD83D\uDCC4'}</span>
@@ -277,7 +277,7 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
               <span className="block text-2xl mb-2">{'\uD83D\uDCB0'}</span>
-              <p className="text-sm font-medium text-gray-300">R665 Admin Fee</p>
+              <p className="text-sm font-medium text-gray-300">R1,520 Admin Fee</p>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/5">
               <span className="block text-2xl mb-2">{'\uD83D\uDD22'}</span>

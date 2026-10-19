@@ -126,7 +126,7 @@ export const BANKING_DETAILS = {
 export const FEE_NOTES = {
   includes: [
     'COIDA insurance for the training period',
-    'Registration and Assessment fee of R665 for all courses,',
+    'Registration and Assessment fee of R1,520 (R760 registration + R760 assessment) for all courses,',
     'Training materials provided by the institution'
   ],
   excludes: [
@@ -235,7 +235,7 @@ export const ADMISSION_REQUIREMENTS = [
   {
     type: 'fee',
     title: 'Registration & Assessment Fee',
-    description: 'R665 non-refundable fee for registration and assessment',
+    description: 'R1,520 non-refundable fee for registration and assessment (R760 + R760)',
     icon: '💰',
     is_required: true
   },
