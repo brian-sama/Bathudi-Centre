@@ -1,4 +1,7 @@
+from difflib import SequenceMatcher
+
 from rest_framework import serializers
+from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
     Course, CourseRequirement, Application, Student, 
     TeamMember, GalleryImage, Newsletter, NewsPost,
@@ -288,6 +291,139 @@ class DirectorMessageSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.video_file.url)
             return obj.video_file.url
         return None
+
+# ========== ADMIN AUTH SERIALIZERS ==========
+class AdminLoginSerializer(serializers.Serializer):
+    """Validates admin credentials against Django's user store."""
+
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'}, trim_whitespace=False)
+
+    def validate(self, attrs):
+        from django.contrib.auth import get_user_model
+
+        email = attrs['email'].strip().lower()
+        password = attrs['password']
+
+        User = get_user_model()
+
+        # The admin account is configured with the email as the username, but we
+        # also accept a user record whose email field matches, so the admin can
+        # sign in with whichever identifier was configured for them.
+        user = (
+            User.objects.filter(username__iexact=email).first()
+            or User.objects.filter(email__iexact=email).first()
+        )
+
+        if user is None or not user.check_password(password):
+            raise serializers.ValidationError({'detail': 'Invalid email address or password.'})
+
+        if not user.is_active:
+            raise serializers.ValidationError({'detail': 'This admin account has been deactivated.'})
+
+        if not (user.is_staff or user.is_superuser):
+            raise serializers.ValidationError({'detail': 'This account does not have admin access.'})
+
+        attrs['user'] = user
+        return attrs
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """Validates and applies an admin password change."""
+
+    current_password = serializers.CharField(write_only=True, trim_whitespace=False)
+    new_password = serializers.CharField(write_only=True, trim_whitespace=False)
+    confirm_password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    default_error_messages = {
+        'password_mismatch': 'The new password and confirmation do not match.',
+        'password_too_short': 'Password must be at least 8 characters long.',
+        'password_too_common': 'This password is too common. Please choose a more unique password.',
+        'password_too_similar': 'The new password is too similar to your current password.',
+        'password_not_numeric': 'The password cannot be entirely numeric.',
+        'current_password_invalid': 'Your current password is incorrect.',
+        'same_as_current': 'The new password must be different from your current password.',
+    }
+
+    def validate_current_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError(self.error_messages['current_password_invalid'])
+        return value
+
+    @staticmethod
+    def _is_too_similar(new_password, current_password):
+        """
+        Reject a new password that is (nearly) identical to the current one.
+
+        Django's built-in validators only compare against user attributes
+        (name, email, ...), so we add this explicit check ourselves.
+        """
+        if not current_password:
+            return False
+
+        new_normalised = new_password.lower()
+        current_normalised = current_password.lower()
+
+        if new_normalised == current_normalised:
+            return True
+
+        # Guard against a trivial edit of the current password, e.g. appending a
+        # single character or swapping a couple of characters.
+        if abs(len(new_normalised) - len(current_normalised)) <= 1:
+            similarity = SequenceMatcher(None, new_normalised, current_normalised).ratio()
+            if similarity >= 0.9:
+                return True
+
+        return False
+
+    def validate(self, attrs):
+        request = self.context['request']
+        user = request.user
+
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({'confirm_password': [self.error_messages['password_mismatch']]})
+
+        if attrs['new_password'] == attrs['current_password']:
+            raise serializers.ValidationError({'new_password': [self.error_messages['same_as_current']]})
+
+        if self._is_too_similar(attrs['new_password'], attrs['current_password']):
+            raise serializers.ValidationError({'new_password': [self.error_messages['password_too_similar']]})
+
+        if len(attrs['new_password']) < 8:
+            raise serializers.ValidationError({'new_password': [self.error_messages['password_too_short']]})
+
+        if attrs['new_password'].isdigit():
+            raise serializers.ValidationError({'new_password': [self.error_messages['password_not_numeric']]})
+
+        # Reuse Django's own password validators so the rules stay consistent
+        # with the server-side AUTH_PASSWORD_VALIDATORS configuration.
+        from django.contrib.auth.password_validation import validate_password
+
+        try:
+            validate_password(attrs['new_password'], user=user)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({'new_password': list(exc.messages)})
+
+        attrs['user'] = user
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.validated_data['user']
+        user.set_password(self.validated_data['new_password'])
+        user.save(update_fields=['password'])
+        return user
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    """Safe representation of the logged-in admin (never exposes the hash)."""
+
+    class Meta:
+        from django.contrib.auth.models import User
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'last_login']
+        read_only_fields = fields
+
 
 class TestimonialSerializer(serializers.ModelSerializer):
     course_title = serializers.CharField(source='course.title', read_only=True, allow_null=True)

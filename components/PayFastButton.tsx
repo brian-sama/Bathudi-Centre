@@ -161,6 +161,33 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
         <br />
         Your payment information is handled securely by PayFast
       </p>
+
+      {/* Non-refundable fee notice */}
+      <div
+        role="note"
+        className="p-3 sm:p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3"
+      >
+        <svg
+          className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 flex-shrink-0 mt-0.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+          />
+        </svg>
+        <p className="text-xs sm:text-sm text-red-300">
+          <span className="font-bold">Please note: </span>
+          The registration and assessment fee is <strong>non-refundable</strong> and{' '}
+          <strong>non-transferable</strong>. Once payment is made it cannot be refunded, even if
+          you withdraw your application or do not complete the course.
+        </p>
+      </div>
     </div>
   );
 };

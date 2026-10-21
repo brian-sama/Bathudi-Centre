@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Page } from '../types';
+import { Page, AdminUser } from '../types';
 
 interface AdminSidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
   onLogout: () => void;
+  adminUser?: AdminUser | null;
 }
 
-const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, onLogout }) => {
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, onLogout, adminUser }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -27,8 +28,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
 
   // Settings items
   const settingsNavItems = [
-    { id: Page.StudentNotifications, label: 'Push Notifications', icon: '\uD83D\uDD14' },
-    { id: Page.BroadcastMessages, label: 'Broadcast Messages', icon: '\uD83D\uDCE3' },
+    // Temporarily hidden - not in use at the moment.
+    // Re-enable by uncommenting the two lines below.
+    // { id: Page.StudentNotifications, label: 'Push Notifications', icon: '\uD83D\uDD14' },
+    // { id: Page.BroadcastMessages, label: 'Broadcast Messages', icon: '\uD83D\uDCE3' },
+    { id: Page.AdminAccount, label: 'Account & Security', icon: '\uD83D\uDD12' },
   ];
 
   const toggleMobileMenu = () => {
@@ -188,17 +192,25 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
         {/* Footer - Admin Profile & Logout */}
         <div className="p-3 sm:p-4 border-t border-white/5 space-y-3">
           {/* Admin Profile */}
-          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} p-2 sm:p-3 glass rounded-xl group cursor-pointer hover:bg-white/5 transition-colors`}>
+          <button
+            onClick={() => handleNavClick(Page.AdminAccount)}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} p-2 sm:p-3 glass rounded-xl group cursor-pointer hover:bg-white/5 transition-colors text-left`}
+            title={isCollapsed ? 'Account & Security' : ''}
+          >
             <div className="relative flex-shrink-0">
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center font-bold text-white text-xs sm:text-sm">
-                A
+                {(adminUser?.first_name?.[0] || adminUser?.username?.[0] || 'A').toUpperCase()}
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 border-2 border-slate-900 rounded-full animate-pulse"></div>
             </div>
             {showLabels && (
               <div className="flex flex-col overflow-hidden flex-grow">
-                <span className="text-[10px] sm:text-xs font-bold text-white truncate">System Admin</span>
-                <span className="text-[8px] sm:text-[9px] text-gray-400 truncate">admin@bathudi.co.za</span>
+                <span className="text-[10px] sm:text-xs font-bold text-white truncate">
+                  {adminUser?.first_name || adminUser?.username || 'System Admin'}
+                </span>
+                <span className="text-[8px] sm:text-[9px] text-gray-400 truncate">
+                  {adminUser?.email || 'admin@bathudi.co.za'}
+                </span>
               </div>
             )}
             {showLabels && (
@@ -206,7 +218,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentPage, onNavigate, on
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             )}
-          </div>
+          </button>
 
           {/* Logout Button */}
           <button 

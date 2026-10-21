@@ -19,6 +19,7 @@ import AdminApplications from './pages/admin/AdminApplications';
 import AdminCMS from './pages/admin/AdminCMS';
 import AdminStaff from './pages/admin/AdminStaff';
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminAccount from './pages/admin/AdminAccount';
 import PaymentSuccess from './pages/PaymentSuccess';  
 import PaymentCancel from './pages/PaymentCancel';
 // STUDENT PORTAL - COMMENTED OUT
@@ -34,6 +35,12 @@ import StudentContent from './pages/admin/StudentContent';
 import StudentNotifications from './pages/admin/StudentNotifications';
 import BroadcastMessages from './pages/admin/BroadcastMessages';
 import { Page, ViewMode, Student } from './types';
+import {
+  adminLogout,
+  adminMe,
+  AdminApiError,
+  AdminUser,
+} from './types';
 
 
 const App: React.FC = () => {
@@ -45,6 +52,34 @@ const App: React.FC = () => {
   const [newsId, setNewsId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+
+  // Check for an existing Django session on load so a page refresh does not
+  // sign the administrator out.
+  useEffect(() => {
+    let cancelled = false;
+
+    adminMe()
+      .then((response) => {
+        if (cancelled) return;
+        if (response?.user) {
+          setAdminUser(response.user);
+          setIsAuthenticated(true);
+          setViewMode('admin');
+          setCurrentPage(Page.AdminDashboard);
+        }
+      })
+      .catch((err) => {
+        // A 401/403 simply means there is no active admin session.
+        if (err instanceof AdminApiError && (err.status === 401 || err.status === 403)) {
+          return;
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Check for existing session on load
   // (Removed client-side token auto-login for security)
@@ -146,6 +181,8 @@ const App: React.FC = () => {
         return <StudentNotifications onNavigate={setCurrentPage} />;
       case Page.BroadcastMessages:
         return <BroadcastMessages onNavigate={setCurrentPage} />;
+      case Page.AdminAccount:
+        return <AdminAccount adminEmail={adminUser?.email || adminUser?.username} />;
       default:
         return <AdminDashboard />;
     }
@@ -221,13 +258,13 @@ const App: React.FC = () => {
   }, [currentPage, viewMode]);
 
   // Handle admin login
-  const handleAdminLogin = (success: boolean) => {
+  const handleAdminLogin = (success: boolean, user?: AdminUser) => {
     if (success) {
+      setAdminUser(user ?? null);
       setIsAuthenticated(true);
       setViewMode('admin');
       setCurrentPage(Page.AdminDashboard);
       setShowLogin(null);
-      // Note: In a real app, implement secure authentication and session handling.
     }
   };
 
@@ -243,17 +280,21 @@ const App: React.FC = () => {
   };
   */
 
-  // Handle logout
-  const handleLogout = () => {
+  // Handle logout - ends the Django session on the server as well.
+  const handleLogout = async () => {
+    try {
+      await adminLogout();
+    } catch {
+      // Even if the server call fails we still clear the local state.
+    }
+
     setIsAuthenticated(false);
+    setAdminUser(null);
     setCurrentUser(null);
     setViewMode('public');
     setCurrentPage(Page.Home);
     setNewsId(null);
     setSelectedCourseId(null);
-    
-    // Remove any client-side auth tokens if present (not used in this version)
-    // localStorage.removeItem('adminToken'); // Deprecated
   };
 
   // Toggle sidebar collapse - COMMENTED OUT (student only)
@@ -283,6 +324,7 @@ const App: React.FC = () => {
           currentPage={currentPage} 
           onNavigate={setCurrentPage} 
           onLogout={handleLogout} 
+          adminUser={adminUser}
         />
         <main className="flex-grow overflow-y-auto p-4 md:p-6 lg:p-8 animate-fadeIn">
           {renderAdminPage()}

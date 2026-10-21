@@ -13,10 +13,25 @@ const PaymentSuccess: React.FC<PaymentSuccessProps> = ({ onNavigate }) => {
           <span className="text-4xl text-green-500">✓</span>
         </div>
         <h1 className="text-3xl font-orbitron font-bold text-white mb-4">Payment Successful!</h1>
-        <p className="text-gray-300 mb-8 leading-relaxed">
+        <p className="text-gray-300 mb-6 leading-relaxed">
           Thank you for your payment. Your registration fee has been processed successfully. 
           Our admissions team will review your application and contact you shortly.
         </p>
+
+        {/* Non-refundable fee notice */}
+        <div
+          role="note"
+          className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-left mb-8"
+        >
+          <p className="text-red-400 font-bold text-xs sm:text-sm uppercase tracking-wider mb-1.5">
+            Non-Refundable Fee
+          </p>
+          <p className="text-red-300/90 text-xs sm:text-sm leading-relaxed">
+            Please note that the registration and assessment fee is{' '}
+            <strong>non-refundable and non-transferable</strong>. It cannot be claimed back if you
+            withdraw your application or do not complete the course.
+          </p>
+        </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => onNavigate(Page.Apply)}

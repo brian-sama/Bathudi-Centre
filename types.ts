@@ -16,6 +16,7 @@ export enum Page {
   AdminCMS = 'AdminCMS',
   AdminStaff = 'AdminStaff',
   AdminSettings = 'AdminSettings',
+  AdminAccount = 'AdminAccount',
   StudentContent = 'StudentContent',
   StudentNotifications = 'StudentNotifications',
   BroadcastMessages = 'BroadcastMessages',
@@ -382,6 +383,30 @@ export interface SystemNotification {
 }
 
 // Admin User
+/**
+ * Shared helper for talking to the Django admin authentication API.
+ *
+ * The admin portal uses Django session authentication (no JWT / tokens stored in
+ * the browser). Every unsafe request therefore needs the CSRF token that the
+ * backend sets on the `csrftoken` cookie.
+ */
+
+export const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
+/** Read the CSRF token from the `csrftoken` cookie. */
+export const getCsrfToken = (): string | null => {
+  if (typeof document === 'undefined' || !document.cookie) return null;
+  const name = 'csrftoken';
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.substring(0, name.length + 1) === `${name}=`) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
+};
+
 export interface AdminUser {
   id: number;
   username: string;
@@ -390,7 +415,143 @@ export interface AdminUser {
   last_name: string;
   is_staff: boolean;
   is_superuser: boolean;
+  last_login?: string | null;
 }
+
+export class AdminApiError extends Error {
+  status: number;
+  /** Field-level validation errors keyed by field name. */
+  fieldErrors: Record<string, string[]>;
+
+  constructor(status: number, message: string, fieldErrors: Record<string, string[]> = {}) {
+    super(message);
+    this.name = 'AdminApiError';
+    this.status = status;
+    this.fieldErrors = fieldErrors;
+  }
+}
+
+/**
+ * Converts a DRF error payload into a flat map of field -> messages.
+ */
+export const parseApiErrors = (payload: any): Record<string, string[]> => {
+  const fieldErrors: Record<string, string[]> = {};
+
+  const collect = (key: string, value: any) => {
+    if (Array.isArray(value)) {
+      fieldErrors[key] = value.map((v) => String(v));
+    } else if (typeof value === 'string') {
+      fieldErrors[key] = [value];
+    }
+  };
+
+  if (payload && typeof payload === 'object') {
+    Object.entries(payload).forEach(([key, value]) => collect(key, value));
+  }
+
+  return fieldErrors;
+};
+
+interface RequestOptions {
+  method?: string;
+  body?: unknown;
+  signal?: AbortSignal;
+}
+
+/**
+ * Performs an authenticated request against the Django API.
+ *
+ * Always sends the session cookie and, for unsafe methods, the CSRF token.
+ */
+export const adminRequest = async <T = any>(
+  path: string,
+  options: RequestOptions = {}
+): Promise<T> => {
+  const { method = 'GET', body, signal } = options;
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  if (method !== 'GET' && method !== 'HEAD') {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+    }
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers,
+    credentials: 'include',
+    signal,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+
+  let payload: any = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    const fieldErrors = parseApiErrors(payload);
+    const detail =
+      (payload && (payload.detail as string)) ||
+      fieldErrors.detail?.[0] ||
+      (fieldErrors && Object.values(fieldErrors)[0]?.[0]) ||
+      `Request failed (${response.status})`;
+    throw new AdminApiError(response.status, detail, fieldErrors);
+  }
+
+  return payload as T;
+};
+
+/** Authenticate an admin and start a Django session. */
+export const adminLogin = async (email: string, password: string) => {
+  // Make sure we hold a CSRF token before the (unsafe) login request.
+  await ensureCsrfToken();
+  return adminRequest<{ user: AdminUser }>('/auth/login/', {
+    method: 'POST',
+    body: { email, password },
+  });
+};
+
+/**
+ * Ensure a CSRF token is present in the `csrftoken` cookie.
+ *
+ * Django's CSRF middleware protects every unsafe request, including the
+ * login POST, so the token has to be fetched before the first login attempt.
+ */
+export const ensureCsrfToken = async (): Promise<void> => {
+  if (getCsrfToken()) return;
+  await adminRequest<{ csrf_token: string }>('/auth/csrf/');
+};
+
+/** End the current admin session. */
+export const adminLogout = async () => {
+  await ensureCsrfToken();
+  return adminRequest<{ message: string }>('/auth/logout/', { method: 'POST' });
+};
+
+/** Fetch the currently signed-in admin. */
+export const adminMe = () => adminRequest<{ user: AdminUser }>('/auth/me/');
+
+/** Change the signed-in admin's own password. */
+export const adminChangePassword = async (payload: {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}) => {
+  await ensureCsrfToken();
+  return adminRequest<{ message: string }>('/auth/change-password/', {
+    method: 'POST',
+    body: payload,
+  });
+};
+
 
 // File Upload Progress
 export interface UploadProgress {

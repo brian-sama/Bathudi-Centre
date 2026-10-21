@@ -84,8 +84,22 @@ DATABASES = {
     )
 }
 
-# Password validation
-AUTH_PASSWORD_VALIDATORS = []
+# Password validation - enforced for every admin password change.
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 8},
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -135,6 +149,13 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
     ],
+    # Throttling: applied selectively on the admin auth endpoints via
+    # `throttle_scope` (see core/auth_views.py). A global anonymous throttle is
+    # deliberately NOT enabled because the public website APIs are unauthenticated.
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '20/min',
+        'password_change': '10/min',
+    },
 }
 
 # ========== CORS SETTINGS ==========

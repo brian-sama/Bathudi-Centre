@@ -384,6 +384,30 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
             Complete the form below to apply for your chosen course. All fields are required unless marked optional.
           </p>
+
+          {/* Non-refundable fee notice */}
+          <div
+            role="note"
+            className="max-w-3xl mx-auto mt-5 sm:mt-6 p-4 sm:p-5 bg-red-500/10 border-2 border-red-500/30 rounded-2xl text-left"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-red-400 text-lg sm:text-xl">{'⚠️'}</span>
+              </div>
+              <div>
+                <p className="text-red-400 font-bold text-sm sm:text-base uppercase tracking-wider">
+                  Important: Registration Fee is Non-Refundable
+                </p>
+                <p className="text-red-300/90 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                  The registration fee of <strong>R760</strong> (and the assessment fee of{' '}
+                  <strong>R760</strong>, total <strong>R1,520</strong>) is{' '}
+                  <strong>non-refundable and non-transferable</strong>. Once payment has been made
+                  it cannot be refunded, even if you withdraw your application, are not accepted, or
+                  do not complete the course. Please make sure you are certain before paying.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Status Messages */}

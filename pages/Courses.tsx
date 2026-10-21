@@ -208,6 +208,9 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
                       <span className="text-sm text-gray-400">Assessment Fee:</span>
                       <span className="text-white font-bold">{formatCurrency(course.assessment_fee)}</span>
                     </div>
+                    <p className="text-[10px] sm:text-xs text-red-400 font-semibold mt-2 pt-2 border-t border-white/10">
+                      Non-refundable &amp; non-transferable
+                    </p>
                   </div>
                   
                   {/* PDF Download Button */}

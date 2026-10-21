@@ -1,5 +1,12 @@
 from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
+from .auth_views import (
+    admin_csrf,
+    admin_login,
+    admin_logout,
+    admin_me,
+    admin_change_password,
+)
 from .views import (
     CourseViewSet, ApplicationViewSet, StudentViewSet,
     NewsletterViewSet, GalleryImageViewSet, NewsPostViewSet,
@@ -23,7 +30,14 @@ router.register(r'director-message', DirectorMessageViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    
+
+    # ========== ADMIN AUTH ENDPOINTS ==========
+    path('auth/csrf/', admin_csrf, name='admin-csrf'),
+    path('auth/login/', admin_login, name='admin-login'),
+    path('auth/logout/', admin_logout, name='admin-logout'),
+    path('auth/me/', admin_me, name='admin-me'),
+    path('auth/change-password/', admin_change_password, name='admin-change-password'),
+
     # Debug endpoint
     path('debug/courses/', debug_courses, name='debug-courses'),
     
