@@ -14,9 +14,8 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
   const [applicationId, setApplicationId] = useState<number | null>(null);
-  // When true, applications are closed. Show the applications1 notice image and
-  // block access to the application form until we reopen applications.
-  const [applicationsClosed, setApplicationsClosed] = useState(true);
+  // Applications are now open (2 November 2026) - allowing everyone to apply
+  const [applicationsClosed, setApplicationsClosed] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',

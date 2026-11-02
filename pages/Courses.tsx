@@ -95,6 +95,29 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
     }).format(amount);
   };
 
+  const handleDownloadFeeStructure = (courseId: string | number, courseTitle: string) => {
+    setLoading(prev => ({ ...prev, [String(courseId)]: true }));
+
+    try {
+      const course = COURSES.find(c => String(c.id) === String(courseId));
+      if (course) {
+        // Display fee structure information
+        const feeInfo = [
+
+      ].join(String.fromCharCode(10));
+
+        alert(feeInfo);
+        return;
+      }
+      throw new Error(`Course information not available for ${courseTitle}`);
+    } catch (error) {
+      console.error('Error downloading fee structure:', error);
+      alert((error as Error).message);
+    } finally {
+      setLoading(prev => ({ ...prev, [String(courseId)]: false }));
+    }
+  };
+
   const handleDownloadPdf = (courseId: string | number, courseTitle: string) => {
     setLoading(prev => ({ ...prev, [String(courseId)]: true }));
     
@@ -236,6 +259,19 @@ const Courses: React.FC<CoursesProps> = ({ onNavigate, onViewCourse }) => {
                           <span>Download Course Outline (PDF)</span>
                         </>
                       )}
+                    </button>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <button
+                      onClick={() => handleDownloadFeeStructure(course.id, course.title)}
+                      disabled={loading[String(course.id)]}
+                      className="w-full py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      <span>Download Fee Structure</span>
                     </button>
                   </div>
                   

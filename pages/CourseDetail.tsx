@@ -125,7 +125,26 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
     window.open(pdfPath, '_blank');
   };
 
-  const parseFee = (val: any) => {
+    const handleDownloadFeeStructure = () => {
+    if (!course) {
+      alert('Course information not available');
+      return;
+    }
+
+    const feeInfo = [
+      `Course: ${course.title}`,
+      `Total Fee: R${parseFee(course.fee).toLocaleString()}`,
+      `Registration Fee: R${parseFee(course.registration_fee).toLocaleString()}`,
+      `Assessment Fee: R${parseFee(course.assessment_fee).toLocaleString()}`,
+      `Deposit Amount: R${parseFee(course.deposit_amount).toLocaleString()}`,
+      `Monthly Payment: R${parseFee(course.monthly_payment).toLocaleString()}`,
+      `Total Payment: R${parseFee(course.total_payment).toLocaleString()}`,
+    ].join('\n');
+    alert(feeInfo);
+  };
+
+
+const parseFee = (val: any) => {
     if (typeof val === 'number') return val;
     const clean = String(val || '0').replace(',', '.').replace(/[^0-9.]/g, '');
     return parseFloat(clean) || 0;
@@ -233,6 +252,17 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ courseId, onNavigate }) => 
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span>Download Outline</span>
+                  </button>
+                )}
+                {course.course_pdf && (
+                  <button
+                    onClick={() => handleDownloadFeeStructure()}
+                    className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-all flex items-center space-x-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span>Download Fee Structure</span>
                   </button>
                 )}
               </div>
