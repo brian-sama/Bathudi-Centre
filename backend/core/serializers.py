@@ -144,6 +144,15 @@ class ApplicationSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """Validate and map course data"""
+        if (
+            self.instance is None
+            and not data.get('proof_of_payment')
+            and self.initial_data.get('payment_method') != 'payfast'
+        ):
+            raise serializers.ValidationError({
+                'proof_of_payment': 'Upload proof of payment or choose PayFast to pay online.'
+            })
+
         form_course_id = data.get('form_course_id', '')
         if form_course_id:
             course_mapping = {

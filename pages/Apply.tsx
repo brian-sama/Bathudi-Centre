@@ -118,7 +118,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
   };
 
   // Validate form
-  const validateForm = (): string | null => {
+  const validateForm = (options?: { allowPayFast?: boolean }): string | null => {
     const requiredFields = ['name', 'surname', 'age', 'mobile', 'email', 'id_number', 'address', 'education_level', 'previous_school', 'course'];
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
@@ -159,6 +159,12 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
       }
     }
 
+    if (!files.proof_of_payment && !options?.allowPayFast) {
+      const message = 'Upload proof of payment or choose PayFast to pay online.';
+      setErrorMessage(message);
+      return message;
+    }
+
     const maxSize = 5 * 1024 * 1024;
     for (const [field, file] of Object.entries(files)) {
       if (file && file.size > maxSize) {
@@ -171,11 +177,15 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
     return null;
   };
 
-  const submitApplication = async (options?: { showSuccessAlert?: boolean; resetAfterSubmit?: boolean }) => {
+  const submitApplication = async (options?: {
+    showSuccessAlert?: boolean;
+    resetAfterSubmit?: boolean;
+    paymentMethod?: 'payfast';
+  }) => {
     const showSuccessAlert = options?.showSuccessAlert ?? true;
     const resetAfterSubmit = options?.resetAfterSubmit ?? true;
 
-    const validationMessage = validateForm();
+    const validationMessage = validateForm({ allowPayFast: options?.paymentMethod === 'payfast' });
     if (validationMessage) {
       alert(`\u274C Validation Error: ${validationMessage}`);
       throw new Error(validationMessage);
@@ -205,6 +215,10 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
           }
         }
       });
+
+      if (options?.paymentMethod) {
+        formDataToSend.append('payment_method', options.paymentMethod);
+      }
       
       // Add files
       Object.entries(files).forEach(([key, file]) => {
@@ -835,7 +849,11 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
 
                       <PayFastButton
                         applicationId={applicationId}
-                        getApplicationId={() => submitApplication({ showSuccessAlert: false, resetAfterSubmit: false })}
+                        getApplicationId={() => submitApplication({
+                          showSuccessAlert: false,
+                          resetAfterSubmit: false,
+                          paymentMethod: 'payfast',
+                        })}
                         customerName={`${formData.name} ${formData.surname}`.trim()}
                         customerEmail={formData.email}
                         buttonText="Pay R760 with PayFast"
