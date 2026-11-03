@@ -119,8 +119,8 @@ class PayFastService:
             'email_address': email_address,
             'm_payment_id': f'{application_id}',
             'amount': amount_str,
-            'item_name': 'Bathudi Training Centre - Registration Fee',
-            'item_description': f'Application Registration Fee - Application ID: {application_id}',
+            'item_name': 'Bathudi Training Centre - Registration and Assessment Fees',
+            'item_description': f'Application Registration and Assessment Fees - Application ID: {application_id}',
         }
         
         # CRITICAL: Filter out any empty values so they are not sent in the form or included in the signature.

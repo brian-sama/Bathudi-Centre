@@ -1,9 +1,10 @@
 import hashlib
 from decimal import Decimal
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
 
 from .services.payfast import PayFastService
+from .views import _get_application_payment_amount
 
 
 class PayFastSignatureTests(SimpleTestCase):
@@ -35,7 +36,7 @@ class PayFastSignatureTests(SimpleTestCase):
     def test_form_fields_use_payfast_order_and_signature(self):
         form_data = self.payfast.create_payment_form_data(
             application_id=123,
-            amount=Decimal('760.00'),
+            amount=Decimal('1520.00'),
             return_url='https://example.com/payment-success',
             cancel_url='https://example.com/payment-cancel',
             notify_url='https://example.com/api/payfast/notify/',
@@ -67,9 +68,9 @@ class PayFastSignatureTests(SimpleTestCase):
             '&name_last=Student'
             '&email_address=student%40example.com'
             '&m_payment_id=123'
-            '&amount=760.00'
-            '&item_name=Bathudi+Training+Centre+-+Registration+Fee'
-            '&item_description=Application+Registration+Fee+-+Application+ID%3A+123'
+            '&amount=1520.00'
+            '&item_name=Bathudi+Training+Centre+-+Registration+and+Assessment+Fees'
+            '&item_description=Application+Registration+and+Assessment+Fees+-+Application+ID%3A+123'
             '&passphrase=pay+fast%26%2B%7E'
         )
 
@@ -81,3 +82,8 @@ class PayFastSignatureTests(SimpleTestCase):
         )
         self.assertTrue(self.payfast.validate_payment(form_data))
 
+
+class ApplicationPaymentAmountTests(SimpleTestCase):
+    @override_settings(REGISTRATION_FEE_AMOUNT='1520.00')
+    def test_application_payment_amount_includes_registration_and_assessment(self):
+        self.assertEqual(_get_application_payment_amount(), Decimal('1520.00'))

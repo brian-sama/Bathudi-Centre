@@ -245,7 +245,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
         setApplicationId(data.id);
 
         if (showSuccessAlert) {
-          alert(`\u2705 Application Submitted Successfully!\n\n\uD83D\uDCCB Application ID: ${data.id || 'Pending'}\n\uD83D\uDC64 Name: ${formData.name} ${formData.surname}\n\uD83C\uDF93 Course ID: ${formData.course}\n\n\uD83D\uDCEC We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.\n\nYou will now proceed to pay your registration fee via PayFast.`);
+          alert(`\u2705 Application Submitted Successfully!\n\n\uD83D\uDCCB Application ID: ${data.id || 'Pending'}\n\uD83D\uDC64 Name: ${formData.name} ${formData.surname}\n\uD83C\uDF93 Course ID: ${formData.course}\n\n\uD83D\uDCEC We will contact you via email or phone within 3-5 working days.\n\nYour application will now appear in the admin dashboard for review.\n\nYou will now proceed to pay the registration and assessment fees via PayFast (R1,520 total).`);
         }
 
         setSubmitStatus('success');
@@ -390,7 +390,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
             Apply for Admission
           </h2>
           <div className="inline-flex flex-col sm:flex-row items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-4 sm:mb-6">
-            <span className="text-amber-400 font-bold text-sm sm:text-base">{'📢'} Registration Fee: R760 (Total R1,520 with Assessment)</span>
+            <span className="text-amber-400 font-bold text-sm sm:text-base">{'📢'} Registration and Assessment Fees: R1,520 (R760 + R760)</span>
             <span className="hidden sm:inline mx-3 text-gray-400">&bull;</span>
             <span className="text-gray-300 text-xs sm:text-sm">Please upload proof of payment below</span>
           </div>
@@ -788,7 +788,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                 {/* Payment Registration Fee */}
                 <div className="space-y-2 sm:space-y-3 lg:col-span-3">
                   <label className="block text-xs sm:text-sm font-medium text-gray-300">
-                    Registration Fee Payment (R760 — Total R1,520 with Assessment R760) *
+                    Registration and Assessment Fee Payment (R1,520 total: R760 + R760) *
                   </label>
                   
                   <div className="space-y-4">
@@ -839,7 +839,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
 
                     <div className="p-4 sm:p-5 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl">
                       <p className="text-xs sm:text-sm text-blue-300 mb-4 leading-relaxed">
-                        <span className="font-semibold">Pay online with PayFast:</span> If you have not paid yet, submit your application first and then use the secure PayFast button below to complete your registration fee payment online.
+                        <span className="font-semibold">Pay online with PayFast:</span> If you have not paid yet, submit your application first and then use the secure PayFast button below to pay the registration and assessment fees.
                       </p>
                       <p className="text-xs sm:text-sm text-blue-300 mb-4">
                         Payment options:
@@ -856,7 +856,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         })}
                         customerName={`${formData.name} ${formData.surname}`.trim()}
                         customerEmail={formData.email}
-                        buttonText="Pay R760 Now"
+                        buttonText="Pay R1,520 Now"
                         disabled={loading}
                       />
                     </div>

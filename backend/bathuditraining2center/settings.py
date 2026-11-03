@@ -303,7 +303,7 @@ LOGGING = {
 os.makedirs(os.path.join(BASE_DIR, 'logs'), exist_ok=True)
 
 # ========== REGISTRATION FEE ==========
-REGISTRATION_FEE_AMOUNT = os.environ.get('REGISTRATION_FEE_AMOUNT', '760.00')
+REGISTRATION_FEE_AMOUNT = os.environ.get('REGISTRATION_FEE_AMOUNT', '1520.00')
 REGISTRATION_FEE_CURRENCY = os.environ.get('REGISTRATION_FEE_CURRENCY', 'ZAR')
 
 # ========== COURSE MAPPING ==========

@@ -32,7 +32,7 @@ from .services.payfast import PayFastService, get_payfast_service
 logger = logging.getLogger(__name__)
 
 
-def _get_application_registration_fee(application: Application) -> Decimal:
+def _get_application_payment_amount() -> Decimal:
     return Decimal(str(settings.REGISTRATION_FEE_AMOUNT))
 
 
@@ -397,7 +397,7 @@ def initiate_payfast_payment(request):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        amount = _get_application_registration_fee(application)
+        amount = _get_application_payment_amount()
 
         # Build notify URL (webhook URL)
         notify_url = _build_payfast_notify_url(request)
@@ -481,7 +481,7 @@ def payfast_notify(request):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        expected_amount = _get_application_registration_fee(application)
+        expected_amount = _get_application_payment_amount()
         try:
             received_amount = Decimal(str(amount_gross))
         except Exception:
