@@ -53,31 +53,27 @@ class PayFastService:
         Returns:
             MD5 hash signature
         """
-        # Sort keys to ensure consistent order between signature calculation and form submission.
-        # PayFast is sensitive to field order in the query string.
-        # We also exclude 'signature' field if it happens to be in the input.
-        sorted_keys = sorted([k for k in data.keys() if k != 'signature'])
-        
+        # PayFast signs fields in the order they are submitted, using PHP's
+        # urlencode() format. Keep the input order so the form and ITN payload
+        # are both signed in their original order.
         clean_pairs = []
-        for k in sorted_keys:
-            v = data[k]
-            # PayFast ignores empty values in signature calculation.
-            # Convert to string and strip whitespace.
+        for k, v in data.items():
+            if k == 'signature':
+                continue
             v_str = str(v).strip() if v is not None else ""
             if v_str != '':
-                clean_pairs.append(f'{k}={quote_plus(v_str)}')
+                encoded_value = quote_plus(v_str).replace('~', '%7E')
+                clean_pairs.append(f'{k}={encoded_value}')
 
         query_string = '&'.join(clean_pairs)
 
-        # Add passphrase if required
-        # IMPORTANT: PayFast expects the raw passphrase appended to the already-encoded query string.
-        # Do not use quote_plus on the passphrase itself unless it's explicitly required by your dashboard settings.
         if include_passphrase and self.security_passphrase:
-            query_string += f'&passphrase={self.security_passphrase.strip()}'
-        
+            passphrase = quote_plus(self.security_passphrase.strip()).replace('~', '%7E')
+            query_string += f'&passphrase={passphrase}'
+
         # Generate MD5 hash
         signature = hashlib.md5(query_string.encode()).hexdigest()
-        logger.debug(f'Generated signature for fields: {sorted_keys}')
+        logger.debug('Generated signature for fields: %s', list(data.keys()))
         
         return signature
     
@@ -121,7 +117,6 @@ class PayFastService:
             'name_first': payer_name.split()[0] if payer_name else 'Bathudi',
             'name_last': payer_name.split()[-1] if len(payer_name.split()) > 1 else 'Student',
             'email_address': email_address,
-            'reference': f'APP-{application_id}',
             'm_payment_id': f'{application_id}',
             'amount': amount_str,
             'item_name': 'Bathudi Training Centre - Registration Fee',
@@ -136,15 +131,12 @@ class PayFastService:
             if v is not None and str(v).strip() != ''
         }
         
-        # Sort the dictionary keys alphabetically to ensure consistent field order in the form
-        sorted_data = {k: data[k] for k in sorted(data.keys())}
-        
-        # Generate and add signature to the sorted data
-        sorted_data['signature'] = self.generate_signature(sorted_data)
-        
+        # Keep PayFast's documented field order in both the form and signature.
+        data['signature'] = self.generate_signature(data)
+
         logger.info(f'Created payment form for application {application_id}, amount: {amount_str}')
         
-        return sorted_data
+        return data
     
     def validate_payment(self, data: Dict[str, str]) -> bool:
         """
