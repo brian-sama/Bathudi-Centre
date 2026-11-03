@@ -856,7 +856,7 @@ const ApplicationForm: React.FC<ApplyProps> = ({ onNavigate }) => {
                         })}
                         customerName={`${formData.name} ${formData.surname}`.trim()}
                         customerEmail={formData.email}
-                        buttonText="Pay R760 with PayFast"
+                        buttonText="Pay R760 Now"
                         disabled={loading}
                       />
                     </div>

@@ -108,13 +108,13 @@ const PayFastButton: React.FC<PayFastButtonProps> = ({
         type="button"
         className={`
           w-full px-6 py-3 sm:py-4
-          bg-gradient-to-r from-blue-600 to-blue-500
-          hover:from-blue-700 hover:to-blue-600
+          bg-gradient-to-r from-red-600 to-red-500
+          hover:from-red-700 hover:to-red-600
           disabled:from-gray-500 disabled:to-gray-400
           disabled:cursor-not-allowed
           text-white font-bold rounded-xl
           transition-all duration-200
-          shadow-lg shadow-blue-500/20
+          shadow-lg shadow-red-500/20
           flex items-center justify-center gap-3
           text-sm sm:text-base
           ${className}
